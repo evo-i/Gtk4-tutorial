@@ -1,34 +1,33 @@
 Up: [README.md](../README.md),  Prev: [Section 24](sec24.md), Next: [Section 26](sec26.md)
 
-# Periodic Events
+# Периодические события
 
-This chapter was written by Paul Schulz <paul@mawsonlakes.org>.
+Эта глава написана Paul Schulz <paul@mawsonlakes.org>.
 
-## How do we create an animation?
+## Как создать анимацию?
 
-In this section we will continue to build on our previous work. We will create
-an analog clock application. By adding a function which periodically redraws
-GtkDrawingArea, the clock will be able to continuously display the time.
+В этом разделе мы продолжим развивать нашу предыдущую работу. Мы создадим
+приложение аналоговых часов. Добавив функцию, которая периодически перерисовывает
+GtkDrawingArea, часы смогут непрерывно отображать время.
 
-The application uses a compiled in 'resource' file, so if the GTK4 libraries and
-their dependencies are installed and available, the application will run from
-anywhere.
+Приложение использует скомпилированный файл 'ресурсов', поэтому если библиотеки GTK4 и
+их зависимости установлены и доступны, приложение будет запускаться из
+любого места.
 
-The program also makes use of some standard mathematical and time handling
-functions.
+Программа также использует некоторые стандартные математические функции и функции обработки времени.
 
-The clocks mechanics were taken from a Cairo drawing example, using gtkmm4, which can be found
-[here](https://developer-old.gnome.org/gtkmm-tutorial/stable/sec-drawing-clock-example.html.en).
+Механика часов была взята из примера рисования Cairo с использованием gtkmm4, который можно найти
+[здесь](https://developer-old.gnome.org/gtkmm-tutorial/stable/sec-drawing-clock-example.html.en).
 
-The complete code is at the end.
+Полный код приведён в конце.
 
-## Drawing the clock face, hour, minute and second hands
+## Рисование циферблата часов, часовой, минутной и секундной стрелок
 
-The `draw_clock()` function does all the work. See the in-file comments for an
-explanation of how the Cairo drawing works.
+Функция `draw_clock()` выполняет всю работу. См. комментарии в файле для
+объяснения того, как работает рисование Cairo.
 
-For a detailed reference of what each of the Cairo functions does see the
-[cairo_t reference](https://www.cairographics.org/manual/cairo-cairo-t.html).
+Для подробного справочника о том, что делает каждая из функций Cairo, см.
+[справочник cairo_t](https://www.cairographics.org/manual/cairo-cairo-t.html).
 
 ~~~C
   1 static void
@@ -146,16 +145,16 @@ For a detailed reference of what each of the Cairo functions does see the
 113 }
 ~~~
 
-In order for the clock to be drawn, the drawing function `draw_clock()` needs
-to be registered with GTK4. This is done in the `app_activate()` function (on line 24).
+Чтобы часы были нарисованы, функция рисования `draw_clock()` должна
+быть зарегистрирована в GTK4. Это делается в функции `app_activate()` (в строке 24).
 
-Whenever the application needs to redraw the GtkDrawingArea, it will now call `draw_clock()`.
+Всякий раз, когда приложению нужно перерисовать GtkDrawingArea, оно теперь будет вызывать `draw_clock()`.
 
-There is still a problem though. In order to animate the clock we need to also
-tell the application that the clock needs to be redrawn every second. This
-process starts by registering (on the next line, line 15) a timeout function
-with `g_timeout_add()` that will wakeup and run another function `time_handler`,
-every second (or 1000ms).
+Однако всё ещё есть проблема. Чтобы анимировать часы, нам также нужно
+сообщить приложению, что часы нужно перерисовывать каждую секунду. Этот
+процесс начинается с регистрации (в следующей строке, строка 15) функции таймаута
+с помощью `g_timeout_add()`, которая будет пробуждаться и запускать другую функцию `time_handler`,
+каждую секунду (или 1000 мс).
 
 ~~~C
  1 static void
@@ -178,8 +177,8 @@ every second (or 1000ms).
 18 }
 ~~~
 
-Our `time_handler()` function is very simple, as it just calls
-`gtk_widget_queue_draw()` which schedules a redraw of the widget.
+Наша функция `time_handler()` очень проста, так как она просто вызывает
+`gtk_widget_queue_draw()`, которая планирует перерисовку виджета.
 
 ~~~C
 1 gboolean
@@ -190,16 +189,16 @@ Our `time_handler()` function is very simple, as it just calls
 6 }
 ~~~
 
-.. and that is all there is to it. If you compile and run the example you will
-get a ticking analog clock.
+.. и это всё, что нужно. Если вы скомпилируете и запустите пример, вы получите
+тикающие аналоговые часы.
 
-If you get this working, you can try modifying some of the code in
-`draw_clock()` to tweak the application (such as change the color or size and
-length of the hands) or even add text, or create a digital clock.
+Если вы заставите это работать, вы можете попробовать изменить некоторый код в
+`draw_clock()`, чтобы настроить приложение (например, изменить цвет или размер и
+длину стрелок) или даже добавить текст, или создать цифровые часы.
 
-## The Complete code
+## Полный код
 
-You can find the source files in the `tfc` directory. it can be compiled with `./comp tfc`.
+Вы можете найти исходные файлы в каталоге `tfc`. Они могут быть скомпилированы с помощью `./comp tfc`.
 
 `tfc.c`
 
