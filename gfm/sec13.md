@@ -1,24 +1,24 @@
 Up: [README.md](../README.md),  Prev: [Section 12](sec12.md), Next: [Section 14](sec14.md)
 
-# TfeTextView class
+# Класс TfeTextView
 
-The TfeTextView class will be finally completed in this section.
-The remaining topic is functions.
-TfeTextView functions, which are constructors and instance methods, are described in this section.
+Класс TfeTextView будет окончательно завершён в этом разделе.
+Оставшаяся тема - функции.
+Функции TfeTextView, которые являются конструкторами и методами экземпляра, описаны в этом разделе.
 
-The source files are in the directory `src/tfetextview`.
-You can get them by downloading the [repository](https://github.com/ToshioCP/Gtk4-tutorial).
+Исходные файлы находятся в каталоге `src/tfetextview`.
+Вы можете получить их, скачав [репозиторий](https://github.com/ToshioCP/Gtk4-tutorial).
 
 ## tfetextview.h
 
-The header file `tfetextview.h` provides:
+Заголовочный файл `tfetextview.h` предоставляет:
 
-- The type of TfeTextView, which is `TFE_TYPE_TEXT_VIEW`.
-- The macro `G_DECLARE_FINAL_TYPE`, the expansion of which includes some useful functions and definitions.
-- Constants for the `open-response` signal.
-- Public functions of `tfetextview.c`. They are constructors and instance methods.
+- Тип TfeTextView, который является `TFE_TYPE_TEXT_VIEW`.
+- Макрос `G_DECLARE_FINAL_TYPE`, раскрытие которого включает некоторые полезные функции и определения.
+- Константы для сигнала `open-response`.
+- Публичные функции из `tfetextview.c`. Это конструкторы и методы экземпляра.
 
-Therefore, Any programs use TfeTextView needs to include `tfetextview.h`.
+Поэтому любые программы, использующие TfeTextView, должны включать `tfetextview.h`.
 
 ~~~C
  1 #pragma once
@@ -55,38 +55,38 @@ Therefore, Any programs use TfeTextView needs to include `tfetextview.h`.
 32 tfe_text_view_new (void);
 ~~~
 
-- 1: The preprocessor directive `#pragma once` makes the header file be included only once.
-It is non-standard but widely used.
-- 3: Includes gtk4 header files.
-The header file `gtk4` also has the same mechanism to avoid being included multiple times.
-- 5-6: These two lines define TfeTextView type, its class structure and some useful definitions.
-  - `TfeTextView` and `TfeTextViewClass` are declared as typedef of C structures.
-  - You need to define a structure `_TfeTextView` later.
-  - The class structure `_TfeTextViewClass` is defined here. You don't need to define it by yourself.
-  - Convenience functions `TFE_TEXT_VIEW ()` for casting and `TFE_IS_TEXT_VIEW` for type check are defined.
-- 8-14: A definition of the values of the "open-response" signal parameters.
-- 16-32: Declarations of public functions on TfeTextView.
+- 1: Директива препроцессора `#pragma once` делает так, что заголовочный файл включается только один раз.
+Она нестандартная, но широко используется.
+- 3: Включает заголовочные файлы gtk4.
+Заголовочный файл `gtk4` также имеет такой же механизм, чтобы избежать множественного включения.
+- 5-6: Эти две строки определяют тип TfeTextView, его структуру класса и некоторые полезные определения.
+  - `TfeTextView` и `TfeTextViewClass` объявлены как typedef структур C.
+  - Вам нужно будет определить структуру `_TfeTextView` позже.
+  - Структура класса `_TfeTextViewClass` определена здесь. Вам не нужно определять её самостоятельно.
+  - Определены вспомогательные функции `TFE_TEXT_VIEW ()` для приведения типа и `TFE_IS_TEXT_VIEW` для проверки типа.
+- 8-14: Определение значений параметров сигнала "open-response".
+- 16-32: Объявления публичных функций для TfeTextView.
 
-## Constructors
+## Конструкторы
 
-A TfeTextView instance is created with `tfe_text_view_new` or `tfe_text_view_new_with_file`.
-These functions are called constructors.
+Экземпляр TfeTextView создаётся с помощью `tfe_text_view_new` или `tfe_text_view_new_with_file`.
+Эти функции называются конструкторами.
 
 ~~~C
 GtkWidget *tfe_text_view_new (void);
 ~~~
 
-It just creates a new TfeTextView instance and returns the pointer to the new instance.
+Она просто создаёт новый экземпляр TfeTextView и возвращает указатель на новый экземпляр.
 
 ~~~C
 GtkWidget *tfe_text_view_new_with_file (GFile *file);
 ~~~
 
-It is given a Gfile object as an argument and it loads the file into the GtkTextBuffer instance, then returns the pointer to the new instance.
-The argument `file` is owned by the caller and the function doesn't change it.
-If an error occurs during the creation process, NULL will be returned.
+Ей передаётся объект GFile в качестве аргумента, и она загружает файл в экземпляр GtkTextBuffer, затем возвращает указатель на новый экземпляр.
+Аргумент `file` принадлежит вызывающей стороне, и функция его не изменяет.
+Если во время процесса создания произойдёт ошибка, будет возвращено NULL.
 
-Each function is defined as follows.
+Каждая функция определена следующим образом.
 
 ~~~C
  1 GtkWidget *
@@ -116,61 +116,61 @@ Each function is defined as follows.
 25 }
 ~~~
 
-- 22-25: `tfe_text_view_new` function.
-Just returns the value from the function `g_object_new` but casts it to the pointer to GtkWidget.
-The function `g_object_new` creates any instances of its descendant class.
-The arguments are the type of the class, property list and NULL, which is the end mark of the property list.
-TfeTextView "wrap-mode" property has GTK\_WRAP\_WORD\_CHAR as the default value.
-- 1-20: `tfe_text_view_new_with_file` function.
-- 3: `g_return_val_if_fail` is described in [GLib API Reference -- g\_return\_val\_if\_fail](https://docs.gtk.org/glib/func.return_val_if_fail.html).
-And also [GLib API Reference -- Message Logging](https://docs.gtk.org/glib/logging.html).
-It tests whether the argument `file` is a pointer to GFile.
-If it's true, the program goes on to the next line.
-If it's false, it returns NULL (the second argument) immediately.
-And at the same time it logs out the error message (usually the log is outputted to stderr or stdout).
-This function is used to check the programmer's error.
-If an error occurs, the solution is usually to change the (caller) program and fix the bug.
-You need to distinguish programmer's errors and runtime errors.
-You shouldn't use this function to find runtime errors.
-- 10-11: Reads the file. If an error occurs, NULL is returned.
-- 13: Calls the function `tfe_text_view_new`.
-The function creates TfeTextView instance and returns the pointer to the instance.
-- 14: Gets the pointer to the GtkTextBuffer instance corresponds to `tv`.
-The pointer is assigned to `tb`
-- 15: Assigns the contents read from the file to `tb`.
-- 16: Duplicates `file` and sets `tv->file` to point it.
-GFile is *not* thread safe.
-The duplication makes sure that the GFile instance of `tv` keeps the file information even if the original one is changed by other thread.
-- 17: The function `gtk_text_buffer_set_modified (tb, FALSE)` sets the modification flag of `tb` to FALSE.
-The modification flag indicates that the contents has been modified.
-It is used when the contents are saved.
-If the modification flag is FALSE, it doesn't need to save the contents.
-- 18: Frees the memories pointed by `contents`.
-- 19: Returns `tv`, which is a pointer to the newly created TfeTextView instance.
-If an error happens, NULL is returned.
+- 22-25: Функция `tfe_text_view_new`.
+Просто возвращает значение функции `g_object_new`, но приводит его к указателю на GtkWidget.
+Функция `g_object_new` создаёт любые экземпляры классов-потомков.
+Аргументы - это тип класса, список свойств и NULL, который является конечным маркером списка свойств.
+Свойство "wrap-mode" TfeTextView имеет GTK\_WRAP\_WORD\_CHAR в качестве значения по умолчанию.
+- 1-20: Функция `tfe_text_view_new_with_file`.
+- 3: `g_return_val_if_fail` описана в [GLib API Reference -- g\_return\_val\_if\_fail](https://docs.gtk.org/glib/func.return_val_if_fail.html).
+А также [GLib API Reference -- Message Logging](https://docs.gtk.org/glib/logging.html).
+Она проверяет, является ли аргумент `file` указателем на GFile.
+Если это истина, программа переходит к следующей строке.
+Если это ложь, она немедленно возвращает NULL (второй аргумент).
+И в то же время выводит сообщение об ошибке в лог (обычно лог выводится в stderr или stdout).
+Эта функция используется для проверки ошибок программиста.
+Если произойдёт ошибка, решение обычно заключается в изменении программы (вызывающей стороны) и исправлении бага.
+Вам нужно различать ошибки программиста и ошибки времени выполнения.
+Не следует использовать эту функцию для обнаружения ошибок времени выполнения.
+- 10-11: Читает файл. Если произойдёт ошибка, возвращается NULL.
+- 13: Вызывает функцию `tfe_text_view_new`.
+Функция создаёт экземпляр TfeTextView и возвращает указатель на экземпляр.
+- 14: Получает указатель на экземпляр GtkTextBuffer, соответствующий `tv`.
+Указатель присваивается `tb`
+- 15: Присваивает содержимое, прочитанное из файла, буферу `tb`.
+- 16: Дублирует `file` и устанавливает `tv->file` указывающим на него.
+GFile *не является* потокобезопасным.
+Дублирование гарантирует, что экземпляр GFile в `tv` сохраняет информацию о файле, даже если оригинал будет изменён другим потоком.
+- 17: Функция `gtk_text_buffer_set_modified (tb, FALSE)` устанавливает флаг модификации `tb` в FALSE.
+Флаг модификации указывает, что содержимое было изменено.
+Он используется при сохранении содержимого.
+Если флаг модификации равен FALSE, сохранять содержимое не нужно.
+- 18: Освобождает память, на которую указывает `contents`.
+- 19: Возвращает `tv`, который является указателем на только что созданный экземпляр TfeTextView.
+Если произойдёт ошибка, возвращается NULL.
 
-## Save and saveas functions
+## Функции save и saveas
 
-Save and saveas functions write the contents in the GtkTextBuffer to a file.
+Функции save и saveas записывают содержимое из GtkTextBuffer в файл.
 
 ~~~C
 void tfe_text_view_save (TfeTextView *tv)
 ~~~
 
-The function `tfe_text_view_save` writes the contents in the GtkTextBuffer to a file specified by `tv->file`.
-If `tv->file` is NULL, then it shows file chooser dialog and prompts the user to choose a file to save.
-Then it saves the contents to the file and sets `tv->file` to point the GFile instance for the file.
+Функция `tfe_text_view_save` записывает содержимое из GtkTextBuffer в файл, указанный в `tv->file`.
+Если `tv->file` равен NULL, то она показывает диалог выбора файла и запрашивает у пользователя выбор файла для сохранения.
+Затем она сохраняет содержимое в файл и устанавливает `tv->file` указывающим на экземпляр GFile для файла.
 
 ~~~C
 void tfe_text_view_saveas (TfeTextView *tv)
 ~~~
 
-The function `saveas` shows a file chooser dialog and prompts the user to select a existed file or specify a new file to save.
-Then, the function changes `tv->file` and save the contents to the specified file.
-If an error occurs, it is shown to the user through the alert dialog.
-The error is managed only in the TfeTextView and no information is notified to the caller.
+Функция `saveas` показывает диалог выбора файла и запрашивает у пользователя выбор существующего файла или указание нового файла для сохранения.
+Затем функция изменяет `tv->file` и сохраняет содержимое в указанный файл.
+Если произойдёт ошибка, она отображается пользователю через диалог оповещения.
+Ошибка обрабатывается только внутри TfeTextView, и вызывающей стороне не передаётся никакой информации.
 
-### save\_file function
+### Функция save\_file
 
 ~~~C
  1 static gboolean
@@ -198,42 +198,42 @@ The error is managed only in the TfeTextView and no information is notified to t
 23 }
 ~~~
 
-- The function `save_file` is called from `saveas_dialog_response` and `tfe_text_view_save`.
-This function saves the contents of the buffer to the file given as an argument.
-If error happens, it displays an error message.
-So, a caller of this function don't need to take care of errors.
-The class of this function is `static`.
-Therefore, only functions in this file (`tfetextview.c`) call this function.
-Such static functions usually don't have `g_return_val_if_fail` functions.
-- 10-11: Gets the text contents from the buffer.
-- 12: The function `g_file_replace_contents` writes the contents to the file and returns the status (true = success/ false = fail).
-It has many parameters, but some of them are almost always given the same values.
-  - GFile* file: GFile to which the contents are saved.
-  - const char* contents: contents to be saved. The string is owned by the caller.
-  - gsize length: the length of the contents
-  - const char* etag: entity tag. It is usually NULL.
-  - gboolean make_backup: true to make a backup if the file exists. false not to make it. the file will be overwritten.
-  - GFileCreateFlags flags: usually `G_FILE_CREATE_NONE` is fine.
-  - char** new_etag: new entity tag. It is usually NULL.
-  - GCancellable* cancellable: If a cancellable instance is set, the other thread can cancel this operation. it is usually NULL.
-  - GError** error: If error happens, GError will be set.
-- 13,14: If no error happens, set the modified flag to be FALSE.
-This means that the buffer is not modified since it has been saved.
-- 16-19: If it fails to save the contents, an error message will be displayed.
-- 16: Creates an alert dialog. The parameters are printf-like format string followed by values to insert into the string.
-GtkAlertDialog is available since version 4.10.
-If your version is older than 4.10, use GtkMessageDialog instead.
-GtkMessageDialog is deprecated since version 4.10.
-- 17: Show the alert dialog. The parameters are the dialog and the transient parent window.
-This allows window managers to keep the dialog on top of the parent window, or center the dialog over the parent window.
-It is possible to give no parent window to the dialog by giving NULL as the argument.
-However, it is encouraged to give parents to dialogs.
-- 18: Releases the dialog.
-- 19: Frees the GError struct pointed by `err` with `g_error_free` function.
-- 21: Frees `contents`.
-- 22: Returns the status to the caller.
+- Функция `save_file` вызывается из `saveas_dialog_response` и `tfe_text_view_save`.
+Эта функция сохраняет содержимое буфера в файл, переданный в качестве аргумента.
+Если произойдёт ошибка, она отображает сообщение об ошибке.
+Таким образом, вызывающей стороне этой функции не нужно заботиться об ошибках.
+Класс этой функции - `static`.
+Поэтому только функции в этом файле (`tfetextview.c`) вызывают эту функцию.
+Такие статические функции обычно не имеют функций `g_return_val_if_fail`.
+- 10-11: Получает текстовое содержимое из буфера.
+- 12: Функция `g_file_replace_contents` записывает содержимое в файл и возвращает статус (true = успех / false = неудача).
+У неё много параметров, но некоторым из них почти всегда передаются одинаковые значения.
+  - GFile* file: GFile, в который сохраняется содержимое.
+  - const char* contents: содержимое для сохранения. Строка принадлежит вызывающей стороне.
+  - gsize length: длина содержимого
+  - const char* etag: тег сущности. Обычно NULL.
+  - gboolean make_backup: true для создания резервной копии, если файл существует. false, чтобы не создавать её. файл будет перезаписан.
+  - GFileCreateFlags flags: обычно `G_FILE_CREATE_NONE` подходит.
+  - char** new_etag: новый тег сущности. Обычно NULL.
+  - GCancellable* cancellable: Если установлен экземпляр cancellable, другой поток может отменить эту операцию. обычно NULL.
+  - GError** error: Если произойдёт ошибка, будет установлен GError.
+- 13,14: Если ошибка не произошла, устанавливается флаг modified в FALSE.
+Это означает, что буфер не был изменён с момента его сохранения.
+- 16-19: Если не удаётся сохранить содержимое, будет отображено сообщение об ошибке.
+- 16: Создаёт диалог оповещения. Параметры - это строка формата в стиле printf, за которой следуют значения для вставки в строку.
+GtkAlertDialog доступен с версии 4.10.
+Если ваша версия старше 4.10, используйте GtkMessageDialog вместо этого.
+GtkMessageDialog устарел с версии 4.10.
+- 17: Показывает диалог оповещения. Параметры - это диалог и родительское окно.
+Это позволяет менеджерам окон держать диалог поверх родительского окна или центрировать диалог над родительским окном.
+Можно не указывать родительское окно для диалога, передав NULL в качестве аргумента.
+Однако рекомендуется указывать родителей для диалогов.
+- 18: Освобождает диалог.
+- 19: Освобождает структуру GError, на которую указывает `err`, функцией `g_error_free`.
+- 21: Освобождает `contents`.
+- 22: Возвращает статус вызывающей стороне.
 
-### save\_dialog\_cb function
+### Функция save\_dialog\_cb
 
 ~~~C
  1 static void
@@ -267,30 +267,30 @@ However, it is encouraged to give parents to dialogs.
 29 }
 ~~~
 
-- The function `save_dialog_cb` is a call back function that is given to the `gtk_file_dialog_save` function as an argument.
-The `gtk_file_dialog_save` shows a file chooser dialog to the user.
-The user chooses or types a filename and clicks on the `Save` button or just clicks on the `Cancel` button.
-Then the call back function is called with the result.
-This is the general way in GIO to manage asynchronous operations.
-A pair of functions `g_data_input_stream_read_line_async` and `g_data_input_stream_read_line_finish` are one example.
-These functions are thread-safe.
-The arguments of `save_dialog_cb` are:
-  - GObject *source_object: The GObject instance that the operation was started with.
-It is actually the GtkFileDialog instance that is shown to the user.
-However, the call back function is defined as `AsyncReadyCallback`, which is a general call back function for an asynchronous operation.
-So the type is GObject and you need to cast it to GtkFileDialog later.
-  - GAsyncResult *res: The result of the asynchronous operation.
-It will be given to the `gtk_dialog_save_finish` function.
-  - gpointer data: A user data set in the `gtk_dialog_save` function.
-- 11: Calls `gtk_dialog_save_finish`.
-It is given the result `res` as an argument and returns a pointer to a GFile object the user has chosen.
-If the user has canceled or an error happens, it returns NULL, creates a GError object and sets `err` to point it.
-If `gtk_dialog_save_finish` returns a GFile, the function `save_file` is called.
-- 12-21: If the file is successfully saved, these lines are executed.
-See the comments, line 12-15, for the details.
-- 23-28: If an error happens, show the error message through the alert dialog.
+- Функция `save_dialog_cb` является функцией обратного вызова, которая передаётся функции `gtk_file_dialog_save` в качестве аргумента.
+Функция `gtk_file_dialog_save` показывает диалог выбора файла пользователю.
+Пользователь выбирает или вводит имя файла и нажимает кнопку `Save` или просто нажимает кнопку `Cancel`.
+Затем вызывается функция обратного вызова с результатом.
+Это общий способ в GIO для управления асинхронными операциями.
+Пара функций `g_data_input_stream_read_line_async` и `g_data_input_stream_read_line_finish` - один из примеров.
+Эти функции потокобезопасны.
+Аргументы `save_dialog_cb`:
+  - GObject *source_object: Экземпляр GObject, с которым была начата операция.
+На самом деле это экземпляр GtkFileDialog, который показывается пользователю.
+Однако функция обратного вызова определена как `AsyncReadyCallback`, что является общей функцией обратного вызова для асинхронной операции.
+Поэтому тип - GObject, и вам нужно будет привести его к GtkFileDialog позже.
+  - GAsyncResult *res: Результат асинхронной операции.
+Он будет передан функции `gtk_dialog_save_finish`.
+  - gpointer data: Пользовательские данные, установленные в функции `gtk_dialog_save`.
+- 11: Вызывает `gtk_dialog_save_finish`.
+Ей передаётся результат `res` в качестве аргумента, и она возвращает указатель на объект GFile, выбранный пользователем.
+Если пользователь отменил операцию или произошла ошибка, она возвращает NULL, создаёт объект GError и устанавливает `err` указывающим на него.
+Если `gtk_dialog_save_finish` возвращает GFile, вызывается функция `save_file`.
+- 12-21: Если файл успешно сохранён, выполняются эти строки.
+См. комментарии, строки 12-15, для деталей.
+- 23-28: Если произойдёт ошибка, показывается сообщение об ошибке через диалог оповещения.
 
-### tfe\_text\_view\_save function
+### Функция tfe\_text\_view\_save
 
 ~~~C
  1 void
@@ -309,26 +309,26 @@ See the comments, line 12-15, for the details.
 14 }
 ~~~
 
-- The function `tfe_text_view_save` writes the contents to the `tv->file` file.
-It calls `tfe_text_view_saveas` or `save_file`.
-- 1-3: The function is public, i.e. it is open to the other objects.
-So, it doesn't have `static` class.
-Public functions should check the parameter type with `g_return_if_fail` function.
-If `tv` is not a pointer to a TfeTextView instance, then it logs an error message and immediately returns.
-This function is similar to `g_return_val_if_fail`, but no value is returned because `tfe_text_view_save` doesn't return a value (void).
-- 5-6: GtkTextBuffer `tb` and GtkWidget (GtkWindow) `win` are set.
-The function `gtk_widget_get_ancestor (widget, type)` returns the first ancestor of the widget with the type, which is a GType.
-The parent-child relationship here is the one for widgets, not classes.
-More precisely, the returned widget's type is the `type` or a descendant object type of the `type`.
-Be careful, the "descendant object" in the previous sentence is *not* "descendant widget".
-For example, the type of GtkWindow is `GTK_TYPE_WINDOW` and the one of TfeTextView is `TFE_TYPE_TEXT_VIEW`.
-The top level window may be a GtkApplicationWindow, but it is a descendant of GtkWindow.
-Therefore, `gtk_widget_get_ancestor (GTK_WIDGET (tv), GTK_TYPE_WINDOW)` possibly returns GtkWindow or GtkApplicationWindow.
-- 8-9: If the buffer hasn't modified, it doesn't need to be saved.
-- 10-11: If `tv->file` is NULL, which means no file has given yet, it calls `tfe_text_view_saveas` to prompt a user to select a file and save the contents.
-- 12-13: Otherwise, it calls `save_file` to save the contents to the file `tv->file`.
+- Функция `tfe_text_view_save` записывает содержимое в файл `tv->file`.
+Она вызывает `tfe_text_view_saveas` или `save_file`.
+- 1-3: Функция публичная, т.е. она открыта для других объектов.
+Поэтому у неё нет класса `static`.
+Публичные функции должны проверять тип параметра с помощью функции `g_return_if_fail`.
+Если `tv` не является указателем на экземпляр TfeTextView, то она записывает сообщение об ошибке в лог и немедленно возвращается.
+Эта функция похожа на `g_return_val_if_fail`, но не возвращает значение, потому что `tfe_text_view_save` не возвращает значение (void).
+- 5-6: Устанавливаются GtkTextBuffer `tb` и GtkWidget (GtkWindow) `win`.
+Функция `gtk_widget_get_ancestor (widget, type)` возвращает первого предка виджета с типом, который является GType.
+Отношение родитель-потомок здесь - это отношение для виджетов, а не классов.
+Точнее, тип возвращаемого виджета - это `type` или тип объекта-потомка типа `type`.
+Будьте осторожны, "объект-потомок" в предыдущем предложении - это *не* "виджет-потомок".
+Например, тип GtkWindow - это `GTK_TYPE_WINDOW`, а тип TfeTextView - `TFE_TYPE_TEXT_VIEW`.
+Окно верхнего уровня может быть GtkApplicationWindow, но оно является потомком GtkWindow.
+Поэтому `gtk_widget_get_ancestor (GTK_WIDGET (tv), GTK_TYPE_WINDOW)` может вернуть GtkWindow или GtkApplicationWindow.
+- 8-9: Если буфер не был изменён, его не нужно сохранять.
+- 10-11: Если `tv->file` равен NULL, что означает, что файл ещё не был задан, вызывается `tfe_text_view_saveas`, чтобы запросить у пользователя выбор файла и сохранить содержимое.
+- 12-13: В противном случае вызывается `save_file` для сохранения содержимого в файл `tv->file`.
 
-### tfe\_text\_view\_saveas function
+### Функция tfe\_text\_view\_saveas
 
 ~~~C
  1 void
@@ -344,59 +344,59 @@ Therefore, `gtk_widget_get_ancestor (GTK_WIDGET (tv), GTK_TYPE_WINDOW)` possibly
 11 }
 ~~~
 
-The function `tfe_text_view_saveas` shows a file chooser dialog and prompts the user to choose a file and save the contents.
+Функция `tfe_text_view_saveas` показывает диалог выбора файла и запрашивает у пользователя выбор файла и сохранение содержимого.
 
-- 1-3: Check the type of `tv` because the function is public.
-- 6: GtkWidget `win` is set to the window which is an ancestor ot `tv`.
-- 8: Creates a GtkFileDialog instance.
-GtkFileDialog is available since version 4.10.
-If your Gtk version is older than 4.10, use GtkFileChooserDialog instead.
-GtkFileChooserDialog is deprecated since version 4.10.
-- 9: Calls `gtk_file_dialog_save` function. The arguments are:
+- 1-3: Проверяет тип `tv`, потому что функция публичная.
+- 6: GtkWidget `win` устанавливается в окно, которое является предком `tv`.
+- 8: Создаёт экземпляр GtkFileDialog.
+GtkFileDialog доступен с версии 4.10.
+Если ваша версия Gtk старше 4.10, используйте GtkFileChooserDialog вместо этого.
+GtkFileChooserDialog устарел с версии 4.10.
+- 9: Вызывает функцию `gtk_file_dialog_save`. Аргументы:
   - dialog: GtkFileDialog.
-  - GTK_WINDOW (win): transient parent window.
-  - NULL: NULL means no cancellable object.
-If you put a cancellable object here, you can cancel the operation by other thread.
-In many cases, it is NULL.
-See [GCancellable](https://docs.gtk.org/gio/class.Cancellable.html) for further information.
-  - `save_dialog_cb`: A callback to call when the operation is complete.
-The type of the pointer to the callback function is [GAsyncReadyCallback](https://docs.gtk.org/gio/callback.AsyncReadyCallback.html).
-If a cancellable object is given and the operation is cancelled, the callback won't be called.
-  - `tv`: This is an optional user data which is gpointer type.
-It is used in the callback function.
-- 10: Releases the GtkFileDialog instance because it is useless anymore.
+  - GTK_WINDOW (win): родительское окно.
+  - NULL: NULL означает отсутствие объекта cancellable.
+Если вы поместите сюда объект cancellable, вы сможете отменить операцию из другого потока.
+Во многих случаях это NULL.
+См. [GCancellable](https://docs.gtk.org/gio/class.Cancellable.html) для дополнительной информации.
+  - `save_dialog_cb`: Обратный вызов, который вызывается, когда операция завершена.
+Тип указателя на функцию обратного вызова - [GAsyncReadyCallback](https://docs.gtk.org/gio/callback.AsyncReadyCallback.html).
+Если задан объект cancellable и операция отменена, обратный вызов не будет вызван.
+  - `tv`: Это необязательные пользовательские данные типа gpointer.
+Они используются в функции обратного вызова.
+- 10: Освобождает экземпляр GtkFileDialog, потому что он больше не нужен.
 
-This function just shows the file chooser dialog.
-The rest of the operation is done by the callback function.
+Эта функция просто показывает диалог выбора файла.
+Остальная часть операции выполняется функцией обратного вызова.
 
-![Saveas process](../image/saveas.png)
+![Процесс saveas](../image/saveas.png)
 
-## Open related functions
+## Функции, связанные с открытием
 
-Open function shows a file chooser dialog to a user and prompts them to choose a file.
-Then it reads the file and puts the text into GtkTextBuffer.
+Функция открытия показывает диалог выбора файла пользователю и запрашивает выбор файла.
+Затем она читает файл и помещает текст в GtkTextBuffer.
 
 ~~~C
 void tfe_text_view_open (TfeTextView *tv, GtkWindow *win);
 ~~~
 
-The parameter `win` is the transient window.
-A file chooser dialog will be shown at the center of the window.
+Параметр `win` - это родительское окно.
+Диалог выбора файла будет показан в центре окна.
 
-This function may be called just after `tv` has been created.
-In that case, `tv` has not been incorporated into the widget hierarchy.
-Therefore it is impossible to get the top-level window from `tv`.
-That's why the function needs `win` parameter.
+Эта функция может быть вызвана сразу после создания `tv`.
+В этом случае `tv` ещё не включён в иерархию виджетов.
+Поэтому невозможно получить окно верхнего уровня из `tv`.
+Вот почему функция нуждается в параметре `win`.
 
-This function is usually called when the buffer of `tv` is empty.
-However, even if the buffer is not empty, `tfe_text_view_open` doesn't treat it as an error.
-If you want to revert the buffer, calling this function is appropriate.
+Эта функция обычно вызывается, когда буфер `tv` пустой.
+Однако, даже если буфер не пуст, `tfe_text_view_open` не рассматривает это как ошибку.
+Если вы хотите вернуть буфер к исходному состоянию, вызов этой функции уместен.
 
-Open and read process is divided into two phases.
-One is creating and showing a file chooser dialog and the other is the callback function.
-The former is `tfe_text_view_open` and the latter is `open_dialog_cb`.
+Процесс открытия и чтения разделён на две фазы.
+Одна - это создание и показ диалога выбора файла, а другая - функция обратного вызова.
+Первая - это `tfe_text_view_open`, а вторая - `open_dialog_cb`.
 
-### open\_dialog\_cb function
+### Функция open\_dialog\_cb
 
 ~~~C
  1 static void
@@ -443,35 +443,35 @@ The former is `tfe_text_view_open` and the latter is `open_dialog_cb`.
 42 }
 ~~~
 
-This function is similar to `save_dialog_cb`.
-Both are callback functions on a GtkFileDialog object.
+Эта функция похожа на `save_dialog_cb`.
+Обе являются функциями обратного вызова для объекта GtkFileDialog.
 
-- 2: It has three parameters like `save_dialog_cb`.
-They are:
-  - GObject *source_object: The GObject instance that the operation was started with.
-It is actually the GtkFileDialog instance that is shown to the user.
-It will be casted to GtkFileDialog later.
-  - GAsyncResult *res: The result of the asynchronous operation.
-It will be given to the `gtk_dialog_open_finish` function.
-  - gpointer data: A user data set in the `gtk_dialog_open` function.
-It is actually a TfeTextView instance and it will be casted to TfeTextView later.
-- 14: The function `gtk_file_dialog_open_finish` returns a GFile object if the operation has succeeded.
-Otherwise it returns NULL.
-- 16-30: If the user selects a file and the file has successfully been read, the codes from 16 to 30 will be executed.
-- 16-18: Sets the buffer of `tv` with the text read from the file. And frees `contents`.
-Then sets the modified status to false.
-- 19-30: The codes are a bit complicated.
-See the comments.
-If the file (`tv->file`) is changed, "change-file" signal is emitted.
-The signal "open-response" is emitted with the parameter `TFE_OPEN_RESPONSE_SUCCESS`.
-- 31-41: If the operation failed, the codes from 31 to 41 will be executed.
-- 32-33: If the error code is `GTK_DIALOG_ERROR_DISMISSED`, it means that the user has clicked on the "Cancel" button or close button on the header bar.
-Then, "open-response" signal is emitted with the parameter `TFE_OPEN_RESPONSE_CANCEL`.
-The Dialog error is described [here](https://docs.gtk.org/gtk4/error.DialogError.html) in the GTK API reference.
-- 35-38: If another error occurs, it shows an alert dialog to report the error and emits "open-response" signal with the parameter `TFE_OPEN_RESPONSE_ERROR`.
-- 40: Clears the error structure.
+- 2: У неё три параметра, как у `save_dialog_cb`.
+Это:
+  - GObject *source_object: Экземпляр GObject, с которым была начата операция.
+На самом деле это экземпляр GtkFileDialog, который показывается пользователю.
+Позже он будет приведён к GtkFileDialog.
+  - GAsyncResult *res: Результат асинхронной операции.
+Он будет передан функции `gtk_dialog_open_finish`.
+  - gpointer data: Пользовательские данные, установленные в функции `gtk_dialog_open`.
+На самом деле это экземпляр TfeTextView, и позже он будет приведён к TfeTextView.
+- 14: Функция `gtk_file_dialog_open_finish` возвращает объект GFile, если операция прошла успешно.
+В противном случае она возвращает NULL.
+- 16-30: Если пользователь выбрал файл и файл был успешно прочитан, будут выполнены строки с 16 по 30.
+- 16-18: Устанавливает буфер `tv` с текстом, прочитанным из файла. И освобождает `contents`.
+Затем устанавливает статус modified в false.
+- 19-30: Код немного сложный.
+См. комментарии.
+Если файл (`tv->file`) изменился, испускается сигнал "change-file".
+Испускается сигнал "open-response" с параметром `TFE_OPEN_RESPONSE_SUCCESS`.
+- 31-41: Если операция не удалась, будут выполнены строки с 31 по 41.
+- 32-33: Если код ошибки - `GTK_DIALOG_ERROR_DISMISSED`, это означает, что пользователь нажал кнопку "Cancel" или кнопку закрытия на заголовке.
+Затем испускается сигнал "open-response" с параметром `TFE_OPEN_RESPONSE_CANCEL`.
+Ошибка Dialog описана [здесь](https://docs.gtk.org/gtk4/error.DialogError.html) в справочнике GTK API.
+- 35-38: Если произошла другая ошибка, показывается диалог оповещения для сообщения об ошибке и испускается сигнал "open-response" с параметром `TFE_OPEN_RESPONSE_ERROR`.
+- 40: Очищает структуру ошибки.
 
-### tfe\_text\_view\_open function
+### Функция tfe\_text\_view\_open
 
 ~~~C
  1 void
@@ -489,34 +489,34 @@ The Dialog error is described [here](https://docs.gtk.org/gtk4/error.DialogError
 13 }
 ~~~
 
-- 3-6: Check the type of the arguments `tv` and `win`.
-Public functions always need to check the arguments.
-- 10: Creates a GtkFileDialog instance.
-- 11: Calls `gtk_file_dialog_open`. The arguments are:
-  - `dialog`: the GtkFileDialog instance
-  - `win`: the transient window for the file chooser dialog
-  - `NULL`: NULL means no cancellable object
-  - `open_dialog_cb`: callback function
-  - `tv`: user data which is used in the callback function
-- 12: Releases the dialog instance because it is useless anymore.
+- 3-6: Проверяет тип аргументов `tv` и `win`.
+Публичные функции всегда должны проверять аргументы.
+- 10: Создаёт экземпляр GtkFileDialog.
+- 11: Вызывает `gtk_file_dialog_open`. Аргументы:
+  - `dialog`: экземпляр GtkFileDialog
+  - `win`: родительское окно для диалога выбора файла
+  - `NULL`: NULL означает отсутствие объекта cancellable
+  - `open_dialog_cb`: функция обратного вызова
+  - `tv`: пользовательские данные, которые используются в функции обратного вызова
+- 12: Освобождает экземпляр диалога, потому что он больше не нужен.
 
-The whole process between the caller and TfeTextView is shown in the following diagram.
-It is really complicated.
-Because `gtk_file_dialog_open` can't return the status of the operation.
+Весь процесс между вызывающей стороной и TfeTextView показан на следующей диаграмме.
+Он действительно сложный.
+Потому что `gtk_file_dialog_open` не может вернуть статус операции.
 
-![Caller and TfeTextView](../image/open.png)
+![Вызывающая сторона и TfeTextView](../image/open.png)
 
-1. A caller gets a pointer `tv` to a TfeTextView instance by calling `tfe_text_view_new`.
-2. The caller connects the handler (left bottom in the diagram) and the signal "open-response".
-3. It calls `tfe_text_view_open` to prompt the user to select a file from the file chooser dialog.
-4. When the dialog is closed, the callback `open_dialog_cb` is called.
-5. The callback function reads the file and inserts the text into GtkTextBuffer and emits a signal to inform the status as a response code.
-6. The handler of the "open-response" signal is invoked and the operation status is given to it as an argument (signal parameter).
+1. Вызывающая сторона получает указатель `tv` на экземпляр TfeTextView, вызывая `tfe_text_view_new`.
+2. Вызывающая сторона подключает обработчик (слева внизу на диаграмме) и сигнал "open-response".
+3. Она вызывает `tfe_text_view_open`, чтобы запросить у пользователя выбор файла из диалога выбора файла.
+4. Когда диалог закрывается, вызывается обратный вызов `open_dialog_cb`.
+5. Функция обратного вызова читает файл и вставляет текст в GtkTextBuffer и испускает сигнал для информирования о статусе в виде кода ответа.
+6. Вызывается обработчик сигнала "open-response", и статус операции передаётся ему в качестве аргумента (параметра сигнала).
 
-## Getting GFile in TfeTextView
+## Получение GFile в TfeTextView
 
-You can get the GFile in a TfeTextView instance with `tfe_text_view_get_file`.
-It is very simple.
+Вы можете получить GFile в экземпляре TfeTextView с помощью `tfe_text_view_get_file`.
+Это очень просто.
 
 ~~~C
 1 GFile *
@@ -530,18 +530,18 @@ It is very simple.
 9 }
 ~~~
 
-The important thing is to duplicate `tv->file`.
-Otherwise, if the caller frees the GFile object, `tv->file` is no more guaranteed to point the GFile.
-Another reason to use `g_file_dup` is that GFile isn't thread-safe.
-If you use GFile in the different thread, the duplication is necessary.
-See [Gio API Reference -- g\_file\_dup](https://docs.gtk.org/gio/method.File.dup.html).
+Важно дублировать `tv->file`.
+В противном случае, если вызывающая сторона освободит объект GFile, `tv->file` больше не гарантированно будет указывать на GFile.
+Другая причина использования `g_file_dup` заключается в том, что GFile не является потокобезопасным.
+Если вы используете GFile в другом потоке, дублирование необходимо.
+См. [Gio API Reference -- g\_file\_dup](https://docs.gtk.org/gio/method.File.dup.html).
 
-## The API document and source file of tfetextview.c
+## Документация API и исходный файл tfetextview.c
 
-Refer [API document of TfeTextView](tfetextview_doc.md).
-It is under the directory `src/tfetextview`.
+Обратитесь к [документации API TfeTextView](tfetextview_doc.md).
+Она находится в каталоге `src/tfetextview`.
 
-You can find all the TfeTextView source codes under [src/tfetextview](../src/tfetextview) directories.
+Вы можете найти все исходные коды TfeTextView в каталоге [src/tfetextview](../src/tfetextview).
 
 
 Up: [README.md](../README.md),  Prev: [Section 12](sec12.md), Next: [Section 14](sec14.md)

@@ -1,29 +1,29 @@
 Up: [README.md](../README.md),  Prev: [Section 20](sec20.md), Next: [Section 22](sec22.md)
 
-# GtkFontDialogButton and Gsettings
+# GtkFontDialogButton и Gsettings
 
-## The preference dialog
+## Диалог настроек
 
-If the user clicks on the preference menu, a preference dialog appears.
+Если пользователь нажимает на меню настроек, появляется диалог настроек.
 
 ![Preference dialog](../image/pref_dialog.png)
 
-It has only one button, which is a GtkFontDialogButton widget.
-You can add more widgets on the dialog but this simple dialog isn't so bad for the first example program.
+В нём есть только одна кнопка - виджет GtkFontDialogButton.
+Вы можете добавить больше виджетов в этот диалог, но такой простой диалог неплох для первой примерной программы.
 
-If the button is clicked, a FontDialog appears like this.
+Если нажать на кнопку, появляется FontDialog вот так.
 
 ![Font dialog](../image/fontdialog.png)
 
-If the user chooses a font and clicks on the select button, the font is changed.
+Если пользователь выбирает шрифт и нажимает кнопку выбора, шрифт изменяется.
 
-GtkFontDialogButton and GtkFontDialog are available since GTK version 4.10.
-They replace GtkFontButton and GtkFontChooserDialog, which are deprecated since 4.10.
+GtkFontDialogButton и GtkFontDialog доступны начиная с версии GTK 4.10.
+Они заменяют GtkFontButton и GtkFontChooserDialog, которые устарели с версии 4.10.
 
-## A composite widget
+## Составной виджет
 
-The preference dialog has GtkBox, GtkLabel and GtkFontButton in it and is defined as a composite widget.
-The following is the template ui file for TfePref.
+Диалог настроек содержит GtkBox, GtkLabel и GtkFontButton и определён как составной виджет.
+Ниже приведён файл шаблона ui для TfePref.
 
 ~~~xml
  1 <?xml version="1.0" encoding="UTF-8"?>
@@ -60,19 +60,19 @@ The following is the template ui file for TfePref.
 32 </interface>
 ~~~
 
-- Template tag specifies a composite widget.
-The class attribute specifies the class name, which is "TfePref".
-The parent attribute is `GtkWindow`.
-Therefore. `TfePref` is a child class of `GtkWindow`.
-A parent attribute is optional but it is recommended to write it explicitly.
-You can make TfePref as a child of `GtkDialog`, but `GtkDialog` is deprecated since version 4.10.
-- There are three properties, title, resizable and modal.
-- TfePref has a child widget GtkBox which is horizontal.
-The box has two children GtkLabel and GtkFontDialogButton.
+- Тег Template указывает составной виджет.
+Атрибут class указывает имя класса, которое является "TfePref".
+Атрибут parent - это `GtkWindow`.
+Следовательно, `TfePref` является дочерним классом `GtkWindow`.
+Атрибут parent необязателен, но рекомендуется указывать его явно.
+Вы можете сделать TfePref дочерним классом `GtkDialog`, но `GtkDialog` устарел с версии 4.10.
+- Есть три свойства: title, resizable и modal.
+- TfePref имеет дочерний виджет GtkBox, который является горизонтальным.
+Контейнер имеет два дочерних элемента: GtkLabel и GtkFontDialogButton.
 
-## The header file
+## Заголовочный файл
 
-The file `tfepref.h` defines types and declares a public function.
+Файл `tfepref.h` определяет типы и объявляет публичную функцию.
 
 ~~~C
 1 #pragma once
@@ -86,17 +86,17 @@ The file `tfepref.h` defines types and declares a public function.
 9 tfe_pref_new (void);
 ~~~
 
-- 5: Defines the type `TFE_TYPE_PREF`, which is a macro replaced by `tfe_pref_get_type ()`.
-- 6: The macro `G_DECLAER_FINAL_TYPE` expands to:
-  - The function `tfe_pref_get_type ()` is declared.
-  - TfePrep type is defined as a typedef of `struct _TfePrep`.
-  - TfePrepClass type is defined as a typedef of `struct {GtkWindowClass *parent;}`.
-  - Two functions `TFE_PREF ()` and `TFE_IS_PREF ()` is defined.
-- 8-9:The function `tfe_pref_new` is declared. It creates a new TfePref instance.
+- 5: Определяет тип `TFE_TYPE_PREF`, который является макросом, заменяемым на `tfe_pref_get_type ()`.
+- 6: Макрос `G_DECLAER_FINAL_TYPE` раскрывается в:
+  - Объявление функции `tfe_pref_get_type ()`.
+  - Определение типа TfePrep как typedef для `struct _TfePrep`.
+  - Определение типа TfePrepClass как typedef для `struct {GtkWindowClass *parent;}`.
+  - Определение двух функций `TFE_PREF ()` и `TFE_IS_PREF ()`.
+- 8-9: Объявление функции `tfe_pref_new`. Она создаёт новый экземпляр TfePref.
 
-## The C file for composite widget
+## C-файл для составного виджета
 
-The following codes are extracted from the file `tfepref.c`.
+Следующие коды извлечены из файла `tfepref.c`.
 
 ```C
 #include <gtk/gtk.h>
@@ -135,90 +135,90 @@ tfe_pref_new (void) {
 }
 ```
 
-- The structure `_TfePref` has `font_dialog_btn` member.
-It points the GtkFontDialogButton object specified in the XML file "tfepref.ui".
-The member name `font_dialog_btn` must be the same as the GtkFontDialogButton id attribute in the XML file.
-- `G_DEFINE_FINAL_TYPE` macro expands to:
-  - The declaration of the functions `tfe_pref_init` and `tfe_pref_class_init`.
-They are defined in the following part of the program.
-  - The definition of the variable `tfe_pref_parent_class`.
-  - The definition of the function `tfe_pref_get_type`.
-- The function `tfe_pref_class_init` initializes the TfePref class.
-The function `gtk_widget_class_set_template_from_resource` initializes the composite widget template from the XML resource.
-The function `gtk_widget_class_bind_template_child` connects the TfePref structure member `font_dialog_btn` and the GtkFontDialogButton in the XML.
-The member name and the id attribute value must be the same.
-- The function `tfe_pref_init` initializes a newly created instance. The function `gtk_widget_init_template` creates and initializes child widgets.
-- The function `tfe_pref_dispose` releases objects. The function `gtk_widget_dispose_template` releases child widgets.
+- Структура `_TfePref` имеет член `font_dialog_btn`.
+Он указывает на объект GtkFontDialogButton, указанный в XML-файле "tfepref.ui".
+Имя члена `font_dialog_btn` должно совпадать с атрибутом id GtkFontDialogButton в XML-файле.
+- Макрос `G_DEFINE_FINAL_TYPE` раскрывается в:
+  - Объявление функций `tfe_pref_init` и `tfe_pref_class_init`.
+Они определены в следующей части программы.
+  - Определение переменной `tfe_pref_parent_class`.
+  - Определение функции `tfe_pref_get_type`.
+- Функция `tfe_pref_class_init` инициализирует класс TfePref.
+Функция `gtk_widget_class_set_template_from_resource` инициализирует шаблон составного виджета из XML-ресурса.
+Функция `gtk_widget_class_bind_template_child` связывает член структуры TfePref `font_dialog_btn` с GtkFontDialogButton в XML.
+Имя члена и значение атрибута id должны совпадать.
+- Функция `tfe_pref_init` инициализирует вновь созданный экземпляр. Функция `gtk_widget_init_template` создаёт и инициализирует дочерние виджеты.
+- Функция `tfe_pref_dispose` освобождает объекты. Функция `gtk_widget_dispose_template` освобождает дочерние виджеты.
 
-## GtkFontDialogButton and Pango
+## GtkFontDialogButton и Pango
 
-If the GtkFontDialogButton button is clicked, the GtkFontDialog dialog appears.
-A user can choose a font on the dialog.
-If the user clicks on the "select" button, the dialog disappears.
-And the font information is given to the GtkFontDialogButton instance.
-The font data is taken with the method `gtk_font_dialog_button_get_font_desc`.
-It returns a pointer to the PangoFontDescription structure.
+Если нажать кнопку GtkFontDialogButton, появляется диалог GtkFontDialog.
+Пользователь может выбрать шрифт в этом диалоге.
+Если пользователь нажимает кнопку "select", диалог исчезает.
+И информация о шрифте передаётся экземпляру GtkFontDialogButton.
+Данные о шрифте получаются методом `gtk_font_dialog_button_get_font_desc`.
+Он возвращает указатель на структуру PangoFontDescription.
 
-Pango is a text layout engine.
-The [documentation](https://docs.gtk.org/Pango/index.html) is on the internet.
+Pango - это движок компоновки текста.
+[Документация](https://docs.gtk.org/Pango/index.html) доступна в интернете.
 
-PangoFontDescription is a C structure and it isn't allowed to access directly.
-The document is [here](https://docs.gtk.org/Pango/struct.FontDescription.html).
-If you want to retrieve the font information, there are several functions.
+PangoFontDescription - это структура C, и прямой доступ к ней не допускается.
+Документация находится [здесь](https://docs.gtk.org/Pango/struct.FontDescription.html).
+Если вы хотите получить информацию о шрифте, есть несколько функций.
 
-- `pango_font_description_to_string` returns a string like "Jamrul Bold Italic Semi-Expanded 12".
-- `pango_font_description_get_family` returns a font family like "Jamrul".
-- `pango_font_description_get_weight` returns a PangoWeight constant like `PANGO_WEIGHT_BOLD`.
-- `pango_font_description_get_style` returns a PangoStyle constant like `PANGO_STYLE_ITALIC`.
-- `pango_font_description_get_stretch` returns a PangoStretch constant like `PANGO_STRETCH_SEMI_EXPANDED`.
-- `pango_font_description_get_size` returns an integer like `12`.
-Its unit is point or pixel (device unit).
-The function `pango_font_description_get_size_is_absolute` returns TRUE if the unit is absolute that means device unit.
-Otherwise the unit is point.
+- `pango_font_description_to_string` возвращает строку вроде "Jamrul Bold Italic Semi-Expanded 12".
+- `pango_font_description_get_family` возвращает семейство шрифта вроде "Jamrul".
+- `pango_font_description_get_weight` возвращает константу PangoWeight вроде `PANGO_WEIGHT_BOLD`.
+- `pango_font_description_get_style` возвращает константу PangoStyle вроде `PANGO_STYLE_ITALIC`.
+- `pango_font_description_get_stretch` возвращает константу PangoStretch вроде `PANGO_STRETCH_SEMI_EXPANDED`.
+- `pango_font_description_get_size` возвращает целое число вроде `12`.
+Единица измерения - пункт или пиксель (единица устройства).
+Функция `pango_font_description_get_size_is_absolute` возвращает TRUE, если единица абсолютная, то есть единица устройства.
+В противном случае единица - пункт.
 
 ## GSettings
 
-We want to maintain the font data after the application quits.
-There are some ways to implement.
+Мы хотим сохранить данные о шрифте после завершения работы приложения.
+Есть несколько способов реализации.
 
-- Make a configuration file.
-For example, a text file "~/.config/tfe/font_desc.cfg" keeps font information.
-- Use GSettings object.
-The basic idea of GSettings are similar to configuration file.
-Configuration information data is put into a database file.
+- Создать файл конфигурации.
+Например, текстовый файл "~/.config/tfe/font_desc.cfg" хранит информацию о шрифте.
+- Использовать объект GSettings.
+Основная идея GSettings похожа на файл конфигурации.
+Данные конфигурационной информации помещаются в файл базы данных.
 
-GSettings is simple and easy to use but a bit hard to understand the concept.
-This subsection describes the concept first and then how to program it.
+GSettings прост и лёгок в использовании, но концепция немного сложна для понимания.
+Этот подраздел сначала описывает концепцию, а затем способ программирования.
 
-### GSettings schema
+### Схема GSettings
 
-GSettings schema describes a set of keys, value types and some other information.
-GSettings object uses this schema and it writes/reads the value of a key to/from the right place in the database.
+Схема GSettings описывает набор ключей, типов значений и некоторой другой информации.
+Объект GSettings использует эту схему и записывает/читает значение ключа в/из нужного места в базе данных.
 
-- A schema has an id.
-The id must be unique.
-We often use the same string as application id, but schema id and application id are different.
-You can use different name from application id.
-Schema id is a string delimited by periods.
-For example, "com.github.ToshioCP.tfe" is a correct schema id.
-- A schema usually has a path.
-The path is a location in the database.
-Each key is stored under the path.
-For example, if a key `font-desc` is defined with a path `/com/github/ToshioCP/tfe/`,
-the key's location in the database is `/com/github/ToshioCP/tfe/font-desc`.
-Path is a string begins with and ends with a slash (`/`).
-And it is delimited by slashes.
-- GSettings save information as key-value style.
-Key is a string begins with a lower case character followed by lower case, digit or dash (`-`) and ends with lower case or digit.
-No consecutive dashes are allowed.
-Values can be any type.
-GSettings stores values as GVariant type, which can be, for example, integer, double, boolean, string or complex types like an array.
-The type of values needs to be defined in the schema.
-- A default value needs to be set for each key.
-- A summery and description can be set for each key optionally.
+- Схема имеет id.
+Id должен быть уникальным.
+Мы часто используем ту же строку, что и id приложения, но id схемы и id приложения - это разные вещи.
+Вы можете использовать имя, отличное от id приложения.
+Id схемы - это строка, разделённая точками.
+Например, "com.github.ToshioCP.tfe" - это корректный id схемы.
+- Схема обычно имеет путь.
+Путь - это расположение в базе данных.
+Каждый ключ хранится по этому пути.
+Например, если ключ `font-desc` определён с путём `/com/github/ToshioCP/tfe/`,
+расположение ключа в базе данных будет `/com/github/ToshioCP/tfe/font-desc`.
+Путь - это строка, начинающаяся и заканчивающаяся косой чертой (`/`).
+И разделённая косыми чертами.
+- GSettings сохраняет информацию в стиле ключ-значение.
+Ключ - это строка, начинающаяся со строчной буквы, за которой следуют строчные буквы, цифры или тире (`-`), и заканчивающаяся строчной буквой или цифрой.
+Последовательные тире не допускаются.
+Значения могут быть любого типа.
+GSettings хранит значения как тип GVariant, который может быть, например, целым числом, числом с плавающей точкой, булевым значением, строкой или сложными типами, такими как массив.
+Тип значений должен быть определён в схеме.
+- Для каждого ключа должно быть установлено значение по умолчанию.
+- Для каждого ключа можно опционально установить резюме и описание.
 
-Schemas are described in an XML format.
-For example,
+Схемы описываются в формате XML.
+Например,
 
 ~~~xml
  1 <?xml version="1.0" encoding="UTF-8"?>
@@ -233,25 +233,25 @@ For example,
 10 </schemalist>
 ~~~
 
-- 4: The type attribute is "s".
-It is GVariant type string.
-For GVariant type string, see [GLib API Reference -- GVariant Type Strings](https://docs.gtk.org/glib/struct.VariantType.html#gvariant-type-strings).
-Other common types are:
+- 4: Атрибут type имеет значение "s".
+Это строковый тип GVariant.
+Для строковых типов GVariant смотрите [GLib API Reference -- GVariant Type Strings](https://docs.gtk.org/glib/struct.VariantType.html#gvariant-type-strings).
+Другие распространённые типы:
   - "b": gboolean
   - "i": gint32.
   - "d": double.
 
-Further information is in:
+Дополнительная информация находится в:
 
 - [GLib API Reference -- GVariant Format Strings](https://docs.gtk.org/glib/gvariant-format-strings.html)
 - [GLib API Reference -- GVariant Text Format](https://docs.gtk.org/glib/gvariant-text.html)
 - [GLib API Reference -- GVariant](https://docs.gtk.org/glib/struct.Variant.html)
 - [GLib API Reference -- VariantType](https://docs.gtk.org/glib/struct.VariantType.html)
 
-### Gsettings command
+### Команда Gsettings
 
-First, let's try `gsettings` application.
-It is a configuration tool for GSettings.
+Сначала давайте попробуем приложение `gsettings`.
+Это инструмент конфигурации для GSettings.
 
 ~~~
 $ gsettings help
@@ -278,7 +278,7 @@ Commands:
 Use "gsettings help COMMAND" to get detailed help.
 ~~~
 
-List schemas.
+Список схем.
 
 ~~~
 $ gsettings list-schemas
@@ -292,10 +292,10 @@ org.gnome.rhythmbox.plugins.generic-player
 
 ~~~
 
-Each line is an id of a schema.
-Each schema has a key-value configuration data.
-You can see them with list-recursively command.
-Let's look at the keys and values of `org.gnome.calculator` schema.
+Каждая строка - это id схемы.
+Каждая схема имеет данные конфигурации ключ-значение.
+Вы можете увидеть их с помощью команды list-recursively.
+Давайте посмотрим на ключи и значения схемы `org.gnome.calculator`.
 
 ~~~
 $ gsettings list-recursively org.gnome.calculator
@@ -316,8 +316,8 @@ org.gnome.calculator window-position (-1, -1)
 org.gnome.calculator word-size 64
 ~~~
 
-This schema is used by GNOME Calculator.
-Run the calculator and change the mode, then check the schema again.
+Эта схема используется GNOME Калькулятором.
+Запустите калькулятор и измените режим, затем снова проверьте схему.
 
 ~~~
 $ gnome-calculator
@@ -326,11 +326,11 @@ $ gnome-calculator
 ![gnome-calculator basic mode](../image/gnome_calculator_basic.png)
 
 
-Change the mode to advanced and quit.
+Измените режим на расширенный и закройте.
 
 ![gnome-calculator advanced mode](../image/gnome_calculator_advanced.png)
 
-Run gsettings and check the value of `button-mode`.
+Запустите gsettings и проверьте значение `button-mode`.
 
 ~~~
 $ gsettings list-recursively org.gnome.calculator
@@ -343,15 +343,15 @@ org.gnome.calculator button-mode 'advanced'
 
 ~~~
 
-Now we know that GNOME Calculator used gsettings and it has set `button-mode` key to "advanced".
-The value remains even the calculator quits.
-So when the calculator runs again, it will appear as an advanced mode.
+Теперь мы знаем, что GNOME Калькулятор использовал gsettings и установил ключ `button-mode` в значение "advanced".
+Значение сохраняется даже после закрытия калькулятора.
+Так что когда калькулятор запустится снова, он появится в расширенном режиме.
 
-### Glib-compile-schemas utility
+### Утилита Glib-compile-schemas
 
-GSettings schemas are specified with an XML format.
-The XML schema files must have the filename extension `.gschema.xml`.
-The following is the XML schema file for the application `tfe`.
+Схемы GSettings определяются в формате XML.
+Файлы XML-схем должны иметь расширение `.gschema.xml`.
+Ниже приведён XML-файл схемы для приложения `tfe`.
 
 ~~~xml
  1 <?xml version="1.0" encoding="UTF-8"?>
@@ -366,69 +366,69 @@ The following is the XML schema file for the application `tfe`.
 10 </schemalist>
 ~~~
 
-The filename is "com.github.ToshioCP.tfe.gschema.xml".
-Schema XML filenames are usually the schema id followed by ".gschema.xml" suffix.
-You can use different name from schema id, but it is not recommended.
+Имя файла - "com.github.ToshioCP.tfe.gschema.xml".
+Имена XML-файлов схем обычно представляют собой id схемы с суффиксом ".gschema.xml".
+Вы можете использовать имя, отличное от id схемы, но это не рекомендуется.
 
-- 2: The top level element is `<schemalist>`.
-- 3: schema tag has `path` and `id` attributes.
-A path determines where the settings are stored in the conceptual global tree of settings.
-An id identifies the schema.
-- 4: Key tag has two attributes.
-Name is the name of the key.
-Type is the type of the value of the key and it is a GVariant Format String.
-- 5: default value of the key `font-desc` is `Monospace 12`.
-- 6: Summery and description elements describes the key.
-They are optional, but it is recommended to add them in the XML file.
+- 2: Элемент верхнего уровня - `<schemalist>`.
+- 3: Тег schema имеет атрибуты `path` и `id`.
+Путь определяет, где настройки хранятся в концептуальном глобальном дереве настроек.
+Id идентифицирует схему.
+- 4: Тег Key имеет два атрибута.
+Name - это имя ключа.
+Type - это тип значения ключа, и это строка формата GVariant.
+- 5: Значение по умолчанию ключа `font-desc` - `Monospace 12`.
+- 6: Элементы Summery и description описывают ключ.
+Они необязательны, но рекомендуется добавлять их в XML-файл.
 
-The XML file is compiled by glib-compile-schemas.
-When compiling, `glib-compile-schemas` compiles all the XML files which have ".gschema.xml" file extension in the directory given as an argument.
-It converts the XML file into a binary file `gschemas.compiled`.
-Suppose the XML file above is under `tfe6` directory.
+XML-файл компилируется с помощью glib-compile-schemas.
+При компиляции `glib-compile-schemas` компилирует все XML-файлы с расширением ".gschema.xml" в каталоге, указанном в качестве аргумента.
+Он преобразует XML-файл в бинарный файл `gschemas.compiled`.
+Предположим, что XML-файл выше находится в каталоге `tfe6`.
 
 ~~~
 $ glib-compile-schemas tfe6
 ~~~
 
-Then, `gschemas.compiled` is generated under `tfe6`.
-When you test your application, set `GSETTINGS_SCHEMA_DIR` environment variable so that GSettings objet can find `gschemas.compiled`.
+Затем `gschemas.compiled` генерируется в каталоге `tfe6`.
+При тестировании вашего приложения установите переменную окружения `GSETTINGS_SCHEMA_DIR`, чтобы объект GSettings мог найти `gschemas.compiled`.
 
 ~~~
 $ GSETTINGS_SCHEMA_DIR=(the directory gschemas.compiled is located):$GSETTINGS_SCHEMA_DIR (your application name)
 ~~~
 
-GSettings object looks for this file by the following process.
+Объект GSettings ищет этот файл по следующему процессу.
 
-- It searches `glib-2.0/schemas` subdirectories of all the directories specified in the environment variable `XDG_DATA_DIRS`.
-Common directores are `/usr/share/glib-2.0/schemas` and `/usr/local/share/glib-2.0/schemas`.
-- If `$HOME/.local/share/glib-2.0/schemas` exists, it is also searched.
-- If `GSETTINGS_SCHEMA_DIR` environment variable is defined, it searches all the directories specified in the variable.
-`GSETTINGS_SCHEMA_DIR` can specify multiple directories delimited by colon (:).
+- Он ищет подкаталоги `glib-2.0/schemas` во всех каталогах, указанных в переменной окружения `XDG_DATA_DIRS`.
+Обычные каталоги - `/usr/share/glib-2.0/schemas` и `/usr/local/share/glib-2.0/schemas`.
+- Если существует `$HOME/.local/share/glib-2.0/schemas`, он также ищется.
+- Если определена переменная окружения `GSETTINGS_SCHEMA_DIR`, она ищет все каталоги, указанные в переменной.
+`GSETTINGS_SCHEMA_DIR` может указывать несколько каталогов, разделённых двоеточием (:).
 
-The directories above includes more than one `.gschema.xml` file.
-Therefore, when you install your application, follow the instruction below to install your schemas.
+Каталоги выше содержат более одного файла `.gschema.xml`.
+Поэтому при установке вашего приложения следуйте инструкции ниже для установки ваших схем.
 
-1. Make `.gschema.xml` file.
-2. Copy it to one of the directories above. For example, `$HOME/.local/share/glib-2.0/schemas`.
-3. Run `glib-compile-schemas` on the directory.
-It compiles all the schema files in the directory and creates or updates the database file `gschemas.compiled`.
+1. Создайте файл `.gschema.xml`.
+2. Скопируйте его в один из каталогов выше. Например, `$HOME/.local/share/glib-2.0/schemas`.
+3. Запустите `glib-compile-schemas` на этом каталоге.
+Это скомпилирует все файлы схем в каталоге и создаст или обновит файл базы данных `gschemas.compiled`.
 
-### GSettings object and binding
+### Объект GSettings и привязка
 
-Now, we go on to the next topic, how to program GSettings.
+Теперь перейдём к следующей теме - как программировать GSettings.
 
-You need to compile your schema file in advance.
+Вам нужно заранее скомпилировать ваш файл схемы.
 
-Suppose id, key, class name and a property name are:
+Предположим, что id, ключ, имя класса и имя свойства следующие:
 
 - GSettings id: com.github.ToshioCP.sample
 - GSettings key: sample_key
-- The class name: Sample
-- The property to bind: sample_property
+- Имя класса: Sample
+- Свойство для привязки: sample_property
 
-The example below uses `g_settings_bind`.
-If you use it, GSettings key and instance property must have the same the type.
-In the example, it is assumed that the type of "sample_key" and "sample_property" are the same.
+Пример ниже использует `g_settings_bind`.
+Если вы используете это, ключ GSettings и свойство экземпляра должны иметь одинаковый тип.
+В примере предполагается, что тип "sample_key" и "sample_property" одинаковый.
 
 ```C
 GSettings *settings;
@@ -439,19 +439,19 @@ sample_object = sample_new ();
 g_settings_bind (settings, "sample_key", sample_object, "sample_property", G_SETTINGS_BIND_DEFAULT);
 ```
 
-The function `g_settings_bind` binds the GSettings value and the property of the instance.
-If the property value is changed, the GSettings value is also changed, and vice versa.
-The two values are always the same.
+Функция `g_settings_bind` связывает значение GSettings со свойством экземпляра.
+Если значение свойства изменяется, значение GSettings также изменяется, и наоборот.
+Эти два значения всегда одинаковы.
 
-The function `g_settings_bind` is simple and easy but it isn't always possible.
-The type of GSettings are restricted to the type GVariant has.
-Some property types are out of GVariant.
-For example, GtkFontDialogButton has "font-desc" property and its type is PangoFontDescription.
-PangoFontDescription is a C structure and it is wrapped in a boxed type GValue to store in the property.
-GVariant doesn't support boxed type.
+Функция `g_settings_bind` проста и удобна, но не всегда применима.
+Типы GSettings ограничены типами, которые имеет GVariant.
+Некоторые типы свойств не входят в GVariant.
+Например, GtkFontDialogButton имеет свойство "font-desc", и его тип - PangoFontDescription.
+PangoFontDescription - это структура C, и она обёрнута в boxed-тип GValue для хранения в свойстве.
+GVariant не поддерживает boxed-типы.
 
-In that case, another function `g_settings_bind_with_mapping` is used.
-It binds GSettings GVariant value and object property via GValue with mapping functions.
+В этом случае используется другая функция `g_settings_bind_with_mapping`.
+Она связывает значение GVariant GSettings и свойство объекта через GValue с функциями отображения.
 
 ```C
 void
@@ -468,7 +468,7 @@ g_settings_bind_with_mapping (
 )
 ```
 
-The mapping functions are defined like these:
+Функции отображения определяются так:
 
 ```C
 gboolean
@@ -486,7 +486,7 @@ GVariant*
 )
 ```
 
-The following codes are extracted from `tfepref.c`.
+Следующие коды извлечены из `tfepref.c`.
 
 ~~~C
  1 static gboolean // GSettings => property
@@ -512,28 +512,28 @@ The following codes are extracted from `tfepref.c`.
 21 }
 ~~~
 
-- 15-21: This function `tfe_pref_init` initializes the new TfePref instance.
-- 18: Creates a new GSettings instance. The id is "com.github.ToshioCP.tfe".
-- 19-20: Binds the GSettings "font-desc" and the GtkFontDialogButton property "font-desc". The mapping functions are `get_mapping` and `set_mapping`.
-- 1-7: The mapping function from GSettings to the property.
-The first argument `value` is a GValue to be stored in the property.
-The second argument `variant` is a GVarinat structure that comes from the GSettings value.
-- 3: Retrieves a string from the GVariant structure.
-- 4: Build a PangoFontDescription structure from the string and assigns its address to `font_desc`.
-- 5: Puts `font_desc` into the GValue `value`.
-The ownership of `font_desc` moves to `value`.
-- 6: Returns TRUE that means the mapping succeeds.
-- 9-13: The mapping function from the property to GSettings.
-The first argument `value` holds the property data.
-The second argument `expected_type` is the type of GVariant that the GSettings value has.
-It isn't used in this function.
-- 11: Gets the PangoFontDescription structure from `value` and converts it to string.
-- 12: The string is inserted to a GVariant structure.
-The ownership of the string `font_desc_string` moves to the returned value.
+- 15-21: Эта функция `tfe_pref_init` инициализирует новый экземпляр TfePref.
+- 18: Создаёт новый экземпляр GSettings. Id - "com.github.ToshioCP.tfe".
+- 19-20: Связывает GSettings "font-desc" и свойство GtkFontDialogButton "font-desc". Функции отображения - `get_mapping` и `set_mapping`.
+- 1-7: Функция отображения из GSettings в свойство.
+Первый аргумент `value` - это GValue для хранения в свойстве.
+Второй аргумент `variant` - это структура GVariant, которая приходит из значения GSettings.
+- 3: Извлекает строку из структуры GVariant.
+- 4: Строит структуру PangoFontDescription из строки и присваивает её адрес `font_desc`.
+- 5: Помещает `font_desc` в GValue `value`.
+Владение `font_desc` переходит к `value`.
+- 6: Возвращает TRUE, что означает успешное отображение.
+- 9-13: Функция отображения из свойства в GSettings.
+Первый аргумент `value` содержит данные свойства.
+Второй аргумент `expected_type` - это тип GVariant, который имеет значение GSettings.
+Он не используется в этой функции.
+- 11: Получает структуру PangoFontDescription из `value` и преобразует её в строку.
+- 12: Строка вставляется в структуру GVariant.
+Владение строкой `font_desc_string` переходит к возвращаемому значению.
 
-## C file
+## C-файл
 
-The following is the full codes of `tfepref.c`
+Ниже приведён полный код `tfepref.c`
 
 ~~~C
  1 #include <gtk/gtk.h>
@@ -594,9 +594,9 @@ The following is the full codes of `tfepref.c`
 56 }
 ~~~
 
-## Test program
+## Тестовая программа
 
-There's a test program located at `src/tfe6/test` directory.
+Тестовая программа находится в каталоге `src/tfe6/test`.
 
 ~~~C
  1 #include <gtk/gtk.h>
@@ -650,30 +650,30 @@ There's a test program located at `src/tfe6/test` directory.
 49 }
 ~~~
 
-This program sets its active window to TfePref instance, which is a child object of GtkWindow.
+Эта программа устанавливает своё активное окно как экземпляр TfePref, который является дочерним объектом GtkWindow.
 
-It sets the "changed::font-desc" signal handler in the startup function.
-The process from the user's font selection to the handler is:
+Она устанавливает обработчик сигнала "changed::font-desc" в функции startup.
+Процесс от выбора шрифта пользователем до обработчика следующий:
 
-- The user clicked on the GtkFontDialogButton and GtkFontDialog appears.
-- He/she selects a new font.
-- The "font-desc" property of the GtkFontDialogButton instance is changed.
-- The value of "font-desc" key on the GSettings database is changed since it is bound to the property.
-- The "changed::font-desc" signal on the GSettings instance is emitted.
-- The handler is called.
+- Пользователь нажал на GtkFontDialogButton и появился GtkFontDialog.
+- Он/она выбирает новый шрифт.
+- Свойство "font-desc" экземпляра GtkFontDialogButton изменяется.
+- Значение ключа "font-desc" в базе данных GSettings изменяется, так как оно связано со свойством.
+- Сигнал "changed::font-desc" на экземпляре GSettings испускается.
+- Обработчик вызывается.
 
-The program building is divided into four steps.
+Сборка программы разделена на четыре шага.
 
-- Compile the schema file
-- Compile the XML file to a resource (C source file)
-- Compile the C files
-- Run the executable file
+- Компиляция файла схемы
+- Компиляция XML-файла в ресурс (файл исходного кода C)
+- Компиляция C-файлов
+- Запуск исполняемого файла
 
-Commands are shown in the next four sub-subsections.
-You don't need to try them.
-The final sub-subsection shows the meson-ninja way, which is the easiest.
+Команды показаны в следующих четырёх подразделах.
+Вам не нужно их пробовать.
+Последний подраздел показывает способ meson-ninja, который самый простой.
 
-### Compile the schema file
+### Компиляция файла схемы
 
 ```
 $ cd src/tef6/test
@@ -681,22 +681,22 @@ $ cp ../com.github.ToshioCP.tfe.gschema.xml com.github.ToshioCP.tfe.gschema.xml
 $ glib-compile-schemas .
 ```
 
-Be careful. The commands `glib-compile-schemas` has an argument ".", which means the current directory.
-This results in creating `gschemas.compiled` file.
+Будьте внимательны. Команда `glib-compile-schemas` имеет аргумент ".", который означает текущий каталог.
+Это приводит к созданию файла `gschemas.compiled`.
 
-### Compile the XML file
+### Компиляция XML-файла
 
 ```
 $ glib-compile-resources --sourcedir=.. --generate-source --target=resource.c ../tfe.gresource.xml
 ```
 
-### Compile the C file
+### Компиляция C-файла
 
 ```
 $ gcc `pkg-config --cflags gtk4` test_pref.c ../tfepref.c resource.c `pkg-config --libs gtk4`
 ```
 
-### Run the executable file
+### Запуск исполняемого файла
 
 ```
 $ GSETTINGS_SCHEMA_DIR=. ./a.out
@@ -705,13 +705,13 @@ Jamrul Italic Semi-Expanded 12 # <= select Jamrul Italic 12
 Monospace 12 #<= select Monospace Regular 12
 ```
 
-### Meson-ninja way
+### Способ Meson-ninja
 
-Meson wraps up the commands above.
-Create the following text and save it to `meson.build`.
+Meson объединяет команды выше.
+Создайте следующий текст и сохраните его в `meson.build`.
 
-Note: Gtk4-tutorial repository has meson.build file that defines several tests.
-So you can try it instead of the following text.
+Примечание: Репозиторий Gtk4-tutorial имеет файл meson.build, который определяет несколько тестов.
+Поэтому вы можете попробовать его вместо следующего текста.
 
 ```
 project('tfe_pref_test', 'c')
@@ -725,23 +725,23 @@ gnome.compile_schemas(build_by_default: true, depend_files: 'com.github.ToshioCP
 executable('test_pref', ['test_pref.c', '../tfepref.c'], resources, dependencies: gtkdep, export_dynamic: true, install: false)
 ```
 
-- Project name is 'tfe\_pref\_test' and it is written in C language.
-- It depends on GTK4 library.
-- It uses GNOME module. Modules are prepared by Meson.
-- GNOME module has `compile_resources` method.
-When you call this method, you need the prefix "gnome.".
-  - The target filename is resources.
-  - The definition XML file is '../tfe.gresource.xml'.
-  - The source dir is '..'. All the ui files are located there.
-- GNOME module has `compile_schemas` method.
-It compiles the schema file 'com.github.ToshioCP.tfe.gschema.xml'.
-You need to copy '../com.github.ToshioCP.tfe.gschema.xml' to the current directory in advance.
-- It creates an executable file 'test_pref'.
-The source files are 'test_pref.c', '../tfepref.c' and `resources`, which is made by `gnome.compile_resources`.
-It depends on `gtkdep`, which is GTK4 library.
-The symbols are exported and no installation support.
+- Имя проекта - 'tfe\_pref\_test', и он написан на языке C.
+- Он зависит от библиотеки GTK4.
+- Он использует модуль GNOME. Модули подготовлены Meson.
+- Модуль GNOME имеет метод `compile_resources`.
+Когда вы вызываете этот метод, вам нужен префикс "gnome.".
+  - Целевое имя файла - resources.
+  - XML-файл определения - '../tfe.gresource.xml'.
+  - Исходный каталог - '..'. Все ui-файлы находятся там.
+- Модуль GNOME имеет метод `compile_schemas`.
+Он компилирует файл схемы 'com.github.ToshioCP.tfe.gschema.xml'.
+Вам нужно заранее скопировать '../com.github.ToshioCP.tfe.gschema.xml' в текущий каталог.
+- Он создаёт исполняемый файл 'test_pref'.
+Исходные файлы - 'test_pref.c', '../tfepref.c' и `resources`, который создаётся с помощью `gnome.compile_resources`.
+Он зависит от `gtkdep`, который является библиотекой GTK4.
+Символы экспортируются, и поддержка установки отсутствует.
 
-Type like this to build and test the program.
+Введите вот так для сборки и тестирования программы.
 
 ```
 $ cd src/tef6/test
@@ -751,7 +751,7 @@ $ ninja -C _build
 $ GSETTINGS_SCHEMA_DIR=_build _build/test_pref
 ```
 
-A window appears and you can choose a font via GtkFontDialog.
-If you select a new font, the font string is output through the standard output.
+Появляется окно, и вы можете выбрать шрифт через GtkFontDialog.
+Если вы выбираете новый шрифт, строка шрифта выводится в стандартный вывод.
 
 Up: [README.md](../README.md),  Prev: [Section 20](sec20.md), Next: [Section 22](sec22.md)

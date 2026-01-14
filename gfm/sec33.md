@@ -2,42 +2,42 @@ Up: [README.md](../README.md),  Prev: [Section 32](sec32.md)
 
 # GtkSignalListItemFactory
 
-## GtkSignalListItemFactory and GtkBulderListItemFactory
+## GtkSignalListItemFactory и GtkBulderListItemFactory
 
-GtkBuilderlistItemFactory is convenient when GtkListView just shows the contents of a list.
-Its binding direction is always from an item of a list to a child of GtkListItem.
+GtkBuilderlistItemFactory удобен, когда GtkListView просто показывает содержимое списка.
+Его направление привязки всегда от элемента списка к дочернему элементу GtkListItem.
 
-When it comes to dynamic connection, it's not enough.
-For example, suppose you want to edit the contents of a list.
-You set a child of GtkListItem to a GtkText instance so a user can edit a text with it.
-You need to bind an item in the list with the buffer of the GtkText.
-The direction is opposite from the one with GtkBuilderListItemFactory.
-It is from the GtkText instance to the item in the list.
-You can implement this with GtkSignalListItemFactory, which is more flexible than GtkBuilderListItemFactory.
+Когда дело доходит до динамического соединения, этого недостаточно.
+Например, предположим, что вы хотите редактировать содержимое списка.
+Вы устанавливаете дочерний элемент GtkListItem как экземпляр GtkText, чтобы пользователь мог редактировать текст с его помощью.
+Вам нужно привязать элемент в списке с буфером GtkText.
+Направление противоположно тому, что в GtkBuilderListItemFactory.
+Оно от экземпляра GtkText к элементу в списке.
+Вы можете реализовать это с помощью GtkSignalListItemFactory, который более гибкий, чем GtkBuilderListItemFactory.
 
-This section shows just some parts of the source file `listeditor.c`.
-If you want to see the whole codes, see `src/listeditor` directory of the [Gtk4 tutorial repository](https://github.com/ToshioCP/Gtk4-tutorial).
+Этот раздел показывает лишь некоторые части исходного файла `listeditor.c`.
+Если вы хотите увидеть весь код, см. каталог `src/listeditor` [репозитория учебника Gtk4](https://github.com/ToshioCP/Gtk4-tutorial).
 
-## A list editor
+## Редактор списка
 
-The sample program is a list editor and data of the list are strings.
-It's the same as a line editor.
-It reads a text file line by line.
-Each line is an item of the list.
-The list is displayed with GtkColumnView.
-There are two columns.
-The one is a button, which shows if the line is a current line.
-If the line is the current line, the button is colored with red.
-The other is a string which is the contents of the corresponding item of the list.
+Пример программы — это редактор списка, и данные списка — это строки.
+Это то же самое, что и редактор строк.
+Он читает текстовый файл построчно.
+Каждая строка является элементом списка.
+Список отображается с помощью GtkColumnView.
+Есть два столбца.
+Один — это кнопка, которая показывает, является ли строка текущей строкой.
+Если строка является текущей строкой, кнопка окрашена в красный цвет.
+Другой — это строка, которая является содержимым соответствующего элемента списка.
 
 ![List editor](../image/listeditor.png)
 
-The source files are located at `src/listeditor` directory.
-You can compile end execute it as follows.
+Исходные файлы расположены в каталоге `src/listeditor`.
+Вы можете скомпилировать и выполнить его следующим образом.
 
-- Download the program from the [repository](https://github.com/ToshioCP/Gtk4-tutorial).
-- Change your current directory to `src/listeditor`.
-- Type the following on your commandline.
+- Загрузите программу из [репозитория](https://github.com/ToshioCP/Gtk4-tutorial).
+- Измените текущий каталог на `src/listeditor`.
+- Введите следующее в командной строке.
 
 ~~~
 $ meson setup _build
@@ -45,24 +45,24 @@ $ ninja -C _build
 $ _build/listeditor
 ~~~
 
-- Append button: appends a line after the current line, or at the last line if no current line exists.
-- Insert button: inserts a line before the current line, or at the top line if no current line exists.
-- Remove button: removes a current line.
-- Read button: reads a file.
-- Write button: writes the contents to a file.
-- close button: closes the contents.
-- quit button: quits the application.
-- Button on the select column: makes the line current.
-- String column: GtkText. You can edit a string in the field.
+- Кнопка Append: добавляет строку после текущей строки или в конец, если текущей строки не существует.
+- Кнопка Insert: вставляет строку перед текущей строкой или в начало, если текущей строки не существует.
+- Кнопка Remove: удаляет текущую строку.
+- Кнопка Read: читает файл.
+- Кнопка Write: записывает содержимое в файл.
+- Кнопка close: закрывает содержимое.
+- Кнопка quit: завершает приложение.
+- Кнопка в столбце select: делает строку текущей.
+- Столбец String: GtkText. Вы можете редактировать строку в поле.
 
-The current line number (zero-based) is shown at the left of the tool bar.
-The file name is shown at the right of the write button.
+Номер текущей строки (начиная с нуля) показан слева от панели инструментов.
+Имя файла показано справа от кнопки write.
 
-## Connect a GtkText instance and an item in the list
+## Соединение экземпляра GtkText и элемента в списке
 
-The second column (GtkColumnViewColumn) sets its factory property to GtkSignalListItemFactory.
-It uses three signals setup, bind and unbind.
-The following shows the signal handlers.
+Второй столбец (GtkColumnViewColumn) устанавливает свойство factory в GtkSignalListItemFactory.
+Он использует три сигнала: setup, bind и unbind.
+Следующее показывает обработчики сигналов.
 
 ~~~C
  1 static void
@@ -96,78 +96,78 @@ The following shows the signal handlers.
 29 }
 ~~~
 
-- 1-6: `setup2_cb` is a setup signal handler on the GtkSignalListItemFactory.
-This factory is inserted to the factory property of the second GtkColumnViewColumn.
-The handler just creates a GtkText instance and sets the child of `listitem` to it.
-The instance will be destroyed automatically when the `listitem` is destroyed.
-So, teardown signal handler isn't necessary.
-- 8-20: `bind2_cb` is a bind signal handler.
-It is called when the `listitem` is bound to an item in the list.
-The list items are LeData instances.
-LeData is defined in the file `listeditor.c` (the C source file of the list editor).
-It is a child class of GObject and has string data which is the content of the line. 
-  - 10-11: `text` is a child of the `listitem` and it is a GtkText instance.
-And `buffer` is a GtkEntryBuffer instance of the `text`.
-  - 12: The LeData instance `data` is an item pointed by the `listitem`.
-  - 15-16: Sets the text of `text` to `le_data_look_string (data)`.
-le\_data\_look\_string returns the string of the `data` and the ownership of the string is still taken by the `data`.
-So, the caller doesn't need to free the string.
-  - 18: `g_object_bind_property` binds a property and another object property.
-This line binds the "text" property of the `buffer` (source) and the "string" property of the `data` (destination).
-It is a uni-directional binding (`G_BINDING_DEFAULT`).
-When a user changes the GtkText text, the same string is immediately put into the `data`. 
-The function returns a GBinding instance.
-This binding is different from bindings of GtkExpression.
-This binding needs the existence of the two properties.
-  - 19: GObjec has a table.
-The key is a string (or GQuark) and the value is a gpointer (pointer to any type).
-The function `g_object_set_data` sets the association from the key to the value.
-This line sets the association from "bind" to `bind` instance.
-It makes possible for the "unbind" handler to get the `bind` instance.
-- 22-29: `unbind2_cb` is a unbind signal handler.
-  - 24: Retrieves the `bind` instance from the table in the `listitem` instance.
-  - 26-27: Unbind the binding.
-  - 28: Removes the value corresponds to the "bind" key.
+- 1-6: `setup2_cb` — обработчик сигнала setup на GtkSignalListItemFactory.
+Эта фабрика вставлена в свойство factory второго GtkColumnViewColumn.
+Обработчик просто создаёт экземпляр GtkText и устанавливает child `listitem` на него.
+Экземпляр будет уничтожен автоматически при уничтожении `listitem`.
+Поэтому обработчик сигнала teardown не нужен.
+- 8-20: `bind2_cb` — обработчик сигнала bind.
+Он вызывается, когда `listitem` привязан к элементу в списке.
+Элементы списка — это экземпляры LeData.
+LeData определён в файле `listeditor.c` (исходный файл C редактора списка).
+Это дочерний класс GObject и имеет строковые данные, которые являются содержимым строки.
+  - 10-11: `text` — дочерний элемент `listitem`, и это экземпляр GtkText.
+И `buffer` — это экземпляр GtkEntryBuffer для `text`.
+  - 12: Экземпляр LeData `data` — это элемент, на который указывает `listitem`.
+  - 15-16: Устанавливает текст `text` в `le_data_look_string (data)`.
+le\_data\_look\_string возвращает строку `data`, и владение строкой по-прежнему принадлежит `data`.
+Поэтому вызывающий не должен освобождать строку.
+  - 18: `g_object_bind_property` привязывает свойство и свойство другого объекта.
+Эта строка привязывает свойство "text" `buffer` (источник) и свойство "string" `data` (назначение).
+Это однонаправленная привязка (`G_BINDING_DEFAULT`).
+Когда пользователь изменяет текст GtkText, та же строка немедленно помещается в `data`.
+Функция возвращает экземпляр GBinding.
+Эта привязка отличается от привязок GtkExpression.
+Эта привязка требует существования двух свойств.
+  - 19: GObject имеет таблицу.
+Ключ — это строка (или GQuark), а значение — gpointer (указатель на любой тип).
+Функция `g_object_set_data` устанавливает ассоциацию от ключа к значению.
+Эта строка устанавливает ассоциацию от "bind" к экземпляру `bind`.
+Это делает возможным для обработчика "unbind" получить экземпляр `bind`.
+- 22-29: `unbind2_cb` — обработчик сигнала unbind.
+  - 24: Извлекает экземпляр `bind` из таблицы в экземпляре `listitem`.
+  - 26-27: Отвязывает привязку.
+  - 28: Удаляет значение, соответствующее ключу "bind".
 
-This technique is not so complicated.
-You can use it when you make a cell editable application.
+Эта техника не так сложна.
+Вы можете использовать её, когда создаёте редактируемое приложение с ячейками.
 
-If it is impossible to use `g_object_bind_property`, use a notify signal on the GtkEntryBuffer instance.
-You can use "deleted-text" and "inserted-text" signal instead.
-The handler of the signals above copies the text in the GtkEntryBuffer instance to the LeData string.
-Connect the notify signal handler in `bind2_cb` and disconnect it in `unbind2_cb`.
+Если невозможно использовать `g_object_bind_property`, используйте сигнал notify на экземпляре GtkEntryBuffer.
+Вы можете использовать сигналы "deleted-text" и "inserted-text" вместо этого.
+Обработчик сигналов выше копирует текст в экземпляре GtkEntryBuffer в строку LeData.
+Подключите обработчик сигнала notify в `bind2_cb` и отключите его в `unbind2_cb`.
 
-## Change the cell of GtkColumnView dynamically
+## Динамическое изменение ячейки GtkColumnView
 
-Next topic is to change the GtkColumnView (or GtkListView) cells dynamically.
-The example changes the color of the buttons, which are children of GtkListItem instances, as the current line position moves.
+Следующая тема — динамическое изменение ячеек GtkColumnView (или GtkListView).
+Пример изменяет цвет кнопок, которые являются дочерними элементами экземпляров GtkListItem, когда позиция текущей строки перемещается.
 
-The line editor has the current position of the list.
+Редактор строк имеет текущую позицию списка.
 
-- At first, no line is current.
-- When a line is appended or inserted, the line is current.
-- When the current line is deleted, no line will be current.
-- When a button in the first column of GtkColumnView is clicked, the line will be current.
-- It is necessary to set the line status (whether current or not) when a GtkListItem is bound to an item in the list.
-It is because GtkListItem is recycled.
-A GtkListItem was possibly current line before but not current after recycled.
-The opposite can also be happen.
+- Сначала ни одна строка не является текущей.
+- Когда строка добавляется или вставляется, строка становится текущей.
+- Когда текущая строка удаляется, ни одна строка не будет текущей.
+- Когда кнопка в первом столбце GtkColumnView нажата, строка станет текущей.
+- Необходимо установить статус строки (текущая или нет), когда GtkListItem привязан к элементу в списке.
+Это потому, что GtkListItem переиспользуется.
+GtkListItem мог быть текущей строкой раньше, но не текущей после повторного использования.
+Также может произойти обратное.
 
-The button of the current line is colored with red and otherwise white.
+Кнопка текущей строки окрашена в красный цвет, а иначе в белый.
 
-The current line has no relationship to GtkSingleSelection object.
-GtkSingleSelection selects a line on the display.
-The current line doesn't need to be on the display.
-It is possible to be on the line out of the Window (GtkScrolledWindow).
-Actually, the program doesn't use GtkSingleSelection.
+Текущая строка не имеет отношения к объекту GtkSingleSelection.
+GtkSingleSelection выбирает строку на дисплее.
+Текущая строка не обязательно находится на дисплее.
+Возможно, она находится на строке вне окна (GtkScrolledWindow).
+На самом деле, программа не использует GtkSingleSelection.
 
-The LeWindow instance has two instance variables for recording the current line.
+Экземпляр LeWindow имеет две переменные экземпляра для записи текущей строки.
 
-- `win->position`: An int type variable. It is the position of the current line. It is zero-based. If no current line exists, it is -1.
-- `win->current_button`: A variable points the button, located at the first column, on the current line. If no current line exists, it is NULL.
+- `win->position`: Переменная типа int. Это позиция текущей строки. Она начинается с нуля. Если текущей строки не существует, она равна -1.
+- `win->current_button`: Переменная указывает на кнопку, расположенную в первом столбце, на текущей строке. Если текущей строки не существует, она равна NULL.
 
-If the current line moves, the following two functions are called.
-They updates the two varables.
+Если текущая строка перемещается, вызываются следующие две функции.
+Они обновляют две переменные.
 
 ~~~C
  1 static void
@@ -201,19 +201,19 @@ They updates the two varables.
 29 }
 ~~~
 
-The varable `win->position_label` points a GtkLabel instance.
-The label shows the current line position.
+Переменная `win->position_label` указывает на экземпляр GtkLabel.
+Метка показывает позицию текущей строки.
 
-The current button has CSS "current" class.
-The button is colored red through the CSS "button.current {background: red;}".
+Текущая кнопка имеет CSS класс "current".
+Кнопка окрашена в красный цвет через CSS "button.current {background: red;}".
 
-The order of the call for these two functions is important.
-The first function, which updates the position, is usually called first.
-After that, a new line is appended or inserted.
-Then, the second function is called.
+Порядок вызова этих двух функций важен.
+Первая функция, которая обновляет позицию, обычно вызывается первой.
+После этого новая строка добавляется или вставляется.
+Затем вызывается вторая функция.
 
-The following functions call the two functions above.
-Be careful about the order of the call.
+Следующие функции вызывают две функции выше.
+Будьте осторожны с порядком вызова.
 
 ~~~C
  1 void
@@ -242,20 +242,20 @@ Be careful about the order of the call.
 24 }
 ~~~
 
-- 1-7: `select_cb` is a "clicked" signal handler.
-The handler just calls the two functions and update the position and button.
-- 9-15: `setup1_cb` is a setup signal handler on the GtkSignalListItemFactory.
-It sets the child of `listitem` to a GtkButton instance.
-The "clicked" signal on the button is connected to the handler `select_cb`.
-When the listitem is destroyed, the child (GtkButton) is also destroyed.
-At the same time, the connection of the signal and the handler is also destroyed.
-So, you don't need teardown signal handler.
-- 17-24: `bind1_cb` is a bind signal handler.
-Usually, the position moves before this handler is called.
-If the item is on the current line, the button is updated.
-No unbind handler is necessary.
+- 1-7: `select_cb` — обработчик сигнала "clicked".
+Обработчик просто вызывает две функции и обновляет позицию и кнопку.
+- 9-15: `setup1_cb` — обработчик сигнала setup на GtkSignalListItemFactory.
+Он устанавливает child `listitem` как экземпляр GtkButton.
+Сигнал "clicked" на кнопке подключён к обработчику `select_cb`.
+Когда listitem уничтожается, child (GtkButton) также уничтожается.
+В то же время соединение сигнала и обработчика также уничтожается.
+Поэтому вам не нужен обработчик сигнала teardown.
+- 17-24: `bind1_cb` — обработчик сигнала bind.
+Обычно позиция перемещается до вызова этого обработчика.
+Если элемент находится на текущей строке, кнопка обновляется.
+Обработчик unbind не нужен.
 
-When a line is added, the current position is updated in advance.
+Когда добавляется строка, текущая позиция обновляется заранее.
 
 ~~~C
  1 static void
@@ -286,7 +286,7 @@ When a line is added, the current position is updated in advance.
 26 }
 ~~~
 
-When a line is removed, the current position becomes -1 and no button is current.
+Когда строка удаляется, текущая позиция становится -1, и ни одна кнопка не является текущей.
 
 ~~~C
 1 static void
@@ -299,38 +299,38 @@ When a line is removed, the current position becomes -1 and no button is current
 8 }
 ~~~
 
-The color of buttons are determined by the "background" CSS style.
-The following CSS node is a bit complicated.
-CSS node `column view` has `listview` child node.
-It covers the rows in the GtkColumnView.
-The `listview` node is the same as the one for GtkListView.
-It has `row` child node, which is for each child widget.
-Therefore, the following node corresponds buttons on the GtkColumnView widget.
-In addition, it is applied to the "current" class.
+Цвет кнопок определяется стилем CSS "background".
+Следующий узел CSS немного сложен.
+Узел CSS `column view` имеет дочерний узел `listview`.
+Он охватывает строки в GtkColumnView.
+Узел `listview` такой же, как для GtkListView.
+Он имеет дочерний узел `row`, который для каждого дочернего виджета.
+Следовательно, следующий узел соответствует кнопкам на виджете GtkColumnView.
+Кроме того, он применяется к классу "current".
 
 ~~~css
 columnview listview row button.current {background: red;}
 ~~~
 
-## A waring from GtkText
+## Предупреждение от GtkText
 
-If your program has the following two, a warning message can be issued.
+Если ваша программа имеет следующие два условия, может быть выдано предупреждающее сообщение.
 
-- The list has many items and it needs to be scrolled.
-- A GtkText instance is the focus widget.
+- Список имеет много элементов, и его нужно прокручивать.
+- Экземпляр GtkText является виджетом фокуса.
 
 ~~~
 GtkText - unexpected blinking selection. Removing
 ~~~
 
-I don't have an exact idea why this happens.
-But if GtkText "focusable" property is FALSE, the warning doesn't happen.
-So it probably comes from focus and scroll.
+У меня нет точного представления, почему это происходит.
+Но если свойство "focusable" GtkText равно FALSE, предупреждение не появляется.
+Поэтому это, вероятно, происходит из-за фокуса и прокрутки.
 
-You can avoid this by unsetting any focus widget under the main window.
-When scroll begins, the "value-changed" signal on the vertical adjustment of the scrolled window is emitted.
+Вы можете избежать этого, отменив любой виджет фокуса под главным окном.
+Когда начинается прокрутка, испускается сигнал "value-changed" на вертикальной настройке прокручиваемого окна.
 
-The following is extracted from the ui file and C source file.
+Следующее извлечено из файла ui и исходного файла C.
 
 ~~~xml
 ... ... ...
