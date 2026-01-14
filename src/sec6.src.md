@@ -1,16 +1,16 @@
-# Strings and memory management
+# Строки и управление памятью
 
-GtkTextView and GtkTextBuffer have functions that have string parameters or return a string.
-The knowledge of strings and memory management is useful to understand how to use these functions.
+GtkTextView и GtkTextBuffer имеют функции, которые имеют строковые параметры или возвращают строку.
+Знание о строках и управлении памятью полезно для понимания того, как использовать эти функции.
 
-## String and memory
+## Строка и память
 
-A String is an array of characters that is terminated with '\0'.
-String is not a C type such as char, int, float or double, but a character array.
-It behaves like a string in other languages.
-So, the pointer is often called 'a string'.
+Строка — это массив символов, который заканчивается '\0'.
+Строка не является типом C, таким как char, int, float или double, а массивом символов.
+Она ведет себя как строка в других языках.
+Поэтому указатель часто называется 'строкой'.
 
-The following is a sample program.
+Ниже приведен пример программы.
 
 ~~~C
 char a[10], *b;
@@ -23,65 +23,65 @@ a[4] = 'o';
 a[5] = '\0';
 
 b = a;
-/* *b is 'H' */
-/* *(++b) is 'e' */
+/* *b это 'H' */
+/* *(++b) это 'e' */
 ~~~
 
-An array `a` is defined as a `char` type array and its size is ten.
-The first five elements are 'H', 'e', 'l', 'l', 'o'.
-They are character codes.
-For example, 'H' is the same as 0x48 or 72.
-The sixth element is '\0', which is the same as zero, and indicates that the sequence of the data ends there.
-The array represents the string "Hello".
+Массив `a` определен как массив типа `char`, и его размер — десять.
+Первые пять элементов — 'H', 'e', 'l', 'l', 'o'.
+Это коды символов.
+Например, 'H' то же самое, что 0x48 или 72.
+Шестой элемент — '\0', который равен нулю и указывает, что последовательность данных заканчивается там.
+Массив представляет строку "Hello".
 
-The size of the array is 10, so four bytes aren't used.
-But it's OK.
-They are just ignored.
-(If the variable `a` is defined out of functions or its class is static, the four bytes are assigned with zero.
-Otherwise, that is to say, the class is auto or register, they are undefined.)
+Размер массива — 10, поэтому четыре байта не используются.
+Но это нормально.
+Они просто игнорируются.
+(Если переменная `a` определена вне функций или её класс — static, четыре байта заполняются нулем.
+В противном случае, то есть класс — auto или register, они не определены.)
 
-The variable `b` is a pointer to a character.
-It is assigned with `a`, so `b` points the first element of `a` (character 'H').
-The array `a` is immutable.
-So `a=a+1` causes syntax error.
+Переменная `b` — указатель на символ.
+Ей присваивается `a`, поэтому `b` указывает на первый элемент `a` (символ 'H').
+Массив `a` неизменяемый.
+Поэтому `a=a+1` вызывает синтаксическую ошибку.
 
-On the other hand, `b` is a pointer type variable, which is mutable.
-So, `++b`, which increases `b` by one, is allowed.
+С другой стороны, `b` — это переменная типа указатель, которая изменяемая.
+Поэтому `++b`, который увеличивает `b` на единицу, разрешен.
 
 
-If a pointer is NULL, it points nothing.
-So, the pointer is not a string.
-It is different from empty string.
-Empty string is a pointer points '\0'.
+Если указатель равен NULL, он ни на что не указывает.
+Поэтому указатель не является строкой.
+Это отличается от пустой строки.
+Пустая строка — это указатель, указывающий на '\0'.
 
-There are four cases:
+Есть четыре случая:
 
-- The string is read only
-- The string is in static memory area
-- The string is in stack
-- The string is in memory allocated from the heap area
+- Строка только для чтения
+- Строка в статической области памяти
+- Строка в стеке
+- Строка в памяти, выделенной из области кучи
 
-## Read only string
+## Строка только для чтения
 
-A string literal is surrounded by double quotes like this:
+Строковый литерал окружен двойными кавычками вот так:
 
 ~~~C
 char *s;
 s = "Hello"
 ~~~
 
-"Hello" is a string literal, and is read only.
-So, the following program is illegal.
+"Hello" — это строковый литерал, и он только для чтения.
+Поэтому следующая программа недопустима.
 
 ~~~C
 *(s+1) = 'a';
 ~~~
 
-The result is undefined.
-Probably a bad thing will happen, for example, a segmentation fault.
+Результат не определен.
+Вероятно, произойдет что-то плохое, например, ошибка сегментации.
 
-NOTE: The memory of the literal string is allocated when the program is compiled.
-It is possible to see the literal strings with `strings` command.
+ПРИМЕЧАНИЕ: Память литеральной строки выделяется, когда программа компилируется.
+Можно увидеть литеральные строки с помощью команды `strings`.
 
 ~~~
 $ strings src/tvf/a.out
@@ -96,20 +96,20 @@ His wife was surprized at his story. They were very happy because they had no ch
 ... ... ...
 ~~~
 
-It tells us that literal strings are embedded in program binary codes.
+Это говорит нам, что литеральные строки встроены в бинарные коды программы.
 
-## Strings defined as arrays
+## Строки, определенные как массивы
 
-If a string is defined as an array, it's stored in static memory area or stack.
-It depends on the class of the array.
-If the array's class is `static`, then it's placed in static memory area.
-The allocated memory lives for the life of the program.
-This area is writable.
+Если строка определена как массив, она хранится в статической области памяти или в стеке.
+Это зависит от класса массива.
+Если класс массива — `static`, то он размещается в статической области памяти.
+Выделенная память живет в течение всего времени работы программы.
+Эта область доступна для записи.
 
-If the array's class is `auto`, it's placed in stack.
-If the array is defined inside a function, its default class is `auto`.
-The stack area will disappear when the function returns to the caller.
-Arrays defined on the stack are writable.
+Если класс массива — `auto`, он размещается в стеке.
+Если массив определен внутри функции, его класс по умолчанию — `auto`.
+Область стека исчезнет, когда функция вернется вызывающей стороне.
+Массивы, определенные в стеке, доступны для записи.
 
 ~~~C
 static char a[] = {'H', 'e', 'l', 'l', 'o', '\0'};
@@ -118,86 +118,86 @@ void
 print_strings (void) {
   char b[] = "Hello";
 
-  a[1] = 'a'; /* Because the array is static, it's writable. */
-  b[1] = 'a'; /* Because the array is auto, it's writable. */
+  a[1] = 'a'; /* Поскольку массив статический, он доступен для записи. */
+  b[1] = 'a'; /* Поскольку массив auto, он доступен для записи. */
 
   printf ("%s\n", a); /* Hallo */
   printf ("%s\n", b); /* Hallo */
 }
 ~~~
 
-The array `a` is defined out of functions.
-It is placed in the static memory area even if the `static` class is left out.
-The compiler calculates the number of the elements (six) and allocates six bytes in the static memory area.
-Then, it copies "Hello" literal string data to the memory.
+Массив `a` определен вне функций.
+Он размещается в статической области памяти, даже если класс `static` опущен.
+Компилятор вычисляет количество элементов (шесть) и выделяет шесть байт в статической области памяти.
+Затем он копирует данные литеральной строки "Hello" в память.
 
-The array `b` is defined inside the function, so its class is `auto`.
-The compiler calculates the number of the elements in the string literal.
-It is six because it has '\0' terminator.
-The compiler allocates six bytes in the stack and copies "Hello" litaral string to the stack memory.
+Массив `b` определен внутри функции, поэтому его класс — `auto`.
+Компилятор вычисляет количество элементов в строковом литерале.
+Это шесть, потому что он имеет терминатор '\0'.
+Компилятор выделяет шесть байт в стеке и копирует литеральную строку "Hello" в память стека.
 
-Both `a` and `b` are writable.
+И `a`, и `b` доступны для записи.
 
-The memory is allocated and freed by the program automatically so you don't need to allocate or free.
-The array `a` is alive during the program's life time.
-The array `b` is alive when the function is called until the function returns to the caller.
+Память выделяется и освобождается программой автоматически, поэтому вам не нужно выделять или освобождать.
+Массив `a` живет в течение всего времени жизни программы.
+Массив `b` живет, когда функция вызывается, до тех пор, пока функция не вернется вызывающей стороне.
 
-## Strings in the heap area
+## Строки в области кучи
 
-You can get, use and release memory from the heap area.
-The standard C library provides `malloc` to get memory and `free` to put back memory.
-GLib provides the functions `g_new` and `g_free`.
-They are similar to `malloc` and `free`.
+Вы можете получать, использовать и освобождать память из области кучи.
+Стандартная библиотека C предоставляет `malloc` для получения памяти и `free` для возврата памяти.
+GLib предоставляет функции `g_new` и `g_free`.
+Они похожи на `malloc` и `free`.
 
 ~~~C
 g_new (struct_type, n_struct)
 ~~~
 
-`g_new` is a macro to allocate memory for an array.
+`g_new` — это макрос для выделения памяти для массива.
 
-- `struct_type` is the type of the element of the array.
-- `n_struct` is the size of the array.
-- The return value is a pointer to the array.
-Its type is a pointer to `struct_type`.
+- `struct_type` — это тип элемента массива.
+- `n_struct` — это размер массива.
+- Возвращаемое значение — указатель на массив.
+Его тип — указатель на `struct_type`.
 
-For example,
+Например,
 
 ~~~C
 char *s;
 s = g_new (char, 10);
-/* s points an array of char. The size of the array is 10. */
+/* s указывает на массив char. Размер массива — 10. */
 
 struct tuple {int x, y;} *t;
 t = g_new (struct tuple, 5);
-/* t points an array of struct tuple. */
-/* The size of the array is 5. */
+/* t указывает на массив struct tuple. */
+/* Размер массива — 5. */
 ~~~
 
-`g_free` frees memory.
+`g_free` освобождает память.
 
 ~~~C
 void
 g_free (gpointer mem);
 ~~~
 
-If `mem` is NULL, `g_free` does nothing.
-`gpointer` is a type of general pointer.
-It is the same as `void *`.
-This pointer can be casted to any pointer type.
-Conversely, any pointer type can be casted to `gpointer`.
+Если `mem` равен NULL, `g_free` ничего не делает.
+`gpointer` — это тип общего указателя.
+Он такой же, как `void *`.
+Этот указатель может быть приведен к любому типу указателя.
+Наоборот, любой тип указателя может быть приведен к `gpointer`.
 
 ~~~C
 g_free (s);
-/* Frees the memory allocated to s. */
+/* Освобождает память, выделенную для s. */
 
 g_free (t);
-/* Frees the memory allocated to t. */
+/* Освобождает память, выделенную для t. */
 ~~~
 
-If the argument doesn't point allocated memory it will cause an error, specifically, a segmentation fault.
+Если аргумент не указывает на выделенную память, это вызовет ошибку, в частности, ошибку сегментации.
 
-Some GLib functions allocate memory.
-For example, `g_strdup` allocates memory and copies a string given as an argument.
+Некоторые функции GLib выделяют память.
+Например, `g_strdup` выделяет память и копирует строку, переданную в качестве аргумента.
 
 ~~~C
 char *s;
@@ -205,42 +205,42 @@ s = g_strdup ("Hello");
 g_free (s);
 ~~~
 
-The string literal "Hello" has 6 bytes because the string has '\0' at the end.
-`g_strdup` gets 6 bytes from the heap area and copies the string to the memory.
-`s` is assigned the start address of the memory.
-`g_free` returns the memory to the heap area.
+Строковый литерал "Hello" имеет 6 байт, потому что строка имеет '\0' в конце.
+`g_strdup` получает 6 байт из области кучи и копирует строку в память.
+`s` присваивается начальный адрес памяти.
+`g_free` возвращает память в область кучи.
 
-`g_strdup` is described in [GLib API Reference](https://docs.gtk.org/glib/func.strdup.html).
-The following is extracted from the reference.
+`g_strdup` описан в [GLib API Reference](https://docs.gtk.org/glib/func.strdup.html).
+Ниже приведена выдержка из справочника.
 
-> The returned string should be freed with `g_free()` when no longer needed.
+> Возвращаемая строка должна быть освобождена с помощью `g_free()`, когда она больше не нужна.
 
-If you forget to free the allocated memory it will remain until the program ends.
-Repeated allocation and no freeing cause memory leak.
-It is a bug and may bring a serious problem.
+Если вы забудете освободить выделенную память, она останется до конца программы.
+Повторное выделение без освобождения вызывает утечку памяти.
+Это ошибка и может привести к серьезной проблеме.
 
-## const qualifier
+## Квалификатор const
 
-A `const` qualified variable can be assigned to initialize it.
-Once it is initialized, it is never allowed to change or free.
+Переменная, квалифицированная `const`, может быть назначена для инициализации.
+После инициализации никогда не разрешается изменять или освобождать её.
 
 ~~~C
-const int x = 10; /* initialization is OK. */
+const int x = 10; /* инициализация OK. */
 
-x = 20; /* This is illegal because x is qualified with const */
+x = 20; /* Это незаконно, потому что x квалифицирован const */
 ~~~
 
-If a function returns `const char*` type, the string can't be changed or freed.
-If a function has a `const char *` type parameter, it ensures that the parameter is not changed in the function.
+Если функция возвращает тип `const char*`, строка не может быть изменена или освобождена.
+Если функция имеет параметр типа `const char *`, это гарантирует, что параметр не изменяется в функции.
 
 ~~~C
-// You never change or free the returned string.
+// Вы никогда не изменяете и не освобождаете возвращаемую строку.
 const char*
 gtk_label_get_text (
   GtkLabel* self
 )
 
-// Str keeps itself during the function runs
+// Str сохраняет себя во время выполнения функции
 void
 gtk_label_set_text (
   GtkLabel* self,

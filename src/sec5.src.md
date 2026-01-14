@@ -1,35 +1,35 @@
-# Widgets (2)
+# Виджеты (2)
 
-## GtkTextView, GtkTextBuffer and GtkScrolledWindow
+## GtkTextView, GtkTextBuffer и GtkScrolledWindow
 
-### GtkTextView and GtkTextBuffer
+### GtkTextView и GtkTextBuffer
 
-GtkTextView is a widget for multi-line text editing.
-GtkTextBuffer is a text buffer which is connected to GtkTextView.
-See the sample program `tfv1.c` below.
+GtkTextView — это виджет для многострочного редактирования текста.
+GtkTextBuffer — это текстовый буфер, который подключен к GtkTextView.
+Посмотрите пример программы `tfv1.c` ниже.
 
 @@@include
 tfv/tfv1.c
 @@@
 
-Look at line 25.
-A GtkTextView instance is created and its pointer is assigned to `tv`.
-When the GtkTextView instance is created, a GtkTextBuffer instance is also created and connected to the GtkTextView automatically.
-"GtkTextBuffer instance" will be referred to simply as "GtkTextBuffer" or "buffer".
-In the next line, the pointer to the buffer is assigned to `tb`.
-Then, the text from line 10 to 20 is assigned to the buffer.
-If the third argument of `gtk_text_buffer_set_text` is a positive integer, it is the length of the text.
-It it is -1, the string terminates with NULL.
+Посмотрите на строку 25.
+Создается экземпляр GtkTextView, и его указатель присваивается `tv`.
+Когда создается экземпляр GtkTextView, экземпляр GtkTextBuffer также создается и подключается к GtkTextView автоматически.
+"Экземпляр GtkTextBuffer" будет упоминаться просто как "GtkTextBuffer" или "буфер".
+В следующей строке указатель на буфер присваивается `tb`.
+Затем текст со строки 10 по 20 присваивается буферу.
+Если третий аргумент `gtk_text_buffer_set_text` является положительным целым числом, это длина текста.
+Если это -1, строка заканчивается NULL.
 
-GtkTextView has a wrap mode.
-When it is set to `GTK_WRAP_WORD_CHAR`, text wraps in between words, or if that is not enough, also between graphemes.
+GtkTextView имеет режим переноса.
+Когда он установлен в `GTK_WRAP_WORD_CHAR`, текст переносится между словами, или, если этого недостаточно, также между графемами.
 
-Wrap mode is written in [Gtk\_WrapMode](https://docs.gtk.org/gtk4/enum.WrapMode.html) in the GTK 4 API document.
+Режим переноса описан в [Gtk\_WrapMode](https://docs.gtk.org/gtk4/enum.WrapMode.html) в документации GTK 4 API.
 
-In line 30, `tv` is added to `win` as a child.
+В строке 30 `tv` добавляется в `win` как дочерний элемент.
 
-Now compile and run it.
-If you've downloaded this repository, its pathname is `src/tfv/tfv1.c`.
+Теперь скомпилируйте и запустите программу.
+Если вы загрузили этот репозиторий, его путь — `src/tfv/tfv1.c`.
 
 ```
 $ cd src/tfv
@@ -39,35 +39,35 @@ $ ./a.out
 
 ![GtkTextView](../image/screenshot_tfv1.png){width=6.3cm height=5.325cm}
 
-There's an I-beam pointer in the window.
-You can add or delete any characters on the GtkTextView, and your changes are kept in the GtkTextBuffer.
-If you add more characters beyond the limit of the window, the height increases and the window extends.
-If the height gets bigger than the height of the screen,
-you won't be able to control the size of the window or change it back to the original size.
-This is a problem, that is to say a bug.
-This can be solved by adding a GtkScrolledWindow between the GtkApplicationWindow and GtkTextView.
+В окне есть I-образный указатель.
+Вы можете добавлять или удалять любые символы в GtkTextView, и ваши изменения сохраняются в GtkTextBuffer.
+Если вы добавите больше символов за пределы окна, высота увеличится, и окно расширится.
+Если высота станет больше высоты экрана,
+вы не сможете контролировать размер окна или вернуть его к исходному размеру.
+Это проблема, то есть ошибка.
+Это можно решить, добавив GtkScrolledWindow между GtkApplicationWindow и GtkTextView.
 
 ### GtkScrolledWindow
 
-What we need to do is:
+Что нам нужно сделать:
 
-- Create a GtkScrolledWindow and insert it as a child of the GtkApplicationWindow
-- Insert the GtkTextView widget to the GtkScrolledWindow as a child.
+- Создать GtkScrolledWindow и вставить его как дочерний элемент GtkApplicationWindow
+- Вставить виджет GtkTextView в GtkScrolledWindow как дочерний элемент.
 
-Modify `tfv1.c` and save it as `tfv2.c`.
-There is only a few difference between these two files.
+Модифицируйте `tfv1.c` и сохраните его как `tfv2.c`.
+Между этими двумя файлами есть лишь несколько различий.
 
 @@@shell
 cd tfv; diff tfv1.c tfv2.c
 @@@
 
-The whole code of `tfv2.c` is as follows.
+Полный код `tfv2.c` следующий.
 
 @@@include
 tfv/tfv2.c
 @@@
 
-Compile and run it.
+Скомпилируйте и запустите программу.
 
-Now, the window doesn't extend even if you type a lot of characters,
-it just scrolls.
+Теперь окно не расширяется, даже если вы введете много символов,
+оно просто прокручивается.
