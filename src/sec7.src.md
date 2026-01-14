@@ -1,56 +1,56 @@
-# Widgets (3)
+# Виджеты (3)
 
-## Open signal
+## Сигнал open
 
-### G\_APPLICATION\_HANDLES\_OPEN flag
+### Флаг G\_APPLICATION\_HANDLES\_OPEN
 
-We made a very simple editor in the previous section with GtkTextView, GtkTextBuffer and GtkScrolledWindow.
-We will add file-read ability to the program and improve it to a file viewer.
+В предыдущем разделе мы создали очень простой редактор с использованием GtkTextView, GtkTextBuffer и GtkScrolledWindow.
+Мы добавим в программу возможность чтения файлов и улучшим её до программы просмотра файлов.
 
-The easiest way to give a filename is to use a command line argument.
+Самый простой способ передать имя файла — использовать аргумент командной строки.
 
 ~~~
 $ ./a.out filename
 ~~~
 
-The program will open the file and insert its contents into the GtkTextBuffer.
+Программа откроет файл и вставит его содержимое в GtkTextBuffer.
 
-To do this, we need to know how GtkApplication (or GApplication) recognizes arguments.
-This is described in the [GIO API Reference -- Application](https://docs.gtk.org/gio/class.Application.html).
+Для этого нам нужно знать, как GtkApplication (или GApplication) распознаёт аргументы.
+Это описано в [GIO API Reference -- Application](https://docs.gtk.org/gio/class.Application.html).
 
-When GtkApplication is created, a flag (GApplicationFlags) is given as an argument.
+При создании GtkApplication в качестве аргумента передаётся флаг (GApplicationFlags).
 
 ~~~C
 GtkApplication *
 gtk_application_new (const gchar *application_id, GApplicationFlags flags);
 ~~~
 
-This tutorial explains only two flags, `G_APPLICATION_DEFAULT_FLAGS` and `G_APPLICATION_HANDLES_OPEN`.
+В этом учебнике объясняются только два флага: `G_APPLICATION_DEFAULT_FLAGS` и `G_APPLICATION_HANDLES_OPEN`.
 
-`G_APPLICATION_FLAGS_NONE` was used instead of `G_APPLICATION_DEFAULT_FLAGS` before GIO version2.73.3 (GLib 2.73.3 5/Aug/2022).
-Now it is deprecated and `G_APPLICATION_DEFAULT_FLAGS` is recommended.
+Флаг `G_APPLICATION_FLAGS_NONE` использовался вместо `G_APPLICATION_DEFAULT_FLAGS` до версии GIO 2.73.3 (GLib 2.73.3 от 5 августа 2022 года).
+Теперь он устарел, и рекомендуется использовать `G_APPLICATION_DEFAULT_FLAGS`.
 
-For further information, see [GIO API Reference -- ApplicationFlags](https://docs.gtk.org/gio/flags.ApplicationFlags.html) and
+Для получения дополнительной информации см. [GIO API Reference -- ApplicationFlags](https://docs.gtk.org/gio/flags.ApplicationFlags.html) и
 [GIO API Reference -- g\_application\_run](https://docs.gtk.org/gio/method.Application.run.html).
 
-We've already used `G_APPLICATION_DEFAULT_FLAGS`, as it is the simplest option, and no command line arguments are allowed.
-If you give arguments, an error will occur.
+Мы уже использовали `G_APPLICATION_DEFAULT_FLAGS`, так как это самый простой вариант, и аргументы командной строки не разрешены.
+Если вы передадите аргументы, произойдёт ошибка.
 
-The flag `G_APPLICATION_HANDLES_OPEN` is the second simplest option.
-It allows arguments but only filenames.
+Флаг `G_APPLICATION_HANDLES_OPEN` — это второй по простоте вариант.
+Он разрешает аргументы, но только имена файлов.
 
 ~~~C
 app = gtk_application_new ("com.github.ToshioCP.tfv3", G_APPLICATION_HANDLES_OPEN);
 ~~~
 
-### open signal
+### Сигнал open
 
-When `G_APPLICATION_HANDLES_OPEN` flag is given to the application, two signals are available.
+Когда приложению передаётся флаг `G_APPLICATION_HANDLES_OPEN`, становятся доступны два сигнала.
 
-- activate signal: This signal is emitted when there's no argument.
-- open signal: This signal is emitted when there is at least one argument.
+- Сигнал activate: этот сигнал испускается, когда нет аргументов.
+- Сигнал open: этот сигнал испускается, когда есть хотя бы один аргумент.
 
-The handler of the "open" signal is defined as follows.
+Обработчик сигнала "open" определяется следующим образом.
 
 ~~~C
 void
@@ -63,36 +63,36 @@ open (
 )
 ~~~
 
-The parameters are:
+Параметры:
 
-- self: the application instance (usually GtkApplication)
-- files: an array of GFiles. [array length=n\_files] [element-type GFile]
-- n_files: the number of the elements of `files`
-- hint: a hint provided by the calling instance (usually it can be ignored)
-- user_data: user data that is set when the signal handler was connected.
+- self: экземпляр приложения (обычно GtkApplication)
+- files: массив GFile. [array length=n\_files] [element-type GFile]
+- n_files: количество элементов в `files`
+- hint: подсказка, предоставленная вызывающим экземпляром (обычно может быть проигнорирована)
+- user_data: пользовательские данные, которые устанавливаются при подключении обработчика сигнала.
 
-## File viewer
+## Программа просмотра файлов
 
-### What is a file viewer?
+### Что такое программа просмотра файлов?
 
-A file viewer is a program that displays text files.
-Our file viewer is as follows.
+Программа просмотра файлов — это программа, которая отображает текстовые файлы.
+Наша программа просмотра файлов работает следующим образом.
 
-- When arguments are given, it recognizes the first argument as a filename and opens it.
-- The second argument and after are ignored.
-- If there's no argument, it shows an error message and quit.
-- If it successfully opens the file, it reads the contents of the file, inserts them to GtkTextBuffer and shows the window.
-- If it fails to open the file, it shows an error message and quit.
+- Когда передаются аргументы, она распознаёт первый аргумент как имя файла и открывает его.
+- Второй и последующие аргументы игнорируются.
+- Если нет аргументов, она показывает сообщение об ошибке и завершает работу.
+- Если файл успешно открыт, она читает содержимое файла, вставляет его в GtkTextBuffer и показывает окно.
+- Если не удаётся открыть файл, она показывает сообщение об ошибке и завершает работу.
 
-The program is shown below.
+Программа показана ниже.
 
 @@@include
 tfv/tfv3.c
 @@@
 
-Save it as `tfv3.c`.
-If you've downloaded this repository, the file is `src/tfv/tfv3.c`.
-Compile and run it.
+Сохраните её как `tfv3.c`.
+Если вы скачали этот репозиторий, файл находится в `src/tfv/tfv3.c`.
+Скомпилируйте и запустите.
 
 ~~~
 $ comp tfv3
@@ -101,29 +101,29 @@ $ ./a.out tfv3.c
 
 ![File viewer](../image/screenshot_tfv3.png){width=6.3cm height=5.325cm}
 
-The function `main` has only two changes from the previous version.
+Функция `main` имеет только два изменения по сравнению с предыдущей версией.
 
-- `G_APPLICATION_DEFAULT_FLAGS` is replaced by `G_APPLICATION_HANDLES_OPEN`
-- `g_signal_connect (app, "open", G_CALLBACK (app_open), NULL)` is added.
+- `G_APPLICATION_DEFAULT_FLAGS` заменён на `G_APPLICATION_HANDLES_OPEN`
+- Добавлено `g_signal_connect (app, "open", G_CALLBACK (app_open), NULL)`.
 
-When the flag `G_APPLICATION_HANDLES_OPEN` is given to `gtk_application_new` function, the application behaves like this:
+Когда функции `gtk_application_new` передаётся флаг `G_APPLICATION_HANDLES_OPEN`, приложение ведёт себя следующим образом:
 
-- If the application is run without command line arguments, it emits "activate" signal when it is activated.
-- If the application is run with command line arguments, it emits "open" signal when it is activated.
+- Если приложение запускается без аргументов командной строки, оно испускает сигнал "activate" при активации.
+- Если приложение запускается с аргументами командной строки, оно испускает сигнал "open" при активации.
 
-The handler `app_activate` becomes very simple.
-It just outputs an error message and returns to the caller.
-Then the application quits immediately because no window is created.
+Обработчик `app_activate` становится очень простым.
+Он просто выводит сообщение об ошибке и возвращается к вызывающей стороне.
+Затем приложение немедленно завершает работу, потому что окно не создаётся.
 
-The main work is done in the handler `app_open`.
+Основная работа выполняется в обработчике `app_open`.
 
-- Creates GtkApplicationWindow, GtkScrolledWindow, GtkTextView and GtkTextBuffer and connects them together
-- Sets wrap mode to `GTK_WRAP_WORD_CHAR` in GtktextView
-- Sets GtkTextView to non-editable because the program isn't an editor but only a viewer
-- Reads the file and inserts the text into GtkTextBuffer (this will be explained later)
-- If the file is not opened, outputs an error message and destroys the window. This makes the application quit.
+- Создаёт GtkApplicationWindow, GtkScrolledWindow, GtkTextView и GtkTextBuffer и соединяет их вместе
+- Устанавливает режим переноса слов в `GTK_WRAP_WORD_CHAR` в GtktextView
+- Устанавливает GtkTextView как нередактируемый, потому что программа не редактор, а только просмотрщик
+- Читает файл и вставляет текст в GtkTextBuffer (это будет объяснено позже)
+- Если файл не открывается, выводит сообщение об ошибке и уничтожает окно. Это приводит к завершению работы приложения.
 
-The following is the file reading part of the program.
+Ниже приведена часть программы для чтения файла.
 
 ~~~C
 if (g_file_load_contents (files[0], NULL, &contents, &length, NULL, &err)) {
@@ -141,20 +141,20 @@ if (g_file_load_contents (files[0], NULL, &contents, &length, NULL, &err)) {
 }
 ~~~
 
-The function `g_file_load_contents` loads the file contents into a temporary buffer,
-which is automatically allocated and sets `contents` to point the buffer.
-The length of the buffer is assigned to `length`.
-It returns `TRUE` if the file's contents are successfully loaded.
-If an error occurs, it returns `FALSE` and sets the variable `err` to point a newly created GError structure.
-The caller takes ownership of the GError structure and is responsible for freeing it.
-If you want to know the details about g\_file\_load\_contents, see [g file load contents](https://docs.gtk.org/gio/method.File.load_contents.html).
+Функция `g_file_load_contents` загружает содержимое файла во временный буфер,
+который автоматически выделяется, и устанавливает `contents` для указания на буфер.
+Длина буфера присваивается переменной `length`.
+Она возвращает `TRUE`, если содержимое файла успешно загружено.
+Если возникает ошибка, она возвращает `FALSE` и устанавливает переменную `err` для указания на вновь созданную структуру GError.
+Вызывающая сторона становится владельцем структуры GError и отвечает за её освобождение.
+Если вы хотите узнать подробности о g\_file\_load\_contents, см. [g file load contents](https://docs.gtk.org/gio/method.File.load_contents.html).
 
-If it has successfully read the file, it inserts the contents into GtkTextBuffer,
-frees the temporary buffer pointed by `contents`, sets the title of the window,
-frees the memories pointed by `filename` and then shows the window.
+Если файл успешно прочитан, программа вставляет содержимое в GtkTextBuffer,
+освобождает временный буфер, на который указывает `contents`, устанавливает заголовок окна,
+освобождает память, на которую указывает `filename`, а затем показывает окно.
 
-If it fails, `g_file_load_contents` sets `err` to point a newly created GError structure.
-The structure is:
+Если чтение не удаётся, `g_file_load_contents` устанавливает `err` для указания на вновь созданную структуру GError.
+Структура имеет вид:
 
 ~~~C
 struct GError {
@@ -164,56 +164,56 @@ struct GError {
 }
 ~~~
 
-The `message` member is used most often.
-It points an error message.
-A function `g_error_free` is used to free the memory of the structure.
-See [GError](https://docs.gtk.org/glib/struct.Error.html).
+Элемент `message` используется чаще всего.
+Он указывает на сообщение об ошибке.
+Функция `g_error_free` используется для освобождения памяти структуры.
+См. [GError](https://docs.gtk.org/glib/struct.Error.html).
 
-The program above outputs an error message, frees `err` and destroys the window and finally make the program quit.
+Приведённая выше программа выводит сообщение об ошибке, освобождает `err`, уничтожает окно и, наконец, завершает работу программы.
 
 ## GtkNotebook
 
-GtkNotebook is a container widget that contains multiple widgets with tabs.
-It shows only one child at a time.
-Another child will be shown when its tab is clicked.
+GtkNotebook — это виджет-контейнер, который содержит несколько виджетов с вкладками.
+Он показывает только один дочерний виджет за раз.
+Другой дочерний виджет будет показан при щелчке по его вкладке.
 
 ![GtkNotebook](../image/screenshot_gtk_notebook.png){width=13.2cm height=5.325cm}
 
-The left image is the window at the startup.
-The file `pr1.c` is shown and its filename is in the left tab.
-After clicking on the right tab, the contents of the file `tfv1.c` is shown (the right image).
+Левое изображение — это окно при запуске.
+Показан файл `pr1.c`, и его имя находится на левой вкладке.
+После щелчка по правой вкладке показывается содержимое файла `tfv1.c` (правое изображение).
 
-The following is `tfv4.c`.
-It has GtkNoteBook widget.
-It is inserted as a child of GtkApplicationWindow and contains multiple GtkScrolledWindow.
+Ниже приведён `tfv4.c`.
+Он имеет виджет GtkNoteBook.
+Он вставляется как дочерний элемент GtkApplicationWindow и содержит несколько GtkScrolledWindow.
 
 @@@include
 tfv/tfv4.c
 @@@
 
-Most of the changes are in the function `app_open`.
-The numbers at the left of the following items are line numbers in the source code.
+Большинство изменений находятся в функции `app_open`.
+Числа слева от следующих элементов — это номера строк в исходном коде.
 
-- 11-13: Variables `nb`, `lab` and `nbp` are defined. They point GtkNotebook, GtkLabel and GtkNotebookPage respectively.
-- 24: The window's title is set to "file viewer".
-- 25: The default size of the window is 600x400.
-- 26-27: GtkNotebook is created and inserted to the GtkApplicationWindow as a child.
-- 29-57: For-loop. The variable `files[i]` points i-th GFile, which is created by the GtkApplication from the i-th command line argument.
-- 31-36: GtkScrollledWindow, GtkTextView are created. GtkTextBuffer is got from the GtkTextView.
-The GtkTextView is connected to the GtkScrolledWindow as a child.
-- 38-39: inserts the contents of the file into GtkTextBuffer and frees the memory pointed by `contents`.
-- 40-42: If the filename is taken from the GFile, GtkLabel is created with the filename. The string `filename` is freed..
-- 43-44: If it fails to take the filename, empty string GtkLabel is created.
-- 45-46: Appends a GtkScrolledWindow to the GtkNotebook as a child.
-And the GtkLabel is set as the child's tab.
-At the same time, a GtkNoteBookPage is created automatically.
-The function `gtk_notebook_get_page` returns the GtkNotebookPage of the child (GtkScrolledWindow).
-- 47: GtkNotebookPage has "tab-expand" property.
-If it is set to TRUE then the tab expands horizontally as long as possible.
-If it is FALSE, then the width of the tab is determined by the size of the label.
-`g_object_set` is a general function to set properties of objects.
-See [GObject API Reference -- g\_object\_set](https://docs.gtk.org/gobject/method.Object.set.html).
-- 48-50: If it fails to read the file, the error message is shown.
-The function `g_clear_error (&err)` works like `g_error_free (err); err = NULL`.
-- 53-56: If at least one page exists, the window is shown.
-Otherwise, the window is destroyed and the application quits.
+- 11-13: определяются переменные `nb`, `lab` и `nbp`. Они указывают соответственно на GtkNotebook, GtkLabel и GtkNotebookPage.
+- 24: заголовок окна устанавливается на "file viewer".
+- 25: размер окна по умолчанию — 600x400.
+- 26-27: создаётся GtkNotebook и вставляется в GtkApplicationWindow как дочерний элемент.
+- 29-57: цикл for. Переменная `files[i]` указывает на i-й GFile, который создаётся GtkApplication из i-го аргумента командной строки.
+- 31-36: создаются GtkScrollledWindow, GtkTextView. GtkTextBuffer получается из GtkTextView.
+GtkTextView подключается к GtkScrolledWindow как дочерний элемент.
+- 38-39: вставляет содержимое файла в GtkTextBuffer и освобождает память, на которую указывает `contents`.
+- 40-42: если имя файла взято из GFile, создаётся GtkLabel с именем файла. Строка `filename` освобождается.
+- 43-44: если не удаётся получить имя файла, создаётся GtkLabel с пустой строкой.
+- 45-46: добавляет GtkScrolledWindow к GtkNotebook в качестве дочернего элемента.
+И GtkLabel устанавливается как вкладка дочернего элемента.
+При этом автоматически создаётся GtkNoteBookPage.
+Функция `gtk_notebook_get_page` возвращает GtkNotebookPage дочернего элемента (GtkScrolledWindow).
+- 47: GtkNotebookPage имеет свойство "tab-expand".
+Если оно установлено в TRUE, то вкладка расширяется по горизонтали настолько, насколько это возможно.
+Если оно установлено в FALSE, ширина вкладки определяется размером метки.
+`g_object_set` — это общая функция для установки свойств объектов.
+См. [GObject API Reference -- g\_object\_set](https://docs.gtk.org/gobject/method.Object.set.html).
+- 48-50: если не удаётся прочитать файл, показывается сообщение об ошибке.
+Функция `g_clear_error (&err)` работает как `g_error_free (err); err = NULL`.
+- 53-56: если существует хотя бы одна страница, окно показывается.
+В противном случае окно уничтожается, и приложение завершает работу.
