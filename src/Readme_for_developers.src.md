@@ -40,58 +40,58 @@
 Pandoc — это мощный инструмент для преобразования между форматами, такими как Markdown, HTML, LaTeX и Word (.docx).
 В этом проекте этот конкретный диалект используется при преобразовании исходных файлов в HTML или LaTeX.
 
-## The .src.md File and @@@ Commands
+## Файл .src.md и команды @@@
 
-### The .src.md File
+### Файл .src.md
 
-Source files in this project use the .src.md extension.
-The syntax of a .src.md file is similar to standard Markdown, but it includes a special custom command: the @@@ command.
-Each command block starts with a line beginning with @@@, followed by a command name and ends with a line containing only `@@@`.
+Исходные файлы в этом проекте используют расширение .src.md.
+Синтаксис файла .src.md похож на стандартный Markdown, но он включает специальную пользовательскую команду: команду @@@.
+Каждый блок команды начинается со строки, начинающейся с @@@, за которой следует имя команды, и заканчивается строкой, содержащей только `@@@`.
 
-For example,
+Например,
 
     @@@include
     tfeapplication.c
     @@@
 
-The first line is called a directive, which consists of "@@@" and "include" (the command name).
+Первая строка называется директивой, которая состоит из "@@@" и "include" (имя команды).
 
-There are four types of @@@ commands, as described below.
+Существует четыре типа команд @@@, которые описаны ниже.
 
 ### @@@include
 
-This command starts with the directive `@@@include`.
+Эта команда начинается с директивы `@@@include`.
 
     @@@include
     tfeapplication.c
     @@@
 
-It is replaced by the content of the source file specified between the `@@@include` and `@@@` markers.
-The example above includes a C source file `tfeapplication.c`.
+Она заменяется содержимым исходного файла, указанного между маркерами `@@@include` и `@@@`.
+Приведённый выше пример включает исходный файл C `tfeapplication.c`.
 
-If specific function names follow the filename, only those functions will be extracted.
+Если после имени файла следуют имена конкретных функций, будут извлечены только эти функции.
 
     @@@include
     tfeapplication.c main startup
     @@@
 
-The above command would be replaced specifically by the `main` and `startup` functions found in `tfeapplication.c`.
+Приведённая выше команда будет заменена конкретно функциями `main` и `startup`, найденными в `tfeapplication.c`.
 
-You can also include source files from other languages.
-The following example shows that the ruby file `lib_src2md.rb` is inserted by the command.
+Вы также можете включать исходные файлы из других языков.
+Следующий пример показывает, что файл ruby `lib_src2md.rb` вставляется командой.
 
     @@@include
     lib_src2md.rb
     @@@
 
-Note that function-specific extraction is only supported for C source files.
+Обратите внимание, что извлечение конкретных функций поддерживается только для исходных файлов C.
 
-The inserted text is automatically converted into a fenced code block.
-Fenced code blocks start and end with `~~~`, and the contents are displayed verbatim.
-Three consecutive tildes are called a "code fence" because they look like a fence.
+Вставленный текст автоматически преобразуется в огороженный блок кода.
+Огороженные блоки кода начинаются и заканчиваются `~~~`, а содержимое отображается дословно.
+Три последовательных тильды называются "кодовым ограждением", потому что они выглядят как забор.
 
-When the target format is GFM, an "info string" (language identifier) is added after the opening fence.
-The following example shows that the @@@ command includes a C source file `sample.c`.
+Когда целевой формат — GFM, после открывающего ограждения добавляется "информационная строка" (идентификатор языка).
+Следующий пример показывает, что команда @@@ включает исходный файл C `sample.c`.
 
     $ cat src/sample.c
     int
@@ -115,24 +115,24 @@ The following example shows that the @@@ command includes a C source file `sampl
     ~~~
       ... ...
 
-Info strings are usually languages like C, ruby, xml and so on.
-This identifier is determined by the file extension:
+Информационные строки обычно являются языками, такими как C, ruby, xml и так далее.
+Этот идентификатор определяется расширением файла:
 
 - `.c`   => C
 - `.rb`  => ruby
 - `.xml` => xml
 
-The list of supported languages is defined in the `lang` method within `lib/lib_src2md.rb`.
+Список поддерживаемых языков определён в методе `lang` в `lib/lib_src2md.rb`.
 
-By default, line numbers are inserted at the beginning of each line.
-To disable this, use the -N option with the `@@@include` command.
+По умолчанию номера строк вставляются в начале каждой строки.
+Чтобы отключить это, используйте опцию -N с командой `@@@include`.
 
-Options:
+Опции:
 
-- `-n`: Inserts a line number at the top of each line (default).
-- `-N`: No line number is inserted.
+- `-n`: вставляет номер строки в верхней части каждой строки (по умолчанию).
+- `-N`: номер строки не вставляется.
 
-The following shows that the line numbers are inserted at the beginning of each line.
+Ниже показано, что номера строк вставляются в начале каждой строки.
 
     $cat src/sample.src.md
       ... ...
