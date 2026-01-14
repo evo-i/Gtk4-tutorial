@@ -1,28 +1,28 @@
 # GtkExpression
 
-GtkExpression is a fundamental type.
-It is not a descendant of GObject.
-GtkExpression provides a way to describe references to values.
-GtkExpression needs to be evaluated to obtain a value.
+GtkExpression — это фундаментальный тип.
+Это не потомок GObject.
+GtkExpression предоставляет способ описания ссылок на значения.
+GtkExpression необходимо вычислить, чтобы получить значение.
 
-It is similar to arithmetic calculation.
+Это похоже на арифметическое вычисление.
 
 ~~~
 1 + 2 = 3
 ~~~
 
-`1+2` is an expression.
-It shows the way how to calculate.
-`3` is the value comes from the expression.
-Evaluation is to calculate the expression and get the value.
+`1+2` — это выражение.
+Оно показывает способ вычисления.
+`3` — это значение, полученное из выражения.
+Вычисление — это расчёт выражения и получение значения.
 
-GtkExpression is a way to get a value.
-Evaluation is like a calculation.
-A value is got by evaluating the expression.
+GtkExpression — это способ получить значение.
+Вычисление похоже на расчёт.
+Значение получается путём вычисления выражения.
 
-## Constant expression
+## Константное выражение
 
-A constant expression (GtkConstantExpression) provides constant value or instance when it is evaluated.
+Константное выражение (GtkConstantExpression) предоставляет константное значение или экземпляр при его вычислении.
 
 ~~~C
   GValue value = G_VALUE_INIT;
@@ -30,54 +30,54 @@ A constant expression (GtkConstantExpression) provides constant value or instanc
   gtk_expression_evaluate (expression, NULL, &value);
 ~~~
 
-- GtkExpression uses GValue to hold a value.
-GValue is a structure and container to hold a type and value.
-It must be initialized with `G_VALUE_INIT`, first.
-Be careful that `value` is a structure, not a pointer to a structure.
-- Constant expression is created with `gtk_constant_expression_new` function.
-The parameter of the function is a type (GType) and a value (or instance).
-This expression holds a constant value.
-`G_TYPE_INT` is a type that is registered to the type system.
-It is integer type.
-Some types are shown in the following table.
-- `gtk_expression_evaluate` evaluates the expression.
-It has three parameters, the expression to evaluate, `this` instance and a pointer to a GValue for being set with the value.
-`this` instance isn't necessary for constant expressions.
-Therefore, the second argument is NULL.
-`gtk_expression_evaluate` returns TRUE if it successfully evaluates the expression.
-Otherwise it returns FALSE.
-- If it returns TRUE, the GValue `value` is set with the value of the expression.
-The type of the value is int.
+- GtkExpression использует GValue для хранения значения.
+GValue — это структура и контейнер для хранения типа и значения.
+Сначала она должна быть инициализирована с помощью `G_VALUE_INIT`.
+Будьте осторожны, что `value` — это структура, а не указатель на структуру.
+- Константное выражение создаётся с помощью функции `gtk_constant_expression_new`.
+Параметр функции — это тип (GType) и значение (или экземпляр).
+Это выражение содержит константное значение.
+`G_TYPE_INT` — это тип, зарегистрированный в системе типов.
+Это целочисленный тип.
+Некоторые типы показаны в следующей таблице.
+- `gtk_expression_evaluate` вычисляет выражение.
+Он имеет три параметра: выражение для вычисления, экземпляр `this` и указатель на GValue для установки значения.
+Экземпляр `this` не нужен для константных выражений.
+Поэтому второй аргумент — NULL.
+`gtk_expression_evaluate` возвращает TRUE, если он успешно вычисляет выражение.
+В противном случае возвращает FALSE.
+- Если он возвращает TRUE, GValue `value` устанавливается со значением выражения.
+Тип значения — int.
 
-|GType            |C type|type name |notes                  |
-|:----------------|:-----|:---------|:----------------------|
-|G\_TYPE\_CHAR    |char  |gchar     |                       |
-|G\_TYPE\_BOOLEAN |int   |gboolean  |                       |
-|G\_TYPE\_INT     |int   |gint      |                       |
-|G\_TYPE\_FLOAT   |float |gfloat    |                       |
-|G\_TYPE\_DOUBLE  |double|gdouble   |                       |
-|G\_TYPE\_POINTER |void *|gpointer  |general pointer        |
-|G\_TYPE\_STRING  |char *|gchararray|null-terminated Cstring|
-|G\_TYPE\_OBJECT  |      |GObject   |                       |
-|GTK\_TYPE\_WINDOW|      |GtkWindow |                       |
+|GType            |C тип |имя типа  |примечания                         |
+|:----------------|:-----|:---------|:----------------------------------|
+|G\_TYPE\_CHAR    |char  |gchar     |                                   |
+|G\_TYPE\_BOOLEAN |int   |gboolean  |                                   |
+|G\_TYPE\_INT     |int   |gint      |                                   |
+|G\_TYPE\_FLOAT   |float |gfloat    |                                   |
+|G\_TYPE\_DOUBLE  |double|gdouble   |                                   |
+|G\_TYPE\_POINTER |void *|gpointer  |общий указатель                    |
+|G\_TYPE\_STRING  |char *|gchararray|null-терминированная строка C      |
+|G\_TYPE\_OBJECT  |      |GObject   |                                   |
+|GTK\_TYPE\_WINDOW|      |GtkWindow |                                   |
 
 
-A sample program `exp_constant_simple.c` is in `src/expression` directory.
+Пример программы `exp_constant_simple.c` находится в каталоге `src/expression`.
 
 @@@include
 expression/exp_constant_simple.c
 @@@
 
-- 9: A constant expression is created. It holds an int value 100. The variable `expression` points the expression.
-- 11-14: Evaluates the expression. If it successes, show the value to the stdout. Otherwise show an error message.
-- 15-16: Releases the expression and unsets the GValue.
+- 9: Создаётся константное выражение. Оно содержит значение int 100. Переменная `expression` указывает на выражение.
+- 11-14: Вычисляет выражение. Если это успешно, показывает значение в stdout. В противном случае показывает сообщение об ошибке.
+- 15-16: Освобождает выражение и сбрасывает GValue.
 
-Constant expression is usually used to give a constant value or instance to another expression.
+Константное выражение обычно используется для передачи константного значения или экземпляра другому выражению.
 
-## Property expression
+## Выражение свойства
 
-A property expression (GtkPropertyExpression) looks up a property in a GObject instance.
-For example, a property expression that refers "label" property in a GtkLabel object is created like this.
+Выражение свойства (GtkPropertyExpression) ищет свойство в экземпляре GObject.
+Например, выражение свойства, которое ссылается на свойство "label" в объекте GtkLabel, создаётся так.
 
 @@@if gfm
 ~~~C
@@ -89,13 +89,13 @@ expression = gtk_property_expression_new (GTK_TYPE_LABEL, another_expression, "l
 ~~~
 @@@end
 
-The second parameter `another_expression` is one of:
+Второй параметр `another_expression` — это одно из:
 
-- An expression that gives a GtkLabel instance when it is evaluated.
-- NULL. When NULL is given, a GtkLabel instance will be given when it is evaluated.
-The instance is called `this` object.
+- Выражение, которое даёт экземпляр GtkLabel при его вычислении.
+- NULL. Когда передаётся NULL, экземпляр GtkLabel будет передан при вычислении.
+Экземпляр называется объектом `this`.
 
-For example,
+Например,
 
 @@@if gfm
 ~~~C
@@ -111,52 +111,52 @@ expression = gtk_property_expression_new (GTK_TYPE_LABEL, another_expression, "l
 ~~~
 @@@end
 
-If `expression` is evaluated, the second parameter `another_expression` is evaluated in advance.
-The value of `another_expression` is the `label` (GtkLabel instance).
-Then, `expression` looks up "label" property of the label and the evaluation results in "Hello".
+Если `expression` вычисляется, второй параметр `another_expression` вычисляется заранее.
+Значение `another_expression` — это `label` (экземпляр GtkLabel).
+Затем `expression` ищет свойство "label" метки, и результат вычисления — "Hello".
 
-In the example above, the second argument of `gtk_property_expression_new` is another expression.
-But the second argument can be NULL.
-If it is NULL, `this` instance is used instead.
-`this` is given by `gtk_expression_evaluate` function.
+В примере выше второй аргумент `gtk_property_expression_new` — это другое выражение.
+Но второй аргумент может быть NULL.
+Если это NULL, вместо него используется экземпляр `this`.
+`this` передаётся функцией `gtk_expression_evaluate`.
 
-There's a simple program `exp_property_simple.c` in `src/expression` directory.
+Есть простая программа `exp_property_simple.c` в каталоге `src/expression`.
 
 @@@include
 expression/exp_property_simple.c
 @@@
 
-- 9-10: `gtk_init` initializes GTK GUI toolkit.
-It isn't usually necessary because the GtkApplication default startup handler does the initialization.
-A GtkLabel instance is created with the text "Hello world.".
-- 12: A property expression is created.
-It looks a "label" property of a GtkLabel instance.
-But at the creation, no instance is given because the second argument is NULL.
-The expression just knows how to take the property from a future-given GtkLabel instance.
-- 14-17: The function `gtk_expression_evaluate` evaluates the expression with a 'this' instance `label`.
-The result is stored in the GValue `value`.
-The function `g_value_get_string` gets a string from the GValue.
-But the string is owned by the GValue so you must not free the string.
-- 18-19: Releases the expression and unset the GValue.
-At the same time the string in the GValue is freed.
+- 9-10: `gtk_init` инициализирует инструментарий GTK GUI.
+Обычно это не нужно, потому что обработчик запуска по умолчанию GtkApplication выполняет инициализацию.
+Создаётся экземпляр GtkLabel с текстом "Hello world.".
+- 12: Создаётся выражение свойства.
+Оно ищет свойство "label" экземпляра GtkLabel.
+Но при создании экземпляр не передаётся, потому что второй аргумент — NULL.
+Выражение просто знает, как взять свойство из будущего экземпляра GtkLabel.
+- 14-17: Функция `gtk_expression_evaluate` вычисляет выражение с экземпляром 'this' `label`.
+Результат сохраняется в GValue `value`.
+Функция `g_value_get_string` получает строку из GValue.
+Но строка принадлежит GValue, поэтому вы не должны освобождать строку.
+- 18-19: Освобождает выражение и сбрасывает GValue.
+В то же время строка в GValue освобождается.
 
-If the second argument of `gtk_property_expression_new` isn't NULL, it is another expression.
-The expression is owned by a newly created property expression.
-So, when the expressions are useless, you just release the last expression.
-Then it releases another expression it has.
+Если второй аргумент `gtk_property_expression_new` не NULL, это другое выражение.
+Выражение принадлежит вновь созданному выражению свойства.
+Поэтому, когда выражения бесполезны, вы просто освобождаете последнее выражение.
+Затем оно освобождает другое выражение, которое у него есть.
 
-## Closure expression
+## Выражение замыкания
 
-A closure expression calls closure when it is evaluated.
-A closure is a generic representation of a callback (a pointer to a function).
-For information about closure, see [GObject API Reference -- The GObject messaging system](https://docs.gtk.org/gobject/concepts.html#the-gobject-messaging-system).
-There are simple closure example files `closure.c` and `closure_each.c` in the `src/expression` directory.
+Выражение замыкания вызывает замыкание при его вычислении.
+Замыкание — это обобщённое представление обратного вызова (указателя на функцию).
+Для информации о замыканиях см. [GObject API Reference -- The GObject messaging system](https://docs.gtk.org/gobject/concepts.html#the-gobject-messaging-system).
+В каталоге `src/expression` есть простые примеры замыканий `closure.c` и `closure_each.c`.
 
-There are two types of closure expressions, GtkCClosureExpression and GtkClosureExpression.
-They corresponds to GCClosure and GClosure respectively.
-When you program in C language, GtkCClosureExpression and GCClosure are appropriate.
+Существует два типа выражений замыканий: GtkCClosureExpression и GtkClosureExpression.
+Они соответствуют GCClosure и GClosure соответственно.
+Когда вы программируете на языке C, подходят GtkCClosureExpression и GCClosure.
 
-A closure expression is created with `gtk_cclosure_expression_new` function.
+Выражение замыкания создаётся с помощью функции `gtk_cclosure_expression_new`.
 
 @@@if gfm
 ~~~C
@@ -182,26 +182,26 @@ gtk_cclosure_expression_new (GType value_type,
 ~~~
 @end
 
-- `value_type` is the type of the value when it is evaluated.
-- `marshal` is a marshaller.
-You can assign NULL.
-If it is NULL, then `g_cclosure_marshal_generic ()` is used as a marshaller.
-It is a generic marshaller function implemented via libffi.
-- `n_params` is the number of parameters.
-- `params` points expressions for each parameter of the call back function.
-- `callback_func` is a callback function.
-It is given arguments `this` and parameters above.
-So, if `n_params` is 3, the number of arguments of the function is 4.
-(`this` and `params`. See below.)
-- `user_data` is user data.
-You can add it for the closure.
-It is like `user_data` in `g_signal_connect`.
-If it is not necessary, assign NULL.
-- `user_destroy` is a destroy notify for `user_data`.
-It is called to destroy `user_data` when it is no longer needed.
-If NULL is assigned to `user_data`, assign NULL to `user_destroy`, too.
+- `value_type` — это тип значения при его вычислении.
+- `marshal` — это маршаллер.
+Вы можете назначить NULL.
+Если это NULL, то в качестве маршаллера используется `g_cclosure_marshal_generic ()`.
+Это общая функция маршаллера, реализованная через libffi.
+- `n_params` — это количество параметров.
+- `params` указывает на выражения для каждого параметра функции обратного вызова.
+- `callback_func` — это функция обратного вызова.
+Ей передаются аргументы `this` и параметры выше.
+Таким образом, если `n_params` равно 3, количество аргументов функции равно 4.
+(`this` и `params`. См. ниже.)
+- `user_data` — это пользовательские данные.
+Вы можете добавить их для замыкания.
+Это похоже на `user_data` в `g_signal_connect`.
+Если они не нужны, назначьте NULL.
+- `user_destroy` — это уведомление об уничтожении для `user_data`.
+Оно вызывается для уничтожения `user_data`, когда они больше не нужны.
+Если NULL назначено `user_data`, назначьте NULL также `user_destroy`.
 
-Call back functions have the following format.
+Функции обратного вызова имеют следующий формат.
 
 ~~~
 C-type
@@ -222,43 +222,43 @@ callback (GObject *object, int x, const char *s)
 ~~~
 @@@end
 
-The following is `exp_closure_simple.c` in `src/expression`.
+Следующее — `exp_closure_simple.c` в `src/expression`.
 
 @@@include
 expression/exp_closure_simple.c
 @@@
 
-- 3-11: A call back function.
-The parameter is only one and it is a 'this' object.
-It is a GtkLabel and its label is assumed to be "(number)+(number)".
-- 8-10: Retrieves two integers from the label and returns the sum of them.
-This function has no error report.
-If you want to return error report, change the return value type to be a pointer to a structure of gboolean and integer.
-One for error and the other for the sum.
-The first argument of `gtk_cclosure_expression_new` is `G_TYPE_POINTER`.
-There is a sample program `exp_closure_with_error_report` in `src/expression` directory.
-- 19: The function `gtk_init`` initializes GTK. It is necessary for GtkLabel.
-- 20: A GtkLabel instance is created with "123+456".
-- 21: The instance has floating reference. It is changed to an ordinary reference count.
-- 22-23: Creates a closure expression. Its return value type is `G_TYPE_INT` and no parameters or 'this' object.
-- 24: Evaluates the expression with the label as a 'this' object.
-- 25: If the evaluation successes, the sum of "123+456", which is 579, is shown.
-- 27: If it fails, an error message appears.
-- 28-30: Releases the expression and the label. Unsets the value.
+- 3-11: Функция обратного вызова.
+Параметр только один, и это объект 'this'.
+Это GtkLabel, и предполагается, что его метка "(число)+(число)".
+- 8-10: Извлекает два целых числа из метки и возвращает их сумму.
+Эта функция не имеет отчёта об ошибках.
+Если вы хотите вернуть отчёт об ошибке, измените тип возвращаемого значения на указатель на структуру из gboolean и integer.
+Один для ошибки, другой для суммы.
+Первый аргумент `gtk_cclosure_expression_new` — это `G_TYPE_POINTER`.
+Есть пример программы `exp_closure_with_error_report` в каталоге `src/expression`.
+- 19: Функция `gtk_init`` инициализирует GTK. Это необходимо для GtkLabel.
+- 20: Создаётся экземпляр GtkLabel с "123+456".
+- 21: Экземпляр имеет плавающую ссылку. Она изменяется на обычный счётчик ссылок.
+- 22-23: Создаёт выражение замыкания. Его тип возвращаемого значения — `G_TYPE_INT`, и нет параметров или объекта 'this'.
+- 24: Вычисляет выражение с меткой в качестве объекта 'this'.
+- 25: Если вычисление успешно, показывается сумма "123+456", которая равна 579.
+- 27: Если это не удаётся, появляется сообщение об ошибке.
+- 28-30: Освобождает выражение и метку. Сбрасывает значение.
 
-Closure expression is flexible than other type of expression because you can specify your own callback function.
+Выражение замыкания более гибкое, чем другие типы выражений, потому что вы можете указать свою собственную функцию обратного вызова.
 
 ## GtkExpressionWatch
 
-GtkExpressionWatch is a structure, not an object.
-It represents a watched GtkExpression.
-Two functions create GtkExpressionWatch structure.
-They are `gtk_expression_bind` and `gtk_expression_watch`.
+GtkExpressionWatch — это структура, а не объект.
+Она представляет наблюдаемое GtkExpression.
+Две функции создают структуру GtkExpressionWatch.
+Это `gtk_expression_bind` и `gtk_expression_watch`.
 
-### gtk\_expression\_bind function
+### Функция gtk\_expression\_bind
 
-This function binds the target object's property to the expression.
-If the value of the expression changes, the property reflects the value immediately.
+Эта функция привязывает свойство целевого объекта к выражению.
+Если значение выражения изменяется, свойство немедленно отражает значение.
 
 @@@if gfm
 ~~~C
@@ -282,74 +282,74 @@ gtk_expression_bind (
 ~~~
 @@@end
 
-This function takes the ownership of the expression.
-So, if you want to own the expression, call `gtk_expression_ref ()` to increase the reference count of the expression.
-And you should unref it when it is useless.
-If you don't own the expression, you don't care about releasing the expression.
+Эта функция берёт владение выражением.
+Поэтому, если вы хотите владеть выражением, вызовите `gtk_expression_ref ()` для увеличения счётчика ссылок выражения.
+И вы должны освободить его, когда оно бесполезно.
+Если вы не владеете выражением, вам не нужно беспокоиться об освобождении выражения.
 
-An example `exp_bind.c` and `exp_bind.ui` is in [`src/expression`](expression) directory.
+Пример `exp_bind.c` и `exp_bind.ui` находится в каталоге [`src/expression`](expression).
 
 ![exp\_bind](../image/exp_bind.png){width=9.2cm height=1.9cm}
 
-It includes a label and a scale.
-If you move the slider to the right, the scale value increases and the number on the label also increases.
-In the same way, if you move it to the left, the number on the label decreases.
-The label is bound to the scale value via an adjustment.
+Он включает метку и ползунок.
+Если вы перемещаете ползунок вправо, значение ползунка увеличивается, и число на метке также увеличивается.
+Таким же образом, если вы перемещаете его влево, число на метке уменьшается.
+Метка привязана к значению ползунка через adjustment.
 
 @@@include
 expression/exp_bind.ui
 @@@
 
-The ui file describes the following parent-child relationship.
+Ui-файл описывает следующее отношение родитель-дочерний.
 
 ~~~
 GtkApplicationWindow (win) -- GtkBox -+- GtkLabel (label)
                                       +- GtkScale
 ~~~
 
-Four GtkScale properties are defined.
+Определены четыре свойства GtkScale.
 
-- adjustment. GtkAdjustment provides the followings.
-  - upper and lower: the range of the scale.
-  - value: current value of the scale. It reflects the value of the scale.
-  - step increment and page increment: When a user press an arrow key or page up/down key,
-the scale moves by the step increment or page increment respectively.
-  - page-size: When an adjustment is used with a scale, page-size is zero.
-- digits: The number of decimal places that are displayed in the value.
-- draw-value: Whether the value is displayed.
-- has-origin: Whether the scale has the origin. If it's true, an orange bar appears between the origin and the current point.
-- round-digits: The number of digits to round the value to when it changes.
-For example, if it is zero, the slider moves to an integer point.
+- adjustment. GtkAdjustment предоставляет следующее.
+  - upper и lower: диапазон ползунка.
+  - value: текущее значение ползунка. Оно отражает значение ползунка.
+  - step increment и page increment: Когда пользователь нажимает клавишу со стрелкой или клавишу page up/down,
+ползунок перемещается на step increment или page increment соответственно.
+  - page-size: Когда adjustment используется с ползунком, page-size равно нулю.
+- digits: Количество десятичных знаков, отображаемых в значении.
+- draw-value: Отображается ли значение.
+- has-origin: Имеет ли ползунок начало. Если это true, оранжевая полоса появляется между началом и текущей точкой.
+- round-digits: Количество цифр для округления значения при его изменении.
+Например, если это ноль, ползунок перемещается к целочисленной точке.
 
 @@@include
 expression/exp_bind.c
 @@@
 
-The point of the program is:
+Суть программы:
 
-- 41-42: Two expressions are defined.
-One is a property expression and the other is a closure expression.
-The property expression looks up the "value" property of the adjustment instance.
-The closure expression just converts the double into an integer.
-- 43: `gtk_expression_bind` binds the label property of the GtkLabel instance to the integer returned by the closure expression.
-It creates a GtkExpressionWatch structure.
-The binding works during the watch lives.
-When the window is destroyed, the scale and adjustment are also destroyed.
-And the watch recognizes the value of the expression changes and tries to change the property of the label.
-Obviously, it is not a correct behavior.
-The watch should be unwatched before the window is destroyed.
-- 37: Connects the "close-request" signal on the window to a handler `close_request_cb`.
-This signal is emitted when the close button is clicked.
-The handler is called just before the window closes.
-It is the right moment to make the GtkExpressionWatch unwatched.
-- 10-14: "close-request" signal handler.
-The function `gtk_expression_watch_unwatch (watch)` makes the watch stop watching the expression.
-It also releases the expression.
+- 41-42: Определены два выражения.
+Одно — это выражение свойства, а другое — выражение замыкания.
+Выражение свойства ищет свойство "value" экземпляра adjustment.
+Выражение замыкания просто преобразует double в integer.
+- 43: `gtk_expression_bind` привязывает свойство label экземпляра GtkLabel к integer, возвращённому выражением замыкания.
+Оно создаёт структуру GtkExpressionWatch.
+Привязка работает в течение жизни наблюдателя.
+Когда окно уничтожается, ползунок и adjustment также уничтожаются.
+И наблюдатель распознаёт, что значение выражения изменяется, и пытается изменить свойство метки.
+Очевидно, это неправильное поведение.
+Наблюдатель должен прекратить наблюдение до того, как окно будет уничтожено.
+- 37: Подключает сигнал "close-request" на окне к обработчику `close_request_cb`.
+Этот сигнал испускается при нажатии кнопки закрытия.
+Обработчик вызывается непосредственно перед закрытием окна.
+Это правильный момент для прекращения наблюдения GtkExpressionWatch.
+- 10-14: Обработчик сигнала "close-request".
+Функция `gtk_expression_watch_unwatch (watch)` заставляет наблюдателя прекратить наблюдение за выражением.
+Она также освобождает выражение.
 
-If you want to bind a property to an expression, `gtk_expression_bind` is the best choice.
-You can do it with `gtk_expression_watch` function, but it is less suitable.
+Если вы хотите привязать свойство к выражению, `gtk_expression_bind` — лучший выбор.
+Вы можете сделать это с помощью функции `gtk_expression_watch`, но это менее подходит.
 
-### gtk\_expression\_watch function
+### Функция gtk\_expression\_watch
 
 @@@if gfm
 ~~~C
@@ -375,16 +375,16 @@ gtk_expression_watch (
 ~~~
 @@@end
 
-The function doesn't take the ownership of the expression.
-It differs from `gtk_expression_bind`.
-So, you need to release the expression when it is useless.
-It creates a GtkExpressionWatch structure.
-The third parameter `notify` is a callback to invoke when the expression changes.
-You can set `user_data` to give it to the callback.
-The last parameter is a function to destroy the `user_data` when the watch is unwatched.
-Put NULL if you don't need them.
+Функция не берёт владение выражением.
+Это отличается от `gtk_expression_bind`.
+Поэтому вам нужно освободить выражение, когда оно бесполезно.
+Она создаёт структуру GtkExpressionWatch.
+Третий параметр `notify` — это обратный вызов для вызова при изменении выражения.
+Вы можете установить `user_data`, чтобы передать его обратному вызову.
+Последний параметр — это функция для уничтожения `user_data`, когда наблюдатель прекращает наблюдение.
+Поместите NULL, если они вам не нужны.
 
-Notify callback has the following format.
+Обратный вызов notify имеет следующий формат.
 
 @@@if gfm
 ~~~C
@@ -402,53 +402,53 @@ notify (
 ~~~
 @@@end
 
-This function is used to do something when the value of the expression changes.
-But if you want to bind a property to the value, use `gtk_expression_bind` instead.
+Эта функция используется для выполнения чего-либо при изменении значения выражения.
+Но если вы хотите привязать свойство к значению, используйте вместо этого `gtk_expression_bind`.
 
-There's a sample program `exp_watch.c` in [`src/expression`](expression) directory.
-It outputs the width of the window to the standard output.
+Есть пример программы `exp_watch.c` в каталоге [`src/expression`](expression).
+Она выводит ширину окна в стандартный вывод.
 
 ![exp\_watch](../image/exp_watch.png){width=9.6cm height=6.9cm}
 
-When you resize the window, the width is displayed in the terminal.
+Когда вы изменяете размер окна, ширина отображается в терминале.
 
 @@@include
 expression/exp_watch.c
 @@@
 
-- 37: A property expression looks up the "default-width" property of the window.
-- 38: Create a watch structure for the expression.
-The callback `notify` is called every time the value of the expression changes.
-The 'this' object is `win`, so the expression returns the default width of the window.
-- 6-14: The callback function `notify`.
-It uses `gtk_expression_watch_evaluate` to get the value of the expression.
-The 'this' object is given in advance (when the watch is created).
-It outputs the window width to the standard output.
-- 16-21: A handler for the "close-request"signal on the window.
-It stops the watch.
-In addition, it releases the reference to the expression.
-Because `gtk_expression_watch` doesn't take the ownership of the expression, you own it.
-So, the release is necessary.
+- 37: Выражение свойства ищет свойство "default-width" окна.
+- 38: Создать структуру наблюдателя для выражения.
+Обратный вызов `notify` вызывается каждый раз, когда значение выражения изменяется.
+Объект 'this' — это `win`, поэтому выражение возвращает ширину окна по умолчанию.
+- 6-14: Функция обратного вызова `notify`.
+Она использует `gtk_expression_watch_evaluate` для получения значения выражения.
+Объект 'this' задан заранее (при создании наблюдателя).
+Она выводит ширину окна в стандартный вывод.
+- 16-21: Обработчик сигнала "close-request" на окне.
+Он останавливает наблюдатель.
+Кроме того, он освобождает ссылку на выражение.
+Поскольку `gtk_expression_watch` не берёт владение выражением, вы владеете им.
+Поэтому освобождение необходимо.
 
-## Gtkexpression in ui files
+## GtkExpression в ui-файлах
 
-GtkBuilder supports GtkExpressions.
-There are four tags.
+GtkBuilder поддерживает GtkExpressions.
+Есть четыре тега.
 
-- constant tag to create constant expression. Type attribute specifies the type name of the value.
-If no type is specified, the type is assumed to be an object.
-The content is the value of the expression.
-- lookup tag to create property expression. Type attribute specifies the type of the object.
-Name attribute specifies the property name.
-The content is an expression or object which has the property to look up.
-If there's no content, 'this' object is used.
-- closure tag to create closure expression. Type attribute specifies the type of the returned value.
-Function attribute specifies the callback function.
-The contents of the tag are arguments that are expressions.
-- binding tag to bind a property to an expression.
-It is put in the content of an object tag.
-Name attribute specifies the property name of the object.
-The content is an expression.
+- constant тег для создания константного выражения. Атрибут type указывает имя типа значения.
+Если тип не указан, предполагается, что тип — объект.
+Содержимое — это значение выражения.
+- lookup тег для создания выражения свойства. Атрибут type указывает тип объекта.
+Атрибут name указывает имя свойства.
+Содержимое — это выражение или объект, который имеет свойство для поиска.
+Если содержимого нет, используется объект 'this'.
+- closure тег для создания выражения замыкания. Атрибут type указывает тип возвращаемого значения.
+Атрибут function указывает функцию обратного вызова.
+Содержимое тега — это аргументы, которые являются выражениями.
+- binding тег для привязки свойства к выражению.
+Он помещается в содержимое тега объекта.
+Атрибут name указывает имя свойства объекта.
+Содержимое — это выражение.
 
 @@@if gfm
 ~~~xml
@@ -470,7 +470,7 @@ The content is an expression.
 ~~~
 @@@end
 
-These tags are usually used for GtkBuilderListItemFactory.
+Эти теги обычно используются для GtkBuilderListItemFactory.
 
 @@@if gfm
 ~~~xml
@@ -506,67 +506,67 @@ These tags are usually used for GtkBuilderListItemFactory.
 ~~~
 @@@end
 
-GtkBuilderListItemFactory uses GtkBuilder to extends the GtkListItem with the XML data.
+GtkBuilderListItemFactory использует GtkBuilder для расширения GtkListItem с помощью XML-данных.
 
-In the xml file above, "GtkListItem" is an instance of the GtkListItem template.
-It is the 'this' object given to the expressions.
-(The information is in the [GTK Development Blog](https://blog.gtk.org/2020/09/)).
+В xml-файле выше "GtkListItem" — это экземпляр шаблона GtkListItem.
+Это объект 'this', переданный выражениям.
+(Информация находится в [GTK Development Blog](https://blog.gtk.org/2020/09/)).
 
-GtkBuilder calls `gtk_expression_bind` function when it finds a binding tag.
-The function sets the 'this' object like this:
+GtkBuilder вызывает функцию `gtk_expression_bind` при обнаружении тега binding.
+Функция устанавливает объект 'this' следующим образом:
 
-1. If the binding tag has object attribute, the object will be the 'this' object.
-2. If the current object of the GtkBuilder exists, it will be the 'this' object.
-That's why a GtkListItem instance is the 'this' object of the XML data for a GtkBuilderListItemFactory.
-3. Otherwise, the target object of the binding tag will be the 'this' object.
+1. Если тег binding имеет атрибут object, объект будет объектом 'this'.
+2. Если текущий объект GtkBuilder существует, он будет объектом 'this'.
+Вот почему экземпляр GtkListItem является объектом 'this' XML-данных для GtkBuilderListItemFactory.
+3. В противном случае целевой объект тега binding будет объектом 'this'.
 
-GTK 4 document doesn't describe information about "this" object when expressions are defined in a ui file.
-The information above is found from the GTK 4 source files and it is possible to include mistakes.
-If you have accurate information, please let me know.
+Документация GTK 4 не описывает информацию об объекте "this", когда выражения определены в ui-файле.
+Информация выше найдена из исходных файлов GTK 4, и возможно, она содержит ошибки.
+Если у вас есть точная информация, пожалуйста, сообщите мне.
 
-A sample program `exp.c` and a ui file `exp.ui` is in [`src/expression`](expression) directory.
-The ui file includes lookup, closure and bind tags.
-No constant tag is included.
-However, constant tags are not used so often.
+Пример программы `exp.c` и ui-файла `exp.ui` находится в каталоге [`src/expression`](expression).
+Ui-файл включает теги lookup, closure и bind.
+Тег constant не включён.
+Однако теги constant не используются так часто.
 
 ![exp.c](../image/exp.png){width=10.3cm height=7.6cm}
 
-If you resize the window, the size is shown at the title of the window.
-If you type characters in the entry, the same characters appear on the label.
+Если вы изменяете размер окна, размер показывается в заголовке окна.
+Если вы вводите символы в поле ввода, те же символы появляются на метке.
 
-The ui file is as follows.
+Ui-файл следующий.
 
 @@@include
 expression/exp.ui
 @@@
 
-- 4-9: The title property of the main window is bound to a closure expression.
-Its callback function `set_title` is defined in the C source file.
-It returns a string because the type attribute of the tag is "gchararray".
-Two parameters are given to the function.
-They are width and height of the window.
-Lookup tags don't have contents, so 'this' object is used to look up the properties.
-The 'this' object is `win`, which is the target of the binding (`win` includes the binding tag).
-- 17-21: The "label" property of the GtkLabel instance is bound to the "text" property of `buffer`,
-which is the buffer of GtkEntry defined in line 25.
-If a user types characters in the entry, the same characters appear on the label.
+- 4-9: Свойство title главного окна привязано к выражению замыкания.
+Его функция обратного вызова `set_title` определена в исходном файле C.
+Она возвращает строку, потому что атрибут type тега — "gchararray".
+Функции передаются два параметра.
+Это ширина и высота окна.
+Теги lookup не имеют содержимого, поэтому объект 'this' используется для поиска свойств.
+Объект 'this' — это `win`, который является целью привязки (`win` включает тег binding).
+- 17-21: Свойство "label" экземпляра GtkLabel привязано к свойству "text" `buffer`,
+который является буфером GtkEntry, определённым в строке 25.
+Если пользователь вводит символы в поле ввода, те же символы появляются на метке.
 
-The C source file is as follows.
+Исходный файл C следующий.
 
 @@@include
 expression/exp.c
 @@@
 
-- 4-6: The callback function.
-It returns a string (w)x(h), where the w and h are the width and height of the window.
-String duplication is necessary.
+- 4-6: Функция обратного вызова.
+Она возвращает строку (w)x(h), где w и h — ширина и высота окна.
+Необходимо дублирование строки.
 
-The C source file is very simple because almost everything is done in the ui file.
+Исходный файл C очень прост, потому что почти всё сделано в ui-файле.
 
-## Conversion between GValues
+## Преобразование между GValues
 
-If you bind different type properties, type conversion is automatically done.
-Suppose a label property (string) is bound to default-width property (int).
+Если вы привязываете свойства разных типов, преобразование типов выполняется автоматически.
+Предположим, свойство label (строка) привязано к свойству default-width (int).
 
 @@@if gfm
 ~~~xml
@@ -590,17 +590,17 @@ Suppose a label property (string) is bound to default-width property (int).
 ~~~
 @@@end
 
-The expression created by the lookup tag returns a int type GValue.
-On the other hand "label" property holds a string type GValue.
-When a GValue is copied to another GValue, the type is automatically converted if possible.
-If the current width is 100, an int `100` is converted to a string `"100"`.
+Выражение, созданное тегом lookup, возвращает GValue типа int.
+С другой стороны, свойство "label" содержит GValue типа строки.
+Когда GValue копируется в другой GValue, тип автоматически преобразуется, если это возможно.
+Если текущая ширина 100, int `100` преобразуется в строку `"100"`.
 
-If you use `g_object_get` and `g_object_set` to copy properties, the value is automatically converted. 
+Если вы используете `g_object_get` и `g_object_set` для копирования свойств, значение автоматически преобразуется. 
 
 ## Meson.build
 
-The source files are in `src/expression` directory.
-You can build all the files at once.
+Исходные файлы находятся в каталоге `src/expression`.
+Вы можете собрать все файлы сразу.
 
 ~~~
 $ cd src/expression
@@ -608,10 +608,10 @@ $ meson setup _build
 $ ninja -C _build
 ~~~
 
-For example, if you want to run "exp", which is the executable file from "exp.c", type `_build/exp`.
-You can run other programs as well.
+Например, если вы хотите запустить "exp", который является исполняемым файлом из "exp.c", введите `_build/exp`.
+Вы также можете запустить другие программы.
 
-The file `meson.build` is as follows.
+Файл `meson.build` следующий.
 
 @@@include
 expression/meson.build

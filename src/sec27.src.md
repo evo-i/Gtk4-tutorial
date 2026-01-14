@@ -1,25 +1,25 @@
-# Tiny turtle graphics interpreter
+# Миниатюрный интерпретатор графики черепашки
 
-A program `turtle` is an example with the combination of TfeTextView and GtkDrawingArea objects.
-It is a very small interpreter but you can draw fractal curves with it.
-The following diagram is a Koch curve, which is one of the famous fractal curves.
+Программа `turtle` является примером комбинации объектов TfeTextView и GtkDrawingArea.
+Это очень маленький интерпретатор, но с его помощью вы можете рисовать фрактальные кривые.
+На следующей диаграмме показана кривая Коха, которая является одной из известных фрактальных кривых.
 
 ![Koch curve](turtle/image/turtle_koch.png){width=8cm height=5.11cm}
 
-The following is a snow-crystal-shaped curve.
-It is composed of six Koch curves.
+Следующая кривая имеет форму снежного кристалла.
+Она состоит из шести кривых Коха.
 
 ![Snow](../image/turtle_snow.png){width=8cm height=5.11cm}
 
-This program uses flex and bison.
-Flex is a lexical analyzer.
-Bison is a parser generator.
-These two programs are similar to lex and yacc which are proprietary software developed in Bell Laboratory.
-However, flex and bison are open source software.
-This section describes them and they are not the topics about GTK 4.
-So, readers can skip this section.
+Эта программа использует flex и bison.
+Flex — это лексический анализатор.
+Bison — это генератор парсеров.
+Эти две программы похожи на lex и yacc, которые являются проприетарным программным обеспечением, разработанным в Bell Laboratory.
+Однако flex и bison являются программным обеспечением с открытым исходным кодом.
+Этот раздел описывает их, но они не являются темами о GTK 4.
+Поэтому читатели могут пропустить этот раздел.
 
-## How to use turtle
+## Как использовать turtle
 
 @@@if gfm
 The turtle document is [here](turtle/turtle_doc.src.md).
@@ -28,7 +28,7 @@ The turtle document is [here](https://toshiocp.github.io/Gtk4-tutorial/turtle_do
 @@@elif latex
 The turtle document is in the appendix.
 @@@end
-I'll show you a simple example.
+Я покажу вам простой пример.
 
 ~~~
 fc (1,0,0) # Foreground color is red, rgb = (1,0,0).
@@ -39,96 +39,96 @@ rp (4) {   # Repeat four times.
 }
 ~~~
 
-1. Compile and install `turtle` (See the documentation above).
-Then, run `turtle`.
-2. Type the program above in the editor (left part of the window).
-3. Click on the `Run` button, then a red square appears on the right part of the window.
-The side of the square is 100 pixels long.
+1. Скомпилируйте и установите `turtle` (см. документацию выше).
+Затем запустите `turtle`.
+2. Введите программу выше в редакторе (левая часть окна).
+3. Нажмите на кнопку `Run`, затем в правой части окна появится красный квадрат.
+Сторона квадрата имеет длину 100 пикселей.
 
-In the same way, you can draw other curves.
-The turtle document includes some fractal curves such as tree, snow and square-koch.
-The source codes are located at [src/turtle/example](turtle/example) directory.
-You can read these files into `turtle` editor by clicking on the `Open` button.
+Таким же образом вы можете рисовать другие кривые.
+Документация turtle включает некоторые фрактальные кривые, такие как дерево, снежинка и квадрат-Коха.
+Исходные коды находятся в каталоге [src/turtle/example](turtle/example).
+Вы можете загрузить эти файлы в редактор `turtle`, нажав на кнопку `Open`.
 
-## Combination of TfeTextView and GtkDrawingArea objects
+## Комбинация объектов TfeTextView и GtkDrawingArea
 
-Turtle uses TfeTextView and GtkDrawingArea.
+Turtle использует TfeTextView и GtkDrawingArea.
 
-1. A user inputs/reads a turtle program into the buffer in the TfeTextView instance.
-2. The user clicks on the "Run" button.
-3. The parser reads the program and generates tree-structured data.
-4. The interpriter reads the data and executes it step by step.
-And it draws shapes on a surface.
-The surface isn't the one in the GtkDrawingArea widget.
-5. The widget is added to the queue.
-It will be redrawn with the drawing function, which just copies the surface into the one in the GtkDrawingArea.
+1. Пользователь вводит/читает программу turtle в буфер экземпляра TfeTextView.
+2. Пользователь нажимает на кнопку "Run".
+3. Парсер читает программу и генерирует древовидные структурированные данные.
+4. Интерпретатор читает данные и выполняет их шаг за шагом.
+И он рисует фигуры на поверхности.
+Поверхность не является той, что в виджете GtkDrawingArea.
+5. Виджет добавляется в очередь.
+Он будет перерисован функцией рисования, которая просто копирует поверхность в ту, что в GtkDrawingArea.
 
 ![Parser, interpreter and drawing function](../image/turtle.png)
 
-The body of the interpreter is written with flex and bison.
-The codes are not thread safe.
-So the callback function `run_cb`, which is the handler of "clicked" signal on the `Run` button, prevents reentering.
+Тело интерпретатора написано с использованием flex и bison.
+Код не является потокобезопасным.
+Поэтому функция обратного вызова `run_cb`, которая является обработчиком сигнала "clicked" на кнопке `Run`, предотвращает повторный вход.
 
 @@@include
 turtle/turtleapplication.c run_cb resize_cb
 @@@
 
-- 8, 13-15: The static value `busy` holds a status of the interpreter.
-If it is `TRUE`, the interpreter is running and it is not possible to call the interpreter because it's not a re-entrant program.
-If it is `FALSE`, it is safe to call the interpreter and set the variable `busy` to TRUE.
-- 16-17: Gets the contents of `tb`.
-- 18-30: The variable `surface` is a static variable.
-It points to a `cairo_surface_t` instance.
-It is created when the GtkDrawingArea instance is realized and whenever it is resized.
-Therefore, `surface` isn't NULL usually.
-But if it is NULL, the interpreter won't be called.
-- 18-24: If `surface` points a surface instance and the string `contents` isn't empty, it calls the interpreter.
-  - Initializes the lexical analyzer.
-  - Calls the parser. The parser analyzes the program codes syntactically and generates a tree structured data.
-  - If the parser successfully parsed, it calls the runtime routine 'run'.
-  - Finalizes the lexical analyzer.
-- 25-29: If `surface` points a surface instance and the string `contents` is empty, it clears the surface `surface`.
-- 31: Frees `contents`.
-- 32: Adds the drawing area widget to the queue to draw.
-- 33: Sets the variable `busy` to FALSE.
-- 36-43: The "resized" signal handler.
-If the `surface` isn't NULL, it is destroyed.
-A new surface is created.
-Its size is the same as the surface of the GtkDrawingArea instance.
-It calls the callback function `run_cb` to redraw the shape on the drawing area.
+- 8, 13-15: Статическое значение `busy` содержит статус интерпретатора.
+Если оно `TRUE`, интерпретатор работает и невозможно вызвать интерпретатор, потому что это не реентерабельная программа.
+Если оно `FALSE`, безопасно вызвать интерпретатор и установить переменную `busy` в TRUE.
+- 16-17: Получает содержимое `tb`.
+- 18-30: Переменная `surface` является статической переменной.
+Она указывает на экземпляр `cairo_surface_t`.
+Она создается, когда экземпляр GtkDrawingArea реализован, и когда он изменяет размер.
+Поэтому `surface` обычно не NULL.
+Но если она NULL, интерпретатор не будет вызван.
+- 18-24: Если `surface` указывает на экземпляр поверхности и строка `contents` не пустая, вызывается интерпретатор.
+  - Инициализирует лексический анализатор.
+  - Вызывает парсер. Парсер анализирует код программы синтаксически и генерирует древовидные структурированные данные.
+  - Если парсер успешно проанализировал, он вызывает процедуру выполнения 'run'.
+  - Завершает лексический анализатор.
+- 25-29: Если `surface` указывает на экземпляр поверхности и строка `contents` пустая, она очищает поверхность `surface`.
+- 31: Освобождает `contents`.
+- 32: Добавляет виджет области рисования в очередь для рисования.
+- 33: Устанавливает переменную `busy` в FALSE.
+- 36-43: Обработчик сигнала "resized".
+Если `surface` не NULL, она уничтожается.
+Создается новая поверхность.
+Ее размер такой же, как у поверхности экземпляра GtkDrawingArea.
+Вызывается функция обратного вызова `run_cb` для перерисовки фигуры в области рисования.
 
-If the open button is clicked and a file is read, the filename will be shown on the header bar.
+Если нажата кнопка открытия и файл прочитан, имя файла будет показано в заголовке.
 
 @@@include
 turtle/turtleapplication.c show_filename
 @@@
 
-This function is the callback function of the "change-file" signal on the TfeTextView instance.
-It calls `tfe_text_view_get_file`.
+Эта функция является функцией обратного вызова для сигнала "change-file" на экземпляре TfeTextView.
+Она вызывает `tfe_text_view_get_file`.
 
-- If the return value is a GFile instance, the title will be "Turtle (the filename)".
-- Otherwise, the title will be "Turtle".
+- Если возвращаемое значение является экземпляром GFile, заголовок будет "Turtle (имя файла)".
+- В противном случае заголовок будет "Turtle".
 
-Other part of `turtleapplication.c` is very simple and similar to the codes in the former applications.
-The codes of `turtleapplication.c` is in the [turtle directory](turtle).
+Другая часть `turtleapplication.c` очень проста и похожа на код в предыдущих приложениях.
+Код `turtleapplication.c` находится в [каталоге turtle](turtle).
 
-## What does the interpreter do?
+## Что делает интерпретатор?
 
-Suppose that the turtle application runs with the following program.
+Предположим, что приложение turtle работает со следующей программой.
 
 ~~~
 distance = 100
 fd distance*2
 ~~~
 
-The application recognizes the program and works as follows.
+Приложение распознает программу и работает следующим образом.
 
-- Generally, a program consists of tokens.
-Tokens are "distance", "=", "100", "fd", "*" and "2" in the above example..
-- The parser calls a function `yylex` to read a token in the source file.
-`yylex` returns a code which is called "token kind" and sets a global variable `yylval` to a value, which is called a semantic value.
-The type of `yylval` is union. The type of `yylval.ID` and `yylval.NUM` are string and double respectively.
-There are seven tokens in the program so `yylex` is called seven times.
+- Обычно программа состоит из токенов.
+Токены в приведенном выше примере — это "distance", "=", "100", "fd", "*" и "2".
+- Парсер вызывает функцию `yylex` для чтения токена в исходном файле.
+`yylex` возвращает код, который называется "тип токена", и устанавливает глобальную переменную `yylval` в значение, которое называется семантическим значением.
+Тип `yylval` — объединение. Типы `yylval.ID` и `yylval.NUM` — строка и double соответственно.
+В программе семь токенов, поэтому `yylex` вызывается семь раз.
 
 |   |token kind|yylval.ID|yylval.NUM|
 |:-:|:--------:|:-------:|:--------:|
@@ -140,115 +140,115 @@ There are seven tokens in the program so `yylex` is called seven times.
 | 6 |    *     |         |          |
 | 7 |   NUM    |         |    2     |
 
-- The function `yylex` returns a token kind every time, but it doesn't set `yylval.ID` or `yylval.NUM` every time.
-It is because keywords (`FD`) and symbols (`=` and `*`) don't have any semantic values.
-The function `yylex` is called lexical analyzer or scanner.
-- The application `turtle` makes a tree structured data.
-This part of `turtle` is called parser.
+- Функция `yylex` возвращает тип токена каждый раз, но она не устанавливает `yylval.ID` или `yylval.NUM` каждый раз.
+Это потому, что ключевые слова (`FD`) и символы (`=` и `*`) не имеют семантических значений.
+Функция `yylex` называется лексическим анализатором или сканером.
+- Приложение `turtle` создает древовидные структурированные данные.
+Эта часть `turtle` называется парсером.
 
 ![turtle parser tree](../image/turtle_parser_tree.png){width=12cm height=5.34cm}
 
-- `Turtle` analyzes the tree and executes it.
-This part of `turtle` is called runtime routine or interpreter.
-The tree consists of rectangles and line segments between the rectangles.
-The rectangles are called nodes.
-For example, N\_PROGRAM, N\_ASSIGN, N\_FD and N\_MUL are nodes.
-  1. Goes down from N\_PROGRAM to N\_ASSIGN.
-  2. N_ASSIGN node has two children, ID and NUM.
-This node comes from "distance = 100" which is "ID = NUM" syntactically.
-First, `turtle` checks if the first child is ID.
-If it's ID, then `turtle` looks for the variable in the variable table.
-If it doesn't exist, it registers the ID (`distance`) to the table.
-Then go back to the N\_ASSIGN node.
-  3. `Turtle` calculates the second child.
-In this case its a number 100.
-Saves 100 to the variable table at the `distance` record.
-  4. `Turtle` goes back to N\_PROGRAM then go to the next node N\_FD.
-It has only one child.
-Goes down to the child N\_MUL.
-  5. The first child is ID (distance).
-Searches the variable table for the variable `distance` and gets the value 100.
-The second child is a number 2.
-Multiplies 100 by 2 and gets 200.
-Then `turtle` goes back to N_FD.
-  6. Now `turtle` knows the distance is 200.
-It moves the cursor forward by 200 pixels.
-The segment is drawn on the `surface`.
-  8. There are no node follows.
-Runtime routine returns to the function `run_cb`.
+- `Turtle` анализирует дерево и выполняет его.
+Эта часть `turtle` называется процедурой выполнения или интерпретатором.
+Дерево состоит из прямоугольников и линейных сегментов между прямоугольниками.
+Прямоугольники называются узлами.
+Например, N\_PROGRAM, N\_ASSIGN, N\_FD и N\_MUL — это узлы.
+  1. Спускается от N\_PROGRAM к N\_ASSIGN.
+  2. Узел N_ASSIGN имеет двух потомков, ID и NUM.
+Этот узел происходит от "distance = 100", что синтаксически является "ID = NUM".
+Сначала `turtle` проверяет, является ли первый потомок ID.
+Если это ID, тогда `turtle` ищет переменную в таблице переменных.
+Если она не существует, он регистрирует ID (`distance`) в таблице.
+Затем возвращается к узлу N\_ASSIGN.
+  3. `Turtle` вычисляет второго потомка.
+В этом случае это число 100.
+Сохраняет 100 в таблице переменных в записи `distance`.
+  4. `Turtle` возвращается к N\_PROGRAM, затем переходит к следующему узлу N\_FD.
+У него только один потомок.
+Спускается к потомку N\_MUL.
+  5. Первый потомок — ID (distance).
+Ищет переменную `distance` в таблице переменных и получает значение 100.
+Второй потомок — число 2.
+Умножает 100 на 2 и получает 200.
+Затем `turtle` возвращается к N_FD.
+  6. Теперь `turtle` знает, что расстояние равно 200.
+Он перемещает курсор вперед на 200 пикселей.
+Сегмент рисуется на `surface`.
+  8. Больше нет узлов для обработки.
+Процедура выполнения возвращается к функции `run_cb`.
 
-- The function `run_cb` calls `gtk_widget_queue_draw` and put the GtkDrawingArea widget to the queue.
-- The system redraws the widget.
-At that time drawing function `draw_func` is called.
-The function copies the `surface` to the surface in the GtkDrawingArea.
+- Функция `run_cb` вызывает `gtk_widget_queue_draw` и помещает виджет GtkDrawingArea в очередь.
+- Система перерисовывает виджет.
+В это время вызывается функция рисования `draw_func`.
+Функция копирует `surface` на поверхность в GtkDrawingArea.
 
-Actual turtle program is more complicated than the example above.
-However, what turtle does is basically the same.
-Interpretation consists of three parts.
+Фактическая программа turtle более сложна, чем приведенный выше пример.
+Однако то, что делает turtle, в основном то же самое.
+Интерпретация состоит из трех частей.
 
-- Lexical analysis
-- Syntax Parsing and tree generation
-- Interpretation and execution of the tree.
+- Лексический анализ
+- Синтаксический разбор и генерация дерева
+- Интерпретация и выполнение дерева.
 
-## Compilation flow
+## Поток компиляции
 
-The source files are:
+Исходные файлы:
 
-- flex source file => `turtle.lex`
-- bison source file => `turtle.y`
-- C header file => `turtle_lex.h`
-- C source file => `turtleapplication.c`
-- other files => `turtle.ui`, `turtle.gresources.xml` and `meson.build`
+- исходный файл flex => `turtle.lex`
+- исходный файл bison => `turtle.y`
+- заголовочный файл C => `turtle_lex.h`
+- исходный файл C => `turtleapplication.c`
+- другие файлы => `turtle.ui`, `turtle.gresources.xml` и `meson.build`
 
-The compilation process is a bit complicated.
+Процесс компиляции немного сложен.
 
-1. glib-compile-resources compiles `turtle.ui` to `resources.c` according to `turtle.gresource.xml`.
-It also generates `resources.h`.
-2. bison compiles `turtle.y` to `turtle_parser.c` and generates `turtle_parser.h`
-3. flex compiles `turtle.lex` to `turtle_lex.c`.
-4. gcc compiles `application.c`, `resources.c`, `turtle_parser.c` and `turtle_lex.c` with `turtle_lex.h`, `resources.h` and `turtle_parser.h`.
-It generates an executable file `turtle`.
+1. glib-compile-resources компилирует `turtle.ui` в `resources.c` согласно `turtle.gresource.xml`.
+Также генерирует `resources.h`.
+2. bison компилирует `turtle.y` в `turtle_parser.c` и генерирует `turtle_parser.h`
+3. flex компилирует `turtle.lex` в `turtle_lex.c`.
+4. gcc компилирует `application.c`, `resources.c`, `turtle_parser.c` и `turtle_lex.c` с `turtle_lex.h`, `resources.h` и `turtle_parser.h`.
+Генерирует исполняемый файл `turtle`.
 
 ![compile process](../image/turtle_compile_process.png){width=12cm height=9cm}
 
-Meson controls the process.
-The instruction is described in `meson.build`.
+Meson управляет процессом.
+Инструкция описана в `meson.build`.
 
 @@@include
 turtle/meson.build
 @@@
 
-- 1: The project name is "turtle" and the program language is C.
-- 3: Gets C compiler.
-It is usually `gcc` in linux.
-- 4: Gets math library.
-This program uses trigonometric functions.
-They are defined in the math library, but the library is optional.
-So, it is necessary to include it by `#include <math.h>` and also link the library with the linker.
-- 6: Gets gtk4 library.
-- 8: Gets gnome module.See [Meson build system website -- GNOME module](https://mesonbuild.com/Gnome-module.html#gnome-module) for further information.
-- 9: Compiles ui file to C source file according to the XML file `turtle.gresource.xml`.
-- 11: Gets flex.
-- 12: Gets bison.
-- 13: Compiles `turtle.y` to `turtle_parser.c` and `turtle_parser.h` by bison.
-The function `custom_target` creates a custom top level target.
-See [Meson build system website -- custom target](https://mesonbuild.com/Reference-manual_functions.html#custom_target) for further information.
-- 14: Compiles `turtle.lex` to `turtle_lex.c` by flex.
-- 16: The variable `sourcefiles` is a file object created with the C source files.
-- 18: Compiles C source files including generated files by glib-compile-resources, bison and flex.
-The argument `turtleparser[1]` refers to `tirtle_parser.h` which is the second output in the line 13.
+- 1: Имя проекта — "turtle", а язык программирования — C.
+- 3: Получает компилятор C.
+Обычно это `gcc` в linux.
+- 4: Получает математическую библиотеку.
+Эта программа использует тригонометрические функции.
+Они определены в математической библиотеке, но библиотека опциональна.
+Поэтому необходимо включить ее с помощью `#include <math.h>` и также связать библиотеку с компоновщиком.
+- 6: Получает библиотеку gtk4.
+- 8: Получает модуль gnome. Для дополнительной информации см. [Meson build system website -- GNOME module](https://mesonbuild.com/Gnome-module.html#gnome-module).
+- 9: Компилирует ui файл в исходный файл C согласно XML файлу `turtle.gresource.xml`.
+- 11: Получает flex.
+- 12: Получает bison.
+- 13: Компилирует `turtle.y` в `turtle_parser.c` и `turtle_parser.h` с помощью bison.
+Функция `custom_target` создает пользовательскую цель верхнего уровня.
+Для дополнительной информации см. [Meson build system website -- custom target](https://mesonbuild.com/Reference-manual_functions.html#custom_target).
+- 14: Компилирует `turtle.lex` в `turtle_lex.c` с помощью flex.
+- 16: Переменная `sourcefiles` является файловым объектом, созданным с исходными файлами C.
+- 18: Компилирует исходные файлы C, включая сгенерированные файлы glib-compile-resources, bison и flex.
+Аргумент `turtleparser[1]` ссылается на `tirtle_parser.h`, который является вторым выходом в строке 13.
 
 ## Turtle.lex
 
-### What does flex do?
+### Что делает flex?
 
-Flex creates lexical analyzer from flex source file.
-Flex source file is a text file.
-Its syntactic rule will be explained later.
-Generated lexical analyzer is a C source file.
-It is also called scanner.
-It reads a text file, which is a source file of a program language, and gets variable names, numbers and symbols.
-Suppose here is a turtle source file.
+Flex создает лексический анализатор из исходного файла flex.
+Исходный файл flex — это текстовый файл.
+Его синтаксические правила будут объяснены позже.
+Сгенерированный лексический анализатор — это исходный файл C.
+Он также называется сканером.
+Он читает текстовый файл, который является исходным файлом языка программирования, и получает имена переменных, числа и символы.
+Предположим, вот исходный файл turtle.
 
 ~~~
 fc (1,0,0) # Foreground color is red, rgb = (1,0,0).
@@ -259,134 +259,134 @@ fd distance    # Go forward by distance (100) pixels.
 tr angle     # Turn right by angle (90) degrees.
 ~~~
 
-The content of the text file is separated into `fc`, `(`, `1` and so on.
-The words `fc`, `pd`, `distance`, `angle`, `tr`, `1`, `0`, `100` and `90` are called tokens.
-The characters '`(`' (left parenthesis), '`,`' (comma), '`)`' (right parenthesis) and '`=`' (equal sign) are called symbols.
-( Sometimes those symbols called tokens, too.)
+Содержимое текстового файла разделяется на `fc`, `(`, `1` и так далее.
+Слова `fc`, `pd`, `distance`, `angle`, `tr`, `1`, `0`, `100` и `90` называются токенами.
+Символы '`(`' (левая скобка), '`,`' (запятая), '`)`' (правая скобка) и '`=`' (знак равенства) называются символами.
+(Иногда эти символы также называют токенами.)
 
-Flex reads `turtle.lex` and generates the C source file of a scanner.
-The file `turtle.lex` specifies tokens, symbols and the behavior which corresponds to each token or symbol.
-Turtle.lex isn't a big program.
+Flex читает `turtle.lex` и генерирует исходный файл C для сканера.
+Файл `turtle.lex` определяет токены, символы и поведение, которое соответствует каждому токену или символу.
+Turtle.lex — это не большая программа.
 
 @@@include
 turtle/turtle.lex
 @@@
 
-The file consists of three sections which are separated by "%%" (line 19 and 59).
-They are definitions, rules and user code sections.
+Файл состоит из трех разделов, которые разделены "%%" (строки 19 и 59).
+Это разделы определений, правил и пользовательского кода.
 
-### Definitions section
+### Раздел определений
 
-- 1-12: Lines between "%top{" and "}" are C source codes.
-They will be copied to the top of the generated C source file.
-- 2-3: This program uses two functions `strlen` (l.65) and `atof` (l.40).
-They are defined in `string.h` and `stdlib.h` respectively.
-These two header files are included here.
-- 4: This program uses some GLib functions and structures like `g_strdup` and `GSList`.
-GLib header file is `glib.h` and it is included here.
-- 5: The header file "turtle_parser.h" is generated from "turtle.y" by bison.
-It defines some constants and functions like `PU` and `yylloc`.
-The header file is included here.
-- 7-9: The current input position is pointed by `nline` and `ncolumn`.
-The function `get_location` is declared here so that it can be called before the function is defined (l.61-65).
-- 12: GSlist is a structure for a singly-linked list.
-The variable `list` is defined in `turtle.y` so its class is `extern`.
-It is the start point of the list.
-The list is used to keep allocated memories.
-- 15: This option `%option noyywrap` must be specified when you have only single source file to the scanner. Refer to "9 The Generated Scanner" in the flex documentation in your distribution.
-(The documentation is not on the internet.)
-- 17-18: `REAL_NUMBER` and `IDENTIFIER` are names.
-A name begins with a letter or an underscore followed by zero or more letters, digits, underscores (`_`) or dashes (`-`).
-They are followed by regular expressions which are their definitions.
-They will be used in rules section and will expand to the definition.
+- 1-12: Строки между "%top{" и "}" являются исходным кодом C.
+Они будут скопированы в начало сгенерированного исходного файла C.
+- 2-3: Эта программа использует две функции `strlen` (с.65) и `atof` (с.40).
+Они определены в `string.h` и `stdlib.h` соответственно.
+Эти два заголовочных файла включены здесь.
+- 4: Эта программа использует некоторые функции и структуры GLib, такие как `g_strdup` и `GSList`.
+Заголовочный файл GLib — это `glib.h`, и он включен здесь.
+- 5: Заголовочный файл "turtle_parser.h" генерируется из "turtle.y" с помощью bison.
+Он определяет некоторые константы и функции, такие как `PU` и `yylloc`.
+Заголовочный файл включен здесь.
+- 7-9: Текущая позиция ввода указывается `nline` и `ncolumn`.
+Функция `get_location` объявлена здесь, чтобы ее можно было вызвать до того, как функция определена (с.61-65).
+- 12: GSlist — это структура для односвязного списка.
+Переменная `list` определена в `turtle.y`, поэтому ее класс — `extern`.
+Это начальная точка списка.
+Список используется для хранения выделенной памяти.
+- 15: Эта опция `%option noyywrap` должна быть указана, когда у вас есть только один исходный файл для сканера. Обратитесь к "9 The Generated Scanner" в документации flex в вашем дистрибутиве.
+(Документация не в Интернете.)
+- 17-18: `REAL_NUMBER` и `IDENTIFIER` — это имена.
+Имя начинается с буквы или подчеркивания, за которым следуют ноль или более букв, цифр, подчеркиваний (`_`) или тире (`-`).
+За ними следуют регулярные выражения, которые являются их определениями.
+Они будут использоваться в разделе правил и расширяться до определения.
 
-### Rules section
+### Раздел правил
 
-This section is the most important part.
-Rules consist of patterns and actions.
-The patterns are regular expressions or names surrounded by braces.
-The names must be defined in the definitions section.
-The definition of the regular expression is written in the flex documentation.
+Этот раздел является наиболее важной частью.
+Правила состоят из шаблонов и действий.
+Шаблоны — это регулярные выражения или имена, заключенные в фигурные скобки.
+Имена должны быть определены в разделе определений.
+Определение регулярного выражения написано в документации flex.
 
-For example, line 40 is a rule.
+Например, строка 40 является правилом.
 
-- `{REAL_NUMBER}` is a pattern
-- `get_location (yytext); yylval.NUM = atof (yytext); return NUM;` is an action.
+- `{REAL_NUMBER}` — это шаблон
+- `get_location (yytext); yylval.NUM = atof (yytext); return NUM;` — это действие.
 
-`{REAL_NUMBER}` is defined in the line 17, so it expands to `(0|[1-9][0-9]*)(\.[0-9]+)?`.
-This regular expression matches numbers like `0`, `12` and `1.5`.
-If an input is a number, it matches the pattern in line 40.
-Then the matched text is assigned to `yytext` and corresponding action is executed.
-A function `get_location` changes the location variables to the position at the text.
-It assigns `atof (yytext)`, which is double sized number converted from `yytext`, to `yylval.NUM` and return `NUM`.
-`NUM` is a token kind and it represents (double type) numbers.
- It is defined in `turtle.y`.
+`{REAL_NUMBER}` определен в строке 17, поэтому он расширяется до `(0|[1-9][0-9]*)(\.[0-9]+)?`.
+Это регулярное выражение соответствует числам, таким как `0`, `12` и `1.5`.
+Если ввод является числом, он соответствует шаблону в строке 40.
+Затем совпавший текст присваивается `yytext`, и выполняется соответствующее действие.
+Функция `get_location` изменяет переменные местоположения на позицию в тексте.
+Она присваивает `atof (yytext)`, которое является числом типа double, преобразованным из `yytext`, к `yylval.NUM` и возвращает `NUM`.
+`NUM` — это тип токена, и он представляет числа (типа double).
+Он определен в `turtle.y`.
 
-The scanner generated by flex has `yylex` function.
-If `yylex` is called and the input is "123.4", then it works as follows.
+Сканер, сгенерированный flex, имеет функцию `yylex`.
+Если `yylex` вызывается и вводом является "123.4", то он работает следующим образом.
 
-1. A string "123.4" matches `{REAL_NUMBER}`.
-2. Updates the location variable `ncolumn`. The structure `yylloc` is set by `get_location`.
-3. The function `atof` converts the string "123.4" to double type number 123.4.
-4. It is assigned to `yylval.NUM`.
-5. `yylex` returns `NUM` to the caller.
+1. Строка "123.4" соответствует `{REAL_NUMBER}`.
+2. Обновляет переменную местоположения `ncolumn`. Структура `yylloc` устанавливается `get_location`.
+3. Функция `atof` преобразует строку "123.4" в число типа double 123.4.
+4. Оно присваивается `yylval.NUM`.
+5. `yylex` возвращает `NUM` вызывающему.
 
-Then the caller knows the input is a number (`NUM`), and its value is 123.4.
+Затем вызывающий знает, что ввод является числом (`NUM`), и его значение равно 123.4.
 
-- 20-58: Rules section.
-- 21: The symbol `.` (dot) matches any character except newline.
-Therefore, a comment begins `#` followed by any characters except newline.
-No action happens.
-That means that comments are ignored.
-- 22: White space just increases the variable `ncolumn` by one.
-- 23: Tab is assumed to be equal to eight spaces.
-- 24: New line increases a variable `nline` by one and resets `ncolumn`.
-- 26-38: Keywords updates the location variables `ncolumn` and `yylloc`, and returns the token kinds of the keywords.
-- 40: Real number constant.
-The action converts the text`yytext` to a double type number, puts it into `yylval.NUM` and returns `NUM`.
-- 42: `IDENTIFIER` is defined in line 18.
-The identifier is a name of variable or procedure.
-It begins with a letter and followed by letters or digits.
-The location variables are updated and the name of the identifier is assigned to `yylval.ID`.
-The memory of the name is allocated by the function `g_strdup`.
-The memory is registered to the list (GSlist type list).
-The memory will be freed after the runtime routine finishes.
-A token kind `ID` is returned.
-- 46-57: Symbols update the location variable and return the token kinds.
-The token kind is the same as the symbol itself.
-- 58: If the input doesn't match the patterns, then it is an error.
-A special token kind `YYUNDEF` is returned.
+- 20-58: Раздел правил.
+- 21: Символ `.` (точка) соответствует любому символу, кроме новой строки.
+Поэтому комментарий начинается с `#`, за которым следуют любые символы, кроме новой строки.
+Никакого действия не происходит.
+Это означает, что комментарии игнорируются.
+- 22: Пробел просто увеличивает переменную `ncolumn` на единицу.
+- 23: Предполагается, что табуляция равна восьми пробелам.
+- 24: Новая строка увеличивает переменную `nline` на единицу и сбрасывает `ncolumn`.
+- 26-38: Ключевые слова обновляют переменные местоположения `ncolumn` и `yylloc` и возвращают типы токенов ключевых слов.
+- 40: Константа вещественного числа.
+Действие преобразует текст `yytext` в число типа double, помещает его в `yylval.NUM` и возвращает `NUM`.
+- 42: `IDENTIFIER` определен в строке 18.
+Идентификатор — это имя переменной или процедуры.
+Он начинается с буквы и за ним следуют буквы или цифры.
+Переменные местоположения обновляются, и имя идентификатора присваивается `yylval.ID`.
+Память для имени выделяется функцией `g_strdup`.
+Память регистрируется в списке (список типа GSlist).
+Память будет освобождена после завершения процедуры выполнения.
+Возвращается тип токена `ID`.
+- 46-57: Символы обновляют переменную местоположения и возвращают типы токенов.
+Тип токена совпадает с самим символом.
+- 58: Если ввод не соответствует шаблонам, то это ошибка.
+Возвращается специальный тип токена `YYUNDEF`.
 
-### User code section
+### Раздел пользовательского кода
 
-This section is just copied to C source file.
+Этот раздел просто копируется в исходный файл C.
 
-- 61-66: A function `get_location`.
-The location of the input is recorded to `nline` and `ncolumn`.
-A variable `yylloc` is referred by the parser.
-It is a C structure and has four members, `first_line`, `first_column`, `last_line` and `last_column`.
-They point the start and end of the current input text.
-- 68: `YY_BUFFER_STATE` is a pointer points the input buffer.
-Flex makes the definition of `YY_BUFFER_STATE` in the C file (scanner source file `turtle_lex.c`).
-See your flex document, section 11 Multiple Input Buffers, for further information.
-- 70-73: A function `init_flex` is called by `run_cb` which is a "clicked" signal handler on the `Run` button.
-It has one string type parameter.
-The caller assigns it with the content of the GtkTextBuffer instance.
-A function `yy_scan_string` sets the input buffer for the scanner.
-- 75-78: A function `finalize_flex` is called after runtime routine finishes.
-It deletes the input buffer.
+- 61-66: Функция `get_location`.
+Местоположение ввода записывается в `nline` и `ncolumn`.
+Переменная `yylloc` используется парсером.
+Это структура C, имеющая четыре члена: `first_line`, `first_column`, `last_line` и `last_column`.
+Они указывают начало и конец текущего входного текста.
+- 68: `YY_BUFFER_STATE` — это указатель, указывающий на входной буфер.
+Flex создает определение `YY_BUFFER_STATE` в файле C (исходный файл сканера `turtle_lex.c`).
+Для дополнительной информации см. вашу документацию flex, раздел 11 Multiple Input Buffers.
+- 70-73: Функция `init_flex` вызывается `run_cb`, который является обработчиком сигнала "clicked" на кнопке `Run`.
+Она имеет один параметр типа строка.
+Вызывающий присваивает ему содержимое экземпляра GtkTextBuffer.
+Функция `yy_scan_string` устанавливает входной буфер для сканера.
+- 75-78: Функция `finalize_flex` вызывается после завершения процедуры выполнения.
+Она удаляет входной буфер.
 
 ## Turtle.y
 
-Turtle.y has more than 800 lines so it is difficult to explain all the source code.
-So I will explain the key points and leave out other less important parts.
+Turtle.y имеет более 800 строк, поэтому трудно объяснить весь исходный код.
+Поэтому я объясню ключевые моменты и опущу другие менее важные части.
 
-### What does bison do?
+### Что делает bison?
 
-Bison creates C source file of a parser from a bison source file.
-The bison source file is a text file.
-A parser analyzes a program source code according to its grammar.
-Suppose here is a turtle source file.
+Bison создает исходный файл C парсера из исходного файла bison.
+Исходный файл bison — это текстовый файл.
+Парсер анализирует исходный код программы в соответствии с его грамматикой.
+Предположим, вот исходный файл turtle.
 
 ~~~
 fc (1,0,0) # Foreground color is red, rgb = (1,0,0).
@@ -397,9 +397,9 @@ fd distance    # Go forward by distance (100) pixels.
 tr angle     # Turn right by angle (90) degrees.
 ~~~
 
-The parser calls `yylex` to get a token.
-The token consists of its type (token kind) and value (semantic value).
-So, the parser gets items in the following table whenever it calls `yylex`.
+Парсер вызывает `yylex` для получения токена.
+Токен состоит из его типа (тип токена) и значения (семантическое значение).
+Итак, парсер получает элементы в следующей таблице при каждом вызове `yylex`.
 
 |   |token kind|yylval.ID|yylval.NUM|
 |:-:|:--------:|:-------:|:--------:|
@@ -423,39 +423,39 @@ So, the parser gets items in the following table whenever it calls `yylex`.
 |18 |    TR    |         |          |
 |19 |    ID    |  angle  |          |
 
-Bison source code specifies the grammar rules  of turtle language.
-For example, `fc (1,0,0)` is called primary procedure.
-A procedure is like a void type C function.
-It doesn't return any values.
-Programmers can define their own procedures.
-On the other hand, `fc` is a built-in procedure.
-Such procedures are called primary procedures.
-It is described in bison source code like:
+Исходный код bison определяет грамматические правила языка turtle.
+Например, `fc (1,0,0)` называется первичной процедурой.
+Процедура похожа на функцию C типа void.
+Она не возвращает никаких значений.
+Программисты могут определять свои собственные процедуры.
+С другой стороны, `fc` — это встроенная процедура.
+Такие процедуры называются первичными процедурами.
+Это описано в исходном коде bison следующим образом:
 
 ~~~
 primary_procedure: FC '(' expression ',' expression ',' expression ')';
 expression: ID | NUM;
 ~~~
 
-This means:
+Это означает:
 
-- Primary procedure is FC followed by '(', expression, ',', expression, ',', expression and ')'.
-- expression is ID or NUM.
+- Первичная процедура — это FC, за которым следуют '(', expression, ',', expression, ',', expression и ')'.
+- expression — это ID или NUM.
 
-The description above is called BNF (Backus-Naur form).
-Precisely speaking, it is not exactly the same as BNF.
-But the difference is small.
+Описание выше называется BNF (форма Бэкуса-Наура).
+Точнее говоря, это не совсем то же самое, что BNF.
+Но разница невелика.
 
-The first line is:
+Первая строка:
 
 ~~~
 FC '(' NUM ',' NUM ',' NUM ')';
 ~~~
 
-The parser analyzes the turtle source code and if the input matches the definition above, the parser recognizes it as a primary procedure.
+Парсер анализирует исходный код turtle, и если ввод соответствует приведенному выше определению, парсер распознает его как первичную процедуру.
 
-The grammar of turtle is described in the [Turtle manual](https://toshiocp.github.io/Gtk4-tutorial/turtle_doc.html).
-The following is an extract from the document.
+Грамматика turtle описана в [руководстве Turtle](https://toshiocp.github.io/Gtk4-tutorial/turtle_doc.html).
+Ниже приведена выдержка из документа.
 
 ~~~
 program:
@@ -521,28 +521,28 @@ expression:
 ;
 ~~~
 
-The grammar rule defines `program` first.
+Грамматическое правило определяет `program` первым.
 
-- program is a statement or a program followed by a statement.
+- program — это statement или program, за которым следует statement.
 
-The definition is recursive.
+Определение рекурсивно.
 
-- `statement` is program.
-- `statement statement` is `program statement`.
-Therefore, it is program.
-- `statement statement statement` is `program statement` because the first two statements are `program`.
-Therefore, it is program.
+- `statement` — это program.
+- `statement statement` — это `program statement`.
+Следовательно, это program.
+- `statement statement statement` — это `program statement`, потому что первые два statement являются `program`.
+Следовательно, это program.
 
-You can find that a sequence of statements is program as well.
+Вы можете обнаружить, что последовательность statements также является program.
 
-The symbols `program` and `statement` aren't tokens.
-They don't appear in the input.
-They are called non terminal symbols.
-On the other hand, tokens are called terminal symbols.
-The word "token" used here has wide meaning, it includes tokens and symbols which appear in the input.
-Non terminal symbols are often shortened to nterm.
+Символы `program` и `statement` не являются токенами.
+Они не появляются во вводе.
+Они называются нетерминальными символами.
+С другой стороны, токены называются терминальными символами.
+Слово "токен", используемое здесь, имеет широкое значение, оно включает токены и символы, которые появляются во вводе.
+Нетерминальные символы часто сокращаются до nterm.
 
-Let's analyze the program above as bison does.
+Давайте проанализируем программу выше так, как это делает bison.
 
 |   |token kind|yylval.ID|yylval.NUM|parse                               |S/R|
 |:-:|:--------:|:-------:|:--------:|:-----------------------------------|:-:|
@@ -591,21 +591,21 @@ Let's analyze the program above as bison does.
 |   |          |         |          |program statement                   | R |
 |   |          |         |          |program                             | R |
 
-The right most column shows shift/reduce.
-Shift is appending an input to the buffer.
-Reduce is substituting a higher nterm for the pattern in the buffer.
-For example, NUM is replaced by expression in the forth row.
-This substitution is "reduce".
+Самый правый столбец показывает сдвиг/свёртку.
+Сдвиг — это добавление ввода в буфер.
+Свёртка — это замена шаблона в буфере на нетерминал более высокого уровня.
+Например, NUM заменяется на expression в четвертой строке.
+Эта замена называется "свёртка".
 
-Bison repeats shift and reduction until the end of the input.
-If the result is reduced to `program`, the input is syntactically valid.
-Bison executes an action whenever reduction occurs.
-Actions build a tree.
-The tree is analyzed and executed by runtime routine later.
+Bison повторяет сдвиг и свёртку до конца ввода.
+Если результат сворачивается к `program`, ввод синтаксически корректен.
+Bison выполняет действие при каждой свёртке.
+Действия строят дерево.
+Дерево анализируется и выполняется процедурой выполнения позже.
 
-Bison source files are called bison grammar files.
-A bison grammar file consists of four sections, prologue, declarations, rules and epilogue.
-The format is as follows.
+Исходные файлы bison называются грамматическими файлами bison.
+Грамматический файл bison состоит из четырех разделов: пролог, объявления, правила и эпилог.
+Формат следующий:
 
 ~~~
 %{
@@ -618,11 +618,11 @@ rules
 epilogue
 ~~~
 
-### Prologue
+### Пролог
 
-Prologue section consists of C codes and the codes are copied to the parser implementation file.
-You can use `%code` directives to qualify the prologue and identifies the purpose explicitly.
-The following is an extract from `turtle.y`.
+Раздел пролога состоит из кода C, и код копируется в файл реализации парсера.
+Вы можете использовать директивы `%code` для уточнения пролога и явного определения цели.
+Ниже приведена выдержка из `turtle.y`.
 
 @@@if gfm
 ~~~bison
@@ -661,13 +661,13 @@ The following is an extract from `turtle.y`.
 }
 ~~~
 
-The directive `%code top` copies its contents to the top of the parser implementation file.
-It usually includes `#include` directives, declarations of functions and definitions of constants.
-A function `yyerror` reports a syntax error and is called by the parser.
-Node type identifies a node in the tree.
+Директива `%code top` копирует свое содержимое в начало файла реализации парсера.
+Обычно она включает директивы `#include`, объявления функций и определения констант.
+Функция `yyerror` сообщает о синтаксической ошибке и вызывается парсером.
+Тип узла идентифицирует узел в дереве.
 
-Another directive `%code requires` copies its contents to both the parser implementation file and header file.
-The header file is read by the scanner C source file and other files.
+Другая директива `%code requires` копирует свое содержимое как в файл реализации парсера, так и в заголовочный файл.
+Заголовочный файл читается исходным файлом C сканера и другими файлами.
 
 @@@if gfm
 ```bison
@@ -734,11 +734,11 @@ The header file is read by the scanner C source file and other files.
 ```
 @@@end
 
-- `yylex` is shared by the parser implementation file and scanner file.
-- `yyparse` and `run` is called by `run_cb` in `turtleapplication.c`.
-- `node_t` is the type of the semantic value of nterms.
-The header file defines `YYSTYPE`, which is the semantic value type, with all the token and nterm value types.
-The following is extracted from the header file.
+- `yylex` используется совместно файлом реализации парсера и файлом сканера.
+- `yyparse` и `run` вызываются `run_cb` в `turtleapplication.c`.
+- `node_t` — это тип семантического значения nterms.
+Заголовочный файл определяет `YYSTYPE`, который является типом семантического значения, со всеми типами значений токенов и nterm.
+Ниже приведена выдержка из заголовочного файла.
 
 @@@if gfm
 ```C
@@ -778,7 +778,7 @@ union YYSTYPE
 ```
 @@@end
 
-Other useful macros and declarations are put into the `%code` directive.
+Другие полезные макросы и объявления помещаются в директиву `%code`.
 
 ```
 %code {
@@ -798,10 +798,10 @@ Other useful macros and declarations are put into the `%code` directive.
 }
 ```
 
-### Bison declarations
+### Объявления Bison
 
-Bison declarations defines terminal and non-terminal symbols.
-It also specifies some directives.
+Объявления Bison определяют терминальные и нетерминальные символы.
+Они также задают некоторые директивы.
 
 ```
 %locations
@@ -841,8 +841,8 @@ It also specifies some directives.
 %precedence UMINUS /* unary minus */
 ```
 
-`%locations` directive inserts the location structure into the header file.
-It is like this.
+Директива `%locations` вставляет структуру местоположения в заголовочный файл.
+Она выглядит так.
 
 @@@if gfm
 ```C
@@ -868,13 +868,13 @@ struct YYLTYPE
 ```
 @@@end
 
-This type is shared by the scanner file and the parser implementation file.
-The error report function `yyerror` uses it so that it can inform the location that error occurs.
+Этот тип используется совместно файлом сканера и файлом реализации парсера.
+Функция сообщения об ошибках `yyerror` использует его, чтобы информировать о местоположении, где произошла ошибка.
 
-`%define api.value.type union` generates semantic value type with tokens and nterms and inserts it to the header file.
-The inserted part is shown in the previous subsection as the extracts that shows the value type (YYSTYPE).
+`%define api.value.type union` генерирует тип семантического значения с токенами и nterms и вставляет его в заголовочный файл.
+Вставленная часть показана в предыдущем подразделе как выдержки, показывающие тип значения (YYSTYPE).
 
-`%token` and `%nterm` directives define tokens and non terminal symbols respectively.
+Директивы `%token` и `%nterm` определяют токены и нетерминальные символы соответственно.
 
 ```
 %token PU
@@ -882,8 +882,8 @@ The inserted part is shown in the previous subsection as the extracts that shows
 %token <double> NUM
 ```
 
-These directives define a token `PU` and `NUM`.
-The values of token kinds `PU` and `NUM` are defined as an enumeration constant in the header file.
+Эти директивы определяют токены `PU` и `NUM`.
+Значения типов токенов `PU` и `NUM` определяются как перечислимая константа в заголовочном файле.
 
 ```
   enum yytokentype
@@ -897,7 +897,7 @@ The values of token kinds `PU` and `NUM` are defined as an enumeration constant 
   typedef enum yytokentype yytoken_kind_t;
 ```
 
-In addition, the type of the semantic value of `NUM` is defined as double in the header file because of `<double>` tag.
+Кроме того, тип семантического значения `NUM` определяется как double в заголовочном файле из-за тега `<double>`.
 
 ```
 union YYSTYPE
@@ -908,9 +908,9 @@ union YYSTYPE
 }
 ```
 
-All the nterm symbols have the same type `*node_t` of the semantic value.
+Все символы nterm имеют один и тот же тип `*node_t` семантического значения.
 
-`%left` and `%precedence` directives define the precedence of operation symbols.
+Директивы `%left` и `%precedence` определяют приоритет операционных символов.
 
 ```
  /* logical relation symbol */
@@ -921,56 +921,56 @@ All the nterm symbols have the same type `*node_t` of the semantic value.
 %precedence UMINUS /* unary minus */
 ```
 
-`%left` directive defines the following symbols as left-associated operators.
-If an operator `+` is left-associated, then
+Директива `%left` определяет следующие символы как левоассоциативные операторы.
+Если оператор `+` левоассоциативный, то
 
 ```
 A + B + C = (A + B) + C
 ```
 
-That is, the calculation is carried out the left operator first, then the right operator.
-If an operator `*` is right-associated, then:
+То есть, вычисление выполняется сначала для левого оператора, затем для правого оператора.
+Если оператор `*` правоассоциативный, то:
 
 ```
 A * B * C = A * (B * C)
 ```
 
-The definition above decides the behavior of the parser.
-Addition and multiplication hold associative law so the result of `(A+B)+C` and `A+(B+C)` are equal in terms of mathematics.
-However, the parser will be confused if left (or right) associativity is not specified.
+Приведенное выше определение определяет поведение парсера.
+Сложение и умножение подчиняются ассоциативному закону, поэтому результат `(A+B)+C` и `A+(B+C)` равны с точки зрения математики.
+Однако парсер будет сбит с толку, если не указана левая (или правая) ассоциативность.
 
-`%left` and `%precedence` directives show the precedence of operators.
-Later declared operators have higher precedence than former declared ones.
-The declaration above says, for example,
+Директивы `%left` и `%precedence` показывают приоритет операторов.
+Операторы, объявленные позже, имеют более высокий приоритет, чем объявленные ранее.
+Приведенное выше объявление говорит, например,
 
 ```
 v=w+z*5+7 is the same as v=((w+(z*5))+7)
 ```
 
-Be careful.
-The operator `=` above is an assignment.
-Assignment is not expression in turtle language.
-It is primary_procedure.
-But if `=` appears in an expression, it is a logical operator, not an assignment.
-The logical equal '`=`' usually used in the conditional expression, for example, in `if` statement.
-(Turtle language uses '=' instead of '==' in C language).
+Будьте осторожны.
+Оператор `=` выше — это присваивание.
+Присваивание не является выражением в языке turtle.
+Это primary_procedure.
+Но если `=` появляется в выражении, это логический оператор, а не присваивание.
+Логическое равенство '`=`' обычно используется в условном выражении, например, в операторе `if`.
+(Язык Turtle использует '=' вместо '==' в языке C).
 
-### Grammar rules
+### Грамматические правила
 
-Grammar rules section defines the syntactic grammar of the language.
-It is similar to BNF form.
+Раздел грамматических правил определяет синтаксическую грамматику языка.
+Она похожа на форму BNF.
 
 ~~~
 result: components { action };
 ~~~
 
-- result is a nterm.
-- components are list of tokens or nterms.
-- action is C codes. It is executed whenever the components are reduced to the result.
-Action can be left out.
+- result — это nterm.
+- components — это список токенов или nterms.
+- action — это код C. Он выполняется всякий раз, когда компоненты сворачиваются к результату.
+Действие может быть опущено.
 
-The following is a part of the grammar rule in `turtle.y`.
-But it is not exactly the same.
+Ниже приведена часть грамматического правила в `turtle.y`.
+Но она не совсем такая же.
 
 ~~~
 program:
@@ -987,23 +987,23 @@ expression:
 ;
 ~~~
 
-- The first two lines tell that `program` is `statement`.
-- Whenever `statement` is reduced to `program`, an action `node_top=$$=$1;` is executed.
-- `node_top` is a static variable.
-It points the top node of the tree.
-- The symbol `$$` is a semantic value of the result.
-For example, `$$` in line 2 is the semantic value of `program`.
-It is a pointer to a `node_t` type structure.
-- The symbol `$1` is a semantic value of the first component.
-For example, `$1` in line 2 is the semantic value of `statement`.
-It is also a pointer to `node_t`.
-- The next rule is that `statement` is `primary_procedure`.
-There's no action specified.
-Then, the default action `$$ = $1` is executed.
-- The next rule is that `primary_procedure` is `FD` followed by expression.
-The action calls `tree1` and assigns its return value to `$$`.
-The function `tree1` makes a tree node.
-The tree node has type and union of three pointers to children nodes, string or double.
+- Первые две строки говорят, что `program` — это `statement`.
+- Всякий раз, когда `statement` сворачивается к `program`, выполняется действие `node_top=$$=$1;`.
+- `node_top` — это статическая переменная.
+Она указывает на верхний узел дерева.
+- Символ `$$` — это семантическое значение результата.
+Например, `$$` в строке 2 — это семантическое значение `program`.
+Это указатель на структуру типа `node_t`.
+- Символ `$1` — это семантическое значение первого компонента.
+Например, `$1` в строке 2 — это семантическое значение `statement`.
+Это также указатель на `node_t`.
+- Следующее правило заключается в том, что `statement` — это `primary_procedure`.
+Действие не указано.
+Тогда выполняется действие по умолчанию `$$ = $1`.
+- Следующее правило заключается в том, что `primary_procedure` — это `FD`, за которым следует expression.
+Действие вызывает `tree1` и присваивает его возвращаемое значение `$$`.
+Функция `tree1` создает узел дерева.
+Узел дерева имеет тип и объединение из трех указателей на дочерние узлы, строку или double.
 ~~~
 node --+-- type
        +-- union contents
@@ -1011,40 +1011,40 @@ node --+-- type
                     +---char *name
                     +---double value
 ~~~
-- `tree1` assigns the four arguments to type, child1, child2 and child3 members.
-- The last rule is that `expression` is `NUM`.
-- `tree2` makes a tree node. The paremeters of `tree2` are a type and a semantic value.
+- `tree1` присваивает четыре аргумента членам type, child1, child2 и child3.
+- Последнее правило заключается в том, что `expression` — это `NUM`.
+- `tree2` создает узел дерева. Параметры `tree2` — это тип и семантическое значение.
 
-Suppose the parser reads the following program.
+Предположим, парсер читает следующую программу.
 
 ~~~
 fd 100
 ~~~
 
-What does the parser do?
+Что делает парсер?
 
-1. The parser recognizes the input is `FD`.
-Maybe it is the start of `primary_procedure`, but parser needs to read the next token.
-2. `yylex` returns the token kind `NUM` and sets `yylval.NUM` to 100.0 (the type is double). The parser reduces `NUM` to `expression`.
-At the same time, it sets the semantic value of the `expression` to point a new node.
-The node has the type `N_NUM` and a semantic value 100.0.
-3. After the reduction, the buffer has `FD` and `expression`.
-The parser reduces it to `primary_procedure`.
-And it sets the semantic value of the `primary_procedure` to point a new node.
-The node has the type `N_FD` and its member child1 points the node of `expression`, whose type is `N_NUM`.
-4. The parser reduces `primary_procedure` to `statement`.
-The semantic value of `statement` is the same as the one of `primary_procedure`,
-which points to the node `N_FD`.
-5. The parser reduces `statement` to `program`.
-The semantic value of `statement` is assigned to the one of `program` and the static variable `node_top`.
-6. Finally `node_top` points the node `N_FD` and the node `N_FD` points the node `N_NUM`.
+1. Парсер распознает, что ввод — это `FD`.
+Может быть, это начало `primary_procedure`, но парсеру нужно прочитать следующий токен.
+2. `yylex` возвращает тип токена `NUM` и устанавливает `yylval.NUM` на 100.0 (тип — double). Парсер сворачивает `NUM` к `expression`.
+Одновременно он устанавливает семантическое значение `expression` для указания на новый узел.
+Узел имеет тип `N_NUM` и семантическое значение 100.0.
+3. После свёртки в буфере есть `FD` и `expression`.
+Парсер сворачивает его к `primary_procedure`.
+И он устанавливает семантическое значение `primary_procedure` для указания на новый узел.
+Узел имеет тип `N_FD`, и его член child1 указывает на узел `expression`, тип которого `N_NUM`.
+4. Парсер сворачивает `primary_procedure` к `statement`.
+Семантическое значение `statement` такое же, как у `primary_procedure`,
+которое указывает на узел `N_FD`.
+5. Парсер сворачивает `statement` к `program`.
+Семантическое значение `statement` присваивается значению `program` и статической переменной `node_top`.
+6. Наконец, `node_top` указывает на узел `N_FD`, а узел `N_FD` указывает на узел `N_NUM`.
 
 ![tree](../image/tree.png){width=6.51cm height=5.46cm}
 
-The following is the grammar rule extracted from `turtle.y`.
-The rules there are based on the same idea above.
-I don't want to explain the whole rules below.
-Please look into each line carefully so that you will understand all the rules and actions.
+Ниже приведено грамматическое правило, извлеченное из `turtle.y`.
+Правила там основаны на той же идее, что и выше.
+Я не хочу объяснять все правила ниже.
+Пожалуйста, внимательно изучите каждую строку, чтобы понять все правила и действия.
 
 @@@if gfm
 ```bison
@@ -1204,25 +1204,25 @@ expression:
 ```
 @@@end
 
-### Epilogue
+### Эпилог
 
-The epilogue is written in C language and copied to the parser implementation file.
-Generally, you can put anything into the epilogue.
-In the case of turtle interpreter, the runtime routine and some other functions are in the epilogue.
+Эпилог написан на языке C и копируется в файл реализации парсера.
+Обычно вы можете поместить что угодно в эпилог.
+В случае интерпретатора turtle процедура выполнения и некоторые другие функции находятся в эпилоге.
 
-#### Functions to create tree nodes
+#### Функции для создания узлов дерева
 
-There are three functions, `tree1`, `tree2` and `tree3`.
+Есть три функции: `tree1`, `tree2` и `tree3`.
 
-- `tree1` creates a node and sets the node type and pointers to its three children (NULL is possible).
-- `tree2` creates a node and sets the node type and a value (double).
-- `tree3` creates a node and sets the node type and a pointer to a string.
+- `tree1` создает узел и устанавливает тип узла и указатели на его трех потомков (возможно NULL).
+- `tree2` создает узел и устанавливает тип узла и значение (double).
+- `tree3` создает узел и устанавливает тип узла и указатель на строку.
 
-Each function gets memories first and build a node on them.
-The memories are inserted to the list.
-They will be freed when runtime routine finishes.
+Каждая функция сначала получает память и строит на ней узел.
+Памяти вставляются в список.
+Они будут освобождены, когда процедура выполнения завершится.
 
-The three functions are called in the actions in the rules section.
+Эти три функции вызываются в действиях в разделе правил.
 
 @@@if gfm
 ```C
@@ -1306,20 +1306,20 @@ tree3 (int type, char *name) {
 ```
 @@@end
 
-#### Symbol table
+#### Таблица символов
 
-Variables and user defined procedures are registered in the symbol table.
-This table is a C array.
-It should be replaced by better algorithm and data structure, for example hash, in the future version
+Переменные и пользовательские процедуры регистрируются в таблице символов.
+Эта таблица является массивом C.
+В будущей версии она должна быть заменена лучшим алгоритмом и структурой данных, например, хешем.
 
-- Variables are registered with its name and value.
-- Procedures are registered with its name and a pointer to the node of the procedure.
+- Переменные регистрируются с их именем и значением.
+- Процедуры регистрируются с их именем и указателем на узел процедуры.
 
-Therefore the table has the following fields.
+Следовательно, таблица имеет следующие поля.
 
-- type to identify variable or procedure
-- name
-- value or pointer to a node
+- тип для идентификации переменной или процедуры
+- имя
+- значение или указатель на узел
 
 @@@if gfm
 ```C
@@ -1369,16 +1369,16 @@ init_table (void) {
 ```
 @@@end
 
-The function `init_table` initializes the table.
-This must be called before registrations.
+Функция `init_table` инициализирует таблицу.
+Она должна быть вызвана перед регистрациями.
 
-There are five functions to access the table,
+Есть пять функций для доступа к таблице,
 
-- `proc_install` installs a procedure.
-- `var_install` installs a variable.
-- `proc_lookup` looks up a procedure. If the procedure is found, it returns a pointer to the node. Otherwise it returns NULL.
-- `var_lookup` looks up a variable. If the variable is found, it returns TRUE and sets the pointer (argument) to point the value. Otherwise it returns FALSE.
-- `var_replace` replaces the value of a variable. If the variable hasn't registered yet, it installs the variable.
+- `proc_install` устанавливает процедуру.
+- `var_install` устанавливает переменную.
+- `proc_lookup` ищет процедуру. Если процедура найдена, она возвращает указатель на узел. В противном случае возвращает NULL.
+- `var_lookup` ищет переменную. Если переменная найдена, она возвращает TRUE и устанавливает указатель (аргумент) для указания на значение. В противном случае возвращает FALSE.
+- `var_replace` заменяет значение переменной. Если переменная еще не зарегистрирована, она устанавливает переменную.
 
 @@@if gfm
 ```C
@@ -1520,16 +1520,16 @@ var_lookup (char *name, double *value) {
 ```
 @@@end
 
-#### Stack for parameters and arguments
+#### Стек для параметров и аргументов
 
-Stack is a last-in first-out data structure.
-It is shortened to  LIFO.
-Turtle uses a stack to keep parameters and arguments.
-They are like `auto` class variables in C language.
-They are pushed to the stack whenever the procedure is called.
-LIFO structure is useful for recursive calls.
+Стек — это структура данных "последним пришел — первым вышел".
+Сокращенно LIFO.
+Turtle использует стек для хранения параметров и аргументов.
+Они подобны переменным класса `auto` в языке C.
+Они помещаются в стек всякий раз, когда вызывается процедура.
+Структура LIFO полезна для рекурсивных вызовов.
 
-Each element of the stack has name and value.
+Каждый элемент стека имеет имя и значение.
 
 ~~~C
 #define MAX_STACK_SIZE 500
@@ -1545,60 +1545,60 @@ init_stack (void) {
 }
 ~~~
 
-`sp` is a stack pointer.
-It is an index of the array `stack` and it always points an element of the array to store the next data.
-`sp_biggest` is the biggest number assigned to `sp`.
-We can know the amount of elements used in the array during the runtime.
-The purpose of the variable is to find appropriate `MAX_STACK_SIZE`.
-It will be unnecessary in the future version if the stack is implemented with better data structure and memory allocation.
+`sp` — это указатель стека.
+Это индекс массива `stack`, и он всегда указывает на элемент массива для сохранения следующих данных.
+`sp_biggest` — это наибольшее число, присвоенное `sp`.
+Мы можем узнать количество элементов, использованных в массиве во время выполнения.
+Цель переменной — найти подходящий `MAX_STACK_SIZE`.
+Она будет не нужна в будущей версии, если стек будет реализован с лучшей структурой данных и выделением памяти.
 
-The runtime routine push data to the stack when it executes a node of a procedure call.
-(The type of the node is `N_procedure_call`.)
+Процедура выполнения помещает данные в стек при выполнении узла вызова процедуры.
+(Тип узла — `N_procedure_call`.)
 
 ~~~
 dp drawline (angle, distance) { ... ... ... }
 drawline (90, 100)
 ~~~
 
-- The first line defines a procedure `drawline`.
-The runtime routine stores the name `drawline` and the node of the procedure to the symbol table.
-- The second line calls the procedure.
-First, it looks for the procedure in the symbol table and gets its node.
-Then it searches the node for the parameters and gets `angle` and `distance`.
-- It pushes ("angle", 90.0) to the stack.
-- It pushes ("distance", 100.0) to the stack.
-- It pushes (NULL, 2.0) to the stack.
-The number 2.0 is the number of parameters (or arguments).
-It is used when the procedure returns.
+- Первая строка определяет процедуру `drawline`.
+Процедура выполнения сохраняет имя `drawline` и узел процедуры в таблице символов.
+- Вторая строка вызывает процедуру.
+Сначала она ищет процедуру в таблице символов и получает ее узел.
+Затем она ищет узел для параметров и получает `angle` и `distance`.
+- Она помещает ("angle", 90.0) в стек.
+- Она помещает ("distance", 100.0) в стек.
+- Она помещает (NULL, 2.0) в стек.
+Число 2.0 — это количество параметров (или аргументов).
+Оно используется при возврате процедуры.
 
-The following diagram shows the structure of the stack.
-First, `procedure 1` is called.
-The procedure has two parameters.
-In the `procedure 1`, another procedure `procedure 2` is called.
-It has one parameter.
-In the `procedure 2`, another procedure `procedure 3` is called.
-It has three parameters.
-These three procedures are nested.
+Следующая диаграмма показывает структуру стека.
+Сначала вызывается `procedure 1`.
+Процедура имеет два параметра.
+В `procedure 1` вызывается другая процедура `procedure 2`.
+У нее один параметр.
+В `procedure 2` вызывается другая процедура `procedure 3`.
+У нее три параметра.
+Эти три процедуры вложены.
 
-Programs push data to a stack from a low address memory to a high address memory.
-In the following diagram, the lowest address is at the top and the highest address is at the bottom.
-That is the order of the address.
-However, "the top of the stack" is the last pushed data and "the bottom of the stack" is the first pushed data.
-Therefore, "the top of the stack" is the bottom of the rectangle in the diagram and "the bottom of the stack" is the top of the rectangle.
+Программы помещают данные в стек от младшего адреса памяти к старшему адресу памяти.
+На следующей диаграмме самый младший адрес находится вверху, а самый старший адрес — внизу.
+Это порядок адресов.
+Однако "вершина стека" — это последние помещенные данные, а "дно стека" — это первые помещенные данные.
+Следовательно, "вершина стека" находится внизу прямоугольника на диаграмме, а "дно стека" — вверху прямоугольника.
 
 ![Stack](../image/stack.png){width=6.64cm height=8.05cm}
 
-There are four functions to access the stack.
+Есть четыре функции для доступа к стеку.
 
-- `stack_push` pushes data to the stack.
-- `stack_lookup` searches the stack for the variable given its name as an argument.
-It searches only the parameters of the latest procedure.
-It returns TRUE and sets the argument `value` to point the value, if the variable has been found.
-Otherwise it returns FALSE.
-- `stack_replace` replaces the value of the variable in the stack.
-If it succeeds, it returns TRUE. Otherwise returns FALSE.
-- `stack_return` throws away the latest parameters.
-The stack pointer goes back to the point before the latest procedure call so that it points to parameters of the previous called procedure.
+- `stack_push` помещает данные в стек.
+- `stack_lookup` ищет в стеке переменную по ее имени, переданному в качестве аргумента.
+Она ищет только параметры последней процедуры.
+Она возвращает TRUE и устанавливает аргумент `value` для указания на значение, если переменная была найдена.
+В противном случае возвращает FALSE.
+- `stack_replace` заменяет значение переменной в стеке.
+Если она успешна, она возвращает TRUE. В противном случае возвращает FALSE.
+- `stack_return` отбрасывает последние параметры.
+Указатель стека возвращается к точке перед последним вызовом процедуры, чтобы он указывал на параметры ранее вызванной процедуры.
 
 @@@if gfm
 ```C
@@ -1732,55 +1732,55 @@ stack_return(void) {
 ```
 @@@end
 
-#### Surface and cairo
+#### Поверхность и cairo
 
-A global variable `surface` is shared by `turtleapplication.c` and `turtle.y`.
-It is initialized in `turtleapplication.c`.
+Глобальная переменная `surface` используется совместно `turtleapplication.c` и `turtle.y`.
+Она инициализируется в `turtleapplication.c`.
 
-The runtime routine has its own cairo context.
-This is different from the cairo in the GtkDrawingArea instance.
-The runtime routine draws a shape on the `surface` with the cairo context.
-After runtime routine returns to `run_cb`, `run_cb` adds the GtkDrawingArea widget to the queue to redraw.
-When the widget is redraw,the drawing function `draw_func` is called.
-It copies the `surface` to the surface in the GtkDrawingArea object.
+Процедура выполнения имеет свой собственный контекст cairo.
+Он отличается от cairo в экземпляре GtkDrawingArea.
+Процедура выполнения рисует фигуру на `surface` с контекстом cairo.
+После того, как процедура выполнения возвращается к `run_cb`, `run_cb` добавляет виджет GtkDrawingArea в очередь для перерисовки.
+Когда виджет перерисовывается, вызывается функция рисования `draw_func`.
+Она копирует `surface` на поверхность в объекте GtkDrawingArea.
 
-`turtle.y` has two functions `init_cairo` and `destroy_cairo`.
+`turtle.y` имеет две функции `init_cairo` и `destroy_cairo`.
 
-- `init_cairo` initializes static variables and cairo context.
-The variables keep pen status (up or down), direction, initial location, line width and color.
-The size of the `surface` changes according to the size of the window.
-Whenever a user drags and resizes the window, the `surface` is also resized.
-`init_cairo` gets the size first and sets the initial location of the turtle (center of the surface) and the transformation matrix.
-- `destroy_cairo` just destroys the cairo context.
+- `init_cairo` инициализирует статические переменные и контекст cairo.
+Переменные хранят состояние пера (вверх или вниз), направление, начальное местоположение, ширину линии и цвет.
+Размер `surface` изменяется в соответствии с размером окна.
+Всякий раз, когда пользователь перетаскивает и изменяет размер окна, `surface` также изменяет размер.
+`init_cairo` сначала получает размер и устанавливает начальное местоположение черепашки (центр поверхности) и матрицу преобразования.
+- `destroy_cairo` просто уничтожает контекст cairo.
 
-Turtle has its own coordinate.
-The origin is at the center of the surface, and positive direction of x and y axes are right and up respectively.
-But surfaces have its own coordinate.
-Its origin is at the top-left corner of the surface and positive direction of x and y are right and down respectively.
-A plane with the turtle's coordinate is called user space, which is the same as cairo's user space.
-A plane with the surface's coordinate is called device space.
+Turtle имеет свою собственную систему координат.
+Начало координат находится в центре поверхности, а положительное направление осей x и y — вправо и вверх соответственно.
+Но поверхности имеют свою собственную систему координат.
+Ее начало координат находится в верхнем левом углу поверхности, а положительное направление x и y — вправо и вниз соответственно.
+Плоскость с системой координат черепашки называется пользовательским пространством, что совпадает с пользовательским пространством cairo.
+Плоскость с системой координат поверхности называется пространством устройства.
 
-Cairo provides a transformation which is an affine transformation.
-It transforms a user-space coordinate (x, y) into a device-space coordinate (z, w).
+Cairo обеспечивает преобразование, которое является аффинным преобразованием.
+Оно преобразует координату пользовательского пространства (x, y) в координату пространства устройства (z, w).
 
 ![transformation](../image/transformation.png){width=6.3cm height=2.04cm}
 
-The function `init_cairo` gets the width and height of the `surface` (See the program below).
+Функция `init_cairo` получает ширину и высоту `surface` (см. программу ниже).
 
-- The center of the surface is (0,0) with regard to the user-space coordinate and (width/2, height/2) with regard to the device-space coordinate.
-- The positive direction of x axis in the two spaces are the same. So, (1,0) is transformed into (1+width/2,height/2).
-- The positive direction of y axis in the two spaces are opposite. So, (0,1) is transformed into (width/2,-1+height/2).
+- Центр поверхности — это (0,0) относительно координаты пользовательского пространства и (width/2, height/2) относительно координаты пространства устройства.
+- Положительное направление оси x в двух пространствах одинаково. Итак, (1,0) преобразуется в (1+width/2,height/2).
+- Положительное направление оси y в двух пространствах противоположно. Итак, (0,1) преобразуется в (width/2,-1+height/2).
 
-You can determine a, b, c, d, p and q by substituting the numbers above for x, y, z and w in the equation above.
-The solution of the simultaneous equations is:
+Вы можете определить a, b, c, d, p и q, подставив числа выше вместо x, y, z и w в уравнение выше.
+Решение системы уравнений:
 
 ~~~
 a = 1, b = 0, c = 0, d = -1, p = width/2, q = height/2
 ~~~
 
-Cairo provides a structure `cairo_matrix_t`.
-The function `init_cairo` uses it and sets the cairo transformation (See the program below).
-Once the matrix is set, the transformation always performs whenever `cairo_stroke` function is invoked.
+Cairo предоставляет структуру `cairo_matrix_t`.
+Функция `init_cairo` использует ее и устанавливает преобразование cairo (см. программу ниже).
+После установки матрицы преобразование всегда выполняется при вызове функции `cairo_stroke`.
 
 @@@if gfm
 ```C
@@ -1894,17 +1894,17 @@ destroy_cairo () {
 ```
 @@@end
 
-#### Eval function
+#### Функция Eval
 
-A function `eval` evaluates an expression and returns the value of the expression.
-It calls itself recursively.
-For example, if the node is `N_ADD`, then:
+Функция `eval` вычисляет выражение и возвращает значение выражения.
+Она вызывает себя рекурсивно.
+Например, если узел — `N_ADD`, то:
 
-1. Calls eval(child1(node)) and gets the value1.
-2. Calls eval(child2(node)) and gets the value2.
-3. Returns value1+value2.
+1. Вызывает eval(child1(node)) и получает value1.
+2. Вызывает eval(child2(node)) и получает value2.
+3. Возвращает value1+value2.
 
-This is performed by a macro `calc` defined in the sixth line in the following program.
+Это выполняется макросом `calc`, определенным в шестой строке следующей программы.
 
 @@@if gfm
 ```C
@@ -2006,15 +2006,15 @@ double value = 0.0;
 ```
 @@@end
 
-#### Execute function
+#### Функция Execute
 
-Primary procedures and procedure definitions are analyzed and executed by the function `execute`.
-It doesn't return any values.
-It calls itself recursively.
-The process of `N_RT` and `N_procedure_call` is complicated.
-It will explained after the following program.
-Other parts are not so difficult.
-Read the program below carefully so that you will understand the process.
+Первичные процедуры и определения процедур анализируются и выполняются функцией `execute`.
+Она не возвращает никаких значений.
+Она вызывает себя рекурсивно.
+Обработка `N_RT` и `N_procedure_call` сложна.
+Она будет объяснена после следующей программы.
+Другие части не так сложны.
+Внимательно прочитайте программу ниже, чтобы понять процесс.
 
 @@@if gfm
 ```C
@@ -2332,9 +2332,9 @@ node_t *arg_list;
 ```
 @@@end
 
-A node `N_procedure_call` is created by the parser when it has found a user defined procedure call.
-The procedure has been defined in the prior statement.
-Suppose the parser reads the following example code.
+Узел `N_procedure_call` создается парсером, когда он находит вызов пользовательской процедуры.
+Процедура была определена в предыдущем операторе.
+Предположим, парсер читает следующий пример кода.
 
 ```
 dp drawline (angle, distance) {
@@ -2347,61 +2347,61 @@ drawline (90, 100)
 drawline (90, 100)
 ```
 
-This example draws a square.
+Этот пример рисует квадрат.
 
-When The parser reads the lines from one to four, it creates nodes like this:
+Когда парсер читает строки с первой по четвертую, он создает узлы следующим образом:
 
 ![Nodes of drawline](../image/tree2.png){width=10cm height=6cm}
 
-Runtime routine just stores the procedure to the symbol table with its name and node.
+Процедура выполнения просто сохраняет процедуру в таблице символов с ее именем и узлом.
 
 ![Symbol table](../image/table.png){width=10cm height=5cm}
 
-When the parser reads the fifth line in the example, it creates nodes like this:
+Когда парсер читает пятую строку в примере, он создает узлы следующим образом:
 
 ![Nodes of procedure call](../image/proc_call.png){width=10cm height=5cm}
 
-When the runtime routine meets `N_procedure_call` node, it behaves like this:
+Когда процедура выполнения встречает узел `N_procedure_call`, она ведет себя следующим образом:
 
-1. Searches the symbol table for the procedure with the name.
-2. Gets pointers to the node to parameters and the node to the body.
-3. Creates a temporary stack.
-Makes a tuple of each parameter name and argument value.
-Pushes the tuples into the stack, and (NULL, number of parameters) finally.
-If no error occurs, copies them from the temporary stack to the parameter stack.
-4. Increases `prc_level` by one.
-Sets `ret_level` to the same value as `proc_level`.
-`proc_level` is zero when runtime routine runs on the main routine.
-If it goes into a procedure, `proc_level` increases by one.
-Therefore, `proc_level` is the depth of the procedure call.
-`ret_level` is the level to return.
-If it is the same as `proc_level`, runtime routine executes commands in order of the commands in the procedure.
-If it is smaller than `proc_level`, runtime routine doesn't execute commands until it becomes the same level as `proc_level`.
-`ret_level` is used to return the procedure.
-5. Executes the node of the body of the procedure.
-6. Decreases `proc_level` by one.
-Sets `ret_level` to the same value as `proc_level`.
-Calls `stack_return`.
+1. Ищет процедуру в таблице символов по имени.
+2. Получает указатели на узел параметров и узел тела.
+3. Создает временный стек.
+Создает кортеж каждого имени параметра и значения аргумента.
+Помещает кортежи в стек и, наконец, (NULL, количество параметров).
+Если ошибок не происходит, копирует их из временного стека в стек параметров.
+4. Увеличивает `prc_level` на один.
+Устанавливает `ret_level` равным `proc_level`.
+`proc_level` равен нулю, когда процедура выполнения работает в основной процедуре.
+Если она входит в процедуру, `proc_level` увеличивается на один.
+Следовательно, `proc_level` — это глубина вызова процедуры.
+`ret_level` — это уровень для возврата.
+Если он равен `proc_level`, процедура выполнения выполняет команды в порядке команд в процедуре.
+Если он меньше `proc_level`, процедура выполнения не выполняет команды, пока он не станет равным уровню `proc_level`.
+`ret_level` используется для возврата из процедуры.
+5. Выполняет узел тела процедуры.
+6. Уменьшает `proc_level` на один.
+Устанавливает `ret_level` равным `proc_level`.
+Вызывает `stack_return`.
 
-When the runtime routine meets `N_RT` node, it decreases `ret_level` by one so that the following commands in the procedure are ignored by the runtime routine.
+Когда процедура выполнения встречает узел `N_RT`, она уменьшает `ret_level` на один, чтобы следующие команды в процедуре игнорировались процедурой выполнения.
 
-#### Runtime entry and error functions
+#### Функции входа в процедуру выполнения и обработки ошибок
 
-A function `run` is the entry of the runtime routine.
-A function `runtime_error` reports an error occurred during the runtime routine runs.
-(Errors which occur during the parsing are called syntax error and reported by `yyerror`.)
-After `runtime_error` reports an error, it stops the command execution and goes back to `run` to exit.
+Функция `run` является точкой входа в процедуру выполнения.
+Функция `runtime_error` сообщает об ошибке, возникшей во время работы процедуры выполнения.
+(Ошибки, возникающие во время синтаксического анализа, называются синтаксическими ошибками и сообщаются `yyerror`.)
+После того, как `runtime_error` сообщает об ошибке, она останавливает выполнение команды и возвращается к `run` для выхода.
 
-Setjmp and longjmp functions are used.
-They are declared in `<setjmp.h>`.
-`setjmp (buf)` saves state information in `buf` and returns zero.
-`longjmp(buf, 1)` restores the state information from `buf` and returns `1` (the second argument).
-Because the information is the status at the time `setjmp` is called, so longjmp resumes the execution at the next of setjmp function call.
-In the following program, longjmp resumes at the assignment to the variable `i`.
-When setjmp is called, 0 is assigned to `i` and `execute(node_top)` is called.
-On the other hand, when longjmp is called, 1 is assigned to `i` and `execute(node_top)` is not called..
+Используются функции Setjmp и longjmp.
+Они объявлены в `<setjmp.h>`.
+`setjmp (buf)` сохраняет информацию о состоянии в `buf` и возвращает ноль.
+`longjmp(buf, 1)` восстанавливает информацию о состоянии из `buf` и возвращает `1` (второй аргумент).
+Поскольку информация — это состояние в момент вызова `setjmp`, longjmp возобновляет выполнение после вызова функции setjmp.
+В следующей программе longjmp возобновляет присваивание переменной `i`.
+Когда вызывается setjmp, 0 присваивается `i` и вызывается `execute(node_top)`.
+С другой стороны, когда вызывается longjmp, 1 присваивается `i` и `execute(node_top)` не вызывается.
 
-`g_slist_free_full` frees all the allocated memories.
+`g_slist_free_full` освобождает всю выделенную память.
 
 @@@if gfm
 ```C
@@ -2539,7 +2539,7 @@ runtime_error (char *format, ...) {
 ```
 @@@end
 
-A function `runtime_error` has a variable-length argument list.
+Функция `runtime_error` имеет список аргументов переменной длины.
 
 @@@if gfm
 ```C
@@ -2551,30 +2551,30 @@ void runtime_error (char *format, ...)
 ```
 @@@end
 
-This is implemented with `<stdarg.h>` header file.
-The `va_list` type variable `args` will refer to each argument in turn.
-A function `va_start` initializes `args`.
-A function `va_arg` returns an argument and moves the reference of `args` to the next.
-A function `va_end` cleans up everything necessary at the end.
+Это реализовано с помощью заголовочного файла `<stdarg.h>`.
+Переменная типа `va_list` `args` будет ссылаться на каждый аргумент по очереди.
+Функция `va_start` инициализирует `args`.
+Функция `va_arg` возвращает аргумент и перемещает ссылку `args` на следующий.
+Функция `va_end` очищает все необходимое в конце.
 
-The function `runtime_error` has a similar format of printf standard function.
-But its format has only `%s`, `%f` and `%d`.
+Функция `runtime_error` имеет формат, похожий на стандартную функцию printf.
+Но ее формат имеет только `%s`, `%f` и `%d`.
 
-The functions declared in `<setjmp.h>` and `<stdarg.h>` are explained in the very famous book "The C programming language" written by Brian Kernighan and Dennis Ritchie.
-I referred to the book to write the program above.
+Функции, объявленные в `<setjmp.h>` и `<stdarg.h>`, объясняются в очень известной книге "Язык программирования C", написанной Брайаном Кернигеном и Деннисом Ритчи.
+Я ссылался на книгу при написании программы выше.
 
-The program `turtle` is unsophisticated and unpolished.
-If you want to make your own language, you need to know more and more.
-I don't know any good textbook about compilers and interpreters.
-If you know a good book, please let me know.
+Программа `turtle` неотшлифованна и неполированна.
+Если вы хотите создать свой собственный язык, вам нужно знать больше и больше.
+Я не знаю ни одного хорошего учебника по компиляторам и интерпретаторам.
+Если вы знаете хорошую книгу, пожалуйста, дайте мне знать.
 
-However, the following information is very useful (but old).
+Однако следующая информация очень полезна (но старая).
 
-- Bison documentation
-- Flex documentation
-- Software tools written by Brian W. Kernighan & P. J. Plauger (1976)
-- Unix programming environment written by Brian W. Kernighan and Rob Pike (1984)
-- Source code of a language, for example, ruby.
+- Документация Bison
+- Документация Flex
+- Software tools, написанная Brian W. Kernighan & P. J. Plauger (1976)
+- Unix programming environment, написанная Brian W. Kernighan и Rob Pike (1984)
+- Исходный код языка, например, ruby.
 
-Lately, lots of source codes are in the internet.
-Maybe reading source codes is the most useful for programmers.
+В последнее время много исходных кодов находится в Интернете.
+Может быть, чтение исходных кодов наиболее полезно для программистов.

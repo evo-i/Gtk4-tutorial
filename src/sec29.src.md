@@ -1,44 +1,44 @@
 # GtkListView
 
-GTK 4 has added new list objects GtkListView, GtkGridView and GtkColumnView.
-The new feature is described in [Gtk API Reference -- List Widget Overview](https://docs.gtk.org/gtk4/section-list-widget.html).
+GTK 4 добавил новые объекты списков GtkListView, GtkGridView и GtkColumnView.
+Новая функциональность описана в [Gtk API Reference -- List Widget Overview](https://docs.gtk.org/gtk4/section-list-widget.html).
 
-GTK 4 has other means to implement lists.
-They are GtkListBox and GtkTreeView which are took over from GTK 3.
-There's an article in [Gtk Development blog](https://blog.gtk.org/2020/06/07/scalable-lists-in-gtk-4/) about list widgets by Matthias Clasen.
-He described why GtkListView are developed to replace GtkTreeView.
-GtkTreeView is deprecated since version 4.10.
+GTK 4 имеет другие средства для реализации списков.
+Это GtkListBox и GtkTreeView, которые перенесены из GTK 3.
+Есть статья в [Gtk Development blog](https://blog.gtk.org/2020/06/07/scalable-lists-in-gtk-4/) о виджетах списков от Matthias Clasen.
+Он описал, почему GtkListView разработан для замены GtkTreeView.
+GtkTreeView устарел с версии 4.10.
 
-GtkListView, GtkGridView, GtkColumnView and related objects are described in Section 29 to 33.
+GtkListView, GtkGridView, GtkColumnView и связанные объекты описаны в разделах 29-33.
 
-## Outline
+## Обзор
 
-A list is a sequential data structure.
-For example, an ordered string sequence "one", "two", "three", "four" is a list.
-Each element is called item.
-A list is like an array, but in many cases it is implemented with pointers which point to the next items of the list.
-And it has a start point.
-So, each item can be referred by the index of the item (first item, second item, ..., nth item, ...).
-There are two cases.
-The one is the index starts from one (one-based) and the other is from zero (zero-based).
+Список — это последовательная структура данных.
+Например, упорядоченная последовательность строк "one", "two", "three", "four" является списком.
+Каждый элемент называется элементом (item).
+Список похож на массив, но во многих случаях он реализован с помощью указателей, которые указывают на следующие элементы списка.
+И у него есть начальная точка.
+Таким образом, к каждому элементу можно обратиться по индексу элемента (первый элемент, второй элемент, ..., n-й элемент, ...).
+Существует два случая.
+Один — индекс начинается с единицы (one-based), другой — с нуля (zero-based).
 
-Gio provides GListModel interface.
-It is a zero-based list and its items are the same type of GObject descendants, or objects that implement the same interface.
-An object implements GListModel is not a widget.
-So, the list is not displayed on the screen directly.
-There's another object GtkListView which is a widget to display the list.
-The items in the list need to be connected to the items in GtkListView.
-GtkListItemFactory instance maps items in the list to GtkListView.
+Gio предоставляет интерфейс GListModel.
+Это список с нулевой индексацией, и его элементы являются одним и тем же типом потомков GObject или объектами, реализующими один и тот же интерфейс.
+Объект, реализующий GListModel, не является виджетом.
+Поэтому список не отображается на экране напрямую.
+Существует другой объект GtkListView, который является виджетом для отображения списка.
+Элементы в списке должны быть связаны с элементами в GtkListView.
+Экземпляр GtkListItemFactory сопоставляет элементы списка с GtkListView.
 
 ![List](../image/list.png){width=10cm height=7.5cm}
 
-## GListModel and GtkStringList
+## GListModel и GtkStringList
 
-If you want to make a list of strings with GListModel, for example, "one", "two", "three", "four", note that strings can't be items of the list.
-Because GListModel is a list of GObject objects and strings aren't GObject objects.
-The word "GObject" here means "GObject class or its descendant class".
-So, you need a wrapper which is a GObject and contains a string.
-GtkStringObject is the wrapper object and GtkStringList, implements GListModel, is a list of GtkStringObject.
+Если вы хотите создать список строк с помощью GListModel, например, "one", "two", "three", "four", обратите внимание, что строки не могут быть элементами списка.
+Потому что GListModel — это список объектов GObject, а строки не являются объектами GObject.
+Слово "GObject" здесь означает "класс GObject или его класс-потомок".
+Поэтому вам нужна обёртка, которая является GObject и содержит строку.
+GtkStringObject — это объект-обёртка, а GtkStringList, реализующий GListModel, — это список объектов GtkStringObject.
 
 @@@if gfm
 ~~~C
@@ -62,78 +62,78 @@ GtkStringList *stringlist = gtk_string_list_new ((const char * const *) array);
 ~~~
 @@@end
 
-The function `gtk_string_list_new` creates a GtkStringList object.
-Its items are GtkStringObject objects which contain the strings "one", "two", "three" and "four".
-There are functions to add items to the list or remove items from the list.
+Функция `gtk_string_list_new` создаёт объект GtkStringList.
+Его элементами являются объекты GtkStringObject, которые содержат строки "one", "two", "three" и "four".
+Существуют функции для добавления элементов в список или удаления элементов из списка.
 
-- `gtk_string_list_append` appends an item to the list
-- `gtk_string_list_remove` removes an item from the list
-- `gtk_string_list_get_string` gets a string in the list
+- `gtk_string_list_append` добавляет элемент в список
+- `gtk_string_list_remove` удаляет элемент из списка
+- `gtk_string_list_get_string` получает строку из списка
 
-See [GTK 4 API Reference -- GtkStringList](https://docs.gtk.org/gtk4/class.StringList.html) for further information.
+Для дополнительной информации см. [GTK 4 API Reference -- GtkStringList](https://docs.gtk.org/gtk4/class.StringList.html).
 
-Other list objects will be explained later.
+Другие объекты списков будут объяснены позже.
 
 ## GtkSelectionModel
 
-GtkSelectionModel is an interface to support for selections.
-Thanks to this model, user can select items by clicking on them.
-It is implemented by GtkMultiSelection, GtkNoSelection and GtkSingleSelection objects.
-These three objects are usually enough to build an application.
-They are created with another GListModel.
-You can also create them alone and add a GListModel later.
+GtkSelectionModel — это интерфейс для поддержки выделения.
+Благодаря этой модели пользователь может выбирать элементы, нажимая на них.
+Он реализован объектами GtkMultiSelection, GtkNoSelection и GtkSingleSelection.
+Этих трёх объектов обычно достаточно для создания приложения.
+Они создаются с другим GListModel.
+Вы также можете создать их отдельно и добавить GListModel позже.
 
-- GtkMultiSelection supports multiple selection.
-- GtkNoSelection supports no selection. This is a wrapper to GListModel when GtkSelectionModel is needed.
-- GtkSingleSelection supports single selection.
+- GtkMultiSelection поддерживает множественный выбор.
+- GtkNoSelection поддерживает отсутствие выбора. Это обёртка для GListModel, когда требуется GtkSelectionModel.
+- GtkSingleSelection поддерживает одиночный выбор.
 
 ## GtkListView
 
-GtkListView is a widget to show GListModel items.
-GtkListItem is used by GtkListView to represent items of a list model.
-But, GtkListItem itself is not a widget, so a user needs to set a widget, for example GtkLabel, as a child of GtkListItem to display an item of the list model.
-"item" property of GtkListItem points an object that belongs to the list model.
+GtkListView — это виджет для отображения элементов GListModel.
+GtkListItem используется GtkListView для представления элементов модели списка.
+Но сам GtkListItem не является виджетом, поэтому пользователю нужно установить виджет, например GtkLabel, в качестве дочернего элемента GtkListItem для отображения элемента модели списка.
+Свойство "item" GtkListItem указывает на объект, принадлежащий модели списка.
 
 ![GtkListItem](../image/gtklistitem.png){width=10cm height=7.5cm}
 
-In case the number of items is very big, for example more than a thousand, GtkListItem is recycled and connected to another item which is newly displayed.
-This recycle makes the number of GtkListItem objects fairly small, less than 200.
-This is very effective to restrain the growth of memory consumption so that GListModel can contain lots of items, for example, more than a million items.
+В случае, если количество элементов очень велико, например, более тысячи, GtkListItem переиспользуется и связывается с другим элементом, который только что отображается.
+Это переиспользование делает количество объектов GtkListItem довольно малым, менее 200.
+Это очень эффективно для сдерживания роста потребления памяти, так что GListModel может содержать множество элементов, например, более миллиона элементов.
 
 ## GtkListItemFactory
 
-GtkListItemFactory creates or recycles GtkListItem and connects it with an item of the list model.
-There are two child classes of this factory, GtkSignalListItemFactory and GtkBuilderListItemFactory.
+GtkListItemFactory создаёт или переиспользует GtkListItem и связывает его с элементом модели списка.
+Существует два дочерних класса этой фабрики: GtkSignalListItemFactory и GtkBuilderListItemFactory.
 
 ### GtkSignalListItemFactory
 
-GtkSignalListItemFactory provides signals for users to configure a GtkListItem object.
-There are four signals.
+GtkSignalListItemFactory предоставляет сигналы для пользователей для настройки объекта GtkListItem.
+Есть четыре сигнала.
 
-1. "setup" is emitted to set up GtkListItem object.
-A user sets its child widget in the handler.
-For example, creates a GtkLabel widget and sets the child property of the GtkListItem to it.
-This setting is kept even the GtkListItem instance is recycled (to bind to another item of GListModel).
-2. "bind" is emitted to bind an item in the list model to the widget.
-For example, a user gets the item from "item" property of the GtkListItem instance.
-Then gets the string of the item and sets the label property of the GtkLabel instance with the string.
-This signal is emitted when the GtkListItem is newly created, recycled or some changes has happened to the item of the list.
-3. "unbind" is emitted to unbind an item.
-A user undoes everything done in step 2 in the signal handler.
-If some object are created in step 2, they must be destroyed.
-4. "teardown" is emitted to undo everything done in step 1.
-So, the widget created in step 1 must be destroyed.
-After this signal, the list item will be destroyed.
+1. "setup" испускается для настройки объекта GtkListItem.
+Пользователь устанавливает его дочерний виджет в обработчике.
+Например, создаёт виджет GtkLabel и устанавливает свойство child GtkListItem на него.
+Эта настройка сохраняется, даже если экземпляр GtkListItem переиспользуется (для связывания с другим элементом GListModel).
+2. "bind" испускается для связывания элемента в модели списка с виджетом.
+Например, пользователь получает элемент из свойства "item" экземпляра GtkListItem.
+Затем получает строку элемента и устанавливает свойство label экземпляра GtkLabel этой строкой.
+Этот сигнал испускается, когда GtkListItem только что создан, переиспользуется или произошли какие-то изменения с элементом списка.
+3. "unbind" испускается для отвязывания элемента.
+Пользователь отменяет всё, что было сделано на шаге 2, в обработчике сигнала.
+Если какие-то объекты были созданы на шаге 2, они должны быть уничтожены.
+4. "teardown" испускается для отмены всего, что было сделано на шаге 1.
+Таким образом, виджет, созданный на шаге 1, должен быть уничтожен.
+После этого сигнала элемент списка будет уничтожен.
 
-The following program `list1.c` shows the list of strings "one", "two", "three" and "four".
-GtkNoSelection is used, so user can't select any item.
+Следующая программа `list1.c` показывает список строк "one", "two", "three" и "four".
+Используется GtkNoSelection, поэтому пользователь не может выбрать ни один элемент.
 
 @@@include
 misc/list1.c
 @@@
 
-The file `list1.c` is located under the directory [src/misc](misc).
-Make a shell script below and save it to your bin directory, for example `$HOME/bin`.
+Файл `list1.c` расположен в каталоге [src/misc](misc).
+Создайте shell-скрипт ниже и сохраните его в ваш каталог bin, например `$HOME/bin`.
 
 @@@if gfm
 ~~~Shell
@@ -153,7 +153,7 @@ gcc `pkg-config --cflags gtk4` $1.c `pkg-config --libs gtk4`
 ~~~
 @@@end
 
-Change the current directory to the directory includes `list1.c` and type as follows.
+Перейдите в каталог, содержащий `list1.c`, и введите следующее.
 
 ~~~
 $ chmod 755 $HOME/bin/comp # or chmod 755 (your bin directory)/comp
@@ -161,17 +161,17 @@ $ comp list1
 $ ./a.out
 ~~~
 
-Then, the following window appears.
+Затем появится следующее окно.
 
 ![list1](../image/list1.png){width=6.04cm height=4.40cm}
 
-The program is not so difficult.
-If you feel some difficulty, read this section again, especially GtkSignalListItemFactory subsubsection.
+Программа не так сложна.
+Если вы чувствуете некоторую сложность, прочитайте этот раздел снова, особенно подраздел GtkSignalListItemFactory.
 
 ### GtkBuilderListItemFactory
 
-GtkBuilderListItemFactory is another GtkListItemFactory.
-Its behavior is defined with ui file.
+GtkBuilderListItemFactory — это ещё одна GtkListItemFactory.
+Её поведение определяется с помощью ui-файла.
 
 @@@if gfm
 ~~~xml
@@ -207,14 +207,14 @@ Its behavior is defined with ui file.
 ~~~
 @@@end
 
-Template tag is used to define GtkListItem.
-And its child property is GtkLabel object.
-The factory sees this template and creates GtkLabel and sets the child property of GtkListItem.
-This is the same as what setup handler of GtkSignalListItemFactory did.
+Тег template используется для определения GtkListItem.
+И его свойство child — это объект GtkLabel.
+Фабрика видит этот шаблон и создаёт GtkLabel и устанавливает свойство child GtkListItem.
+Это то же самое, что делал обработчик setup GtkSignalListItemFactory.
 
-Then, bind the label property of the GtkLabel to the string property of a GtkStringObject.
-The string object refers to the item property of the GtkListItem.
-So, the lookup tag is like this:
+Затем свяжите свойство label GtkLabel со свойством string объекта GtkStringObject.
+Строковый объект ссылается на свойство item GtkListItem.
+Таким образом, тег lookup выглядит так:
 
 ~~~
 label <- string <- GtkStringObject <- item <- GtkListItem
@@ -237,16 +237,16 @@ Its name is `list2.c` and located under [src/misc](misc) directory.
 misc/list2.c
 @@@
 
-No signal handler is needed for GtkBulderListItemFactory.
-GtkSingleSelection is used, so user can select one item at a time.
+Для GtkBulderListItemFactory не требуется обработчик сигналов.
+Используется GtkSingleSelection, поэтому пользователь может выбрать один элемент за раз.
 
-Because this is a small program, the ui data is given as a string.
+Поскольку это небольшая программа, ui-данные задаются как строка.
 
 ## GtkDirectoryList
 
-GtkDirectoryList is a list model containing GFileInfo objects which are information of files under a certain directory.
-It uses `g_file_enumerate_children_async()` to get the GFileInfo objects.
-The list model is created by `gtk_directory_list_new` function.
+GtkDirectoryList — это модель списка, содержащая объекты GFileInfo, которые являются информацией о файлах в определённом каталоге.
+Она использует `g_file_enumerate_children_async()` для получения объектов GFileInfo.
+Модель списка создаётся функцией `gtk_directory_list_new`.
 
 @@@if gfm
 ~~~C
@@ -258,24 +258,24 @@ GtkDirectoryList *gtk_directory_list_new (const char *attributes, GFile *file);
 ~~~
 @@@end
 
-`attributes` is a comma separated list of file attributes.
-File attributes are key-value pairs.
-A key consists of a namespace and a name.
-For example, "standard::name" key is the name of a file.
-"standard" means general file information.
-"name" means filename.
-The following table shows some example.
+`attributes` — это список атрибутов файла, разделённый запятыми.
+Атрибуты файла — это пары ключ-значение.
+Ключ состоит из пространства имён и имени.
+Например, ключ "standard::name" — это имя файла.
+"standard" означает общую информацию о файле.
+"name" означает имя файла.
+В следующей таблице показаны некоторые примеры.
 
-|key             |meaning                                                             |
-|:---------------|:-------------------------------------------------------------------|
-|standard::type  |file type. for example, regular file, directory, symbolic link, etc.|
-|standard::name  |filename                                                            |
-|standard::size  |file size in bytes                                                  |
-|access::can-read|read privilege if the user is able to read the file                 |
-|time::modified  |the time the file was last modified in seconds since the UNIX epoch |
+|ключ            |значение                                                                        |
+|:---------------|:-------------------------------------------------------------------------------|
+|standard::type  |тип файла. например, обычный файл, каталог, символическая ссылка и т.д.         |
+|standard::name  |имя файла                                                                       |
+|standard::size  |размер файла в байтах                                                          |
+|access::can-read|право на чтение, если пользователь может читать файл                            |
+|time::modified  |время последнего изменения файла в секундах с начала эпохи UNIX                 |
 
-The current directory is ".".
-The following program makes GtkDirectoryList `dl` and its contents are GFileInfo objects under the current directory.
+Текущий каталог — это ".".
+Следующая программа создаёт GtkDirectoryList `dl`, и его содержимое — это объекты GFileInfo в текущем каталоге.
 
 @@@if gfm
 ~~~C
@@ -291,11 +291,11 @@ g_object_unref (file);
 ~~~
 @@@end
 
-It is not so difficult to make file listing program by changing `list2.c` in the previous subsection.
-One problem is that GInfoFile doesn't have properties.
-Lookup tag look for a property, so it is useless for looking for a filename from a GFileInfo object.
-Instead, closure tag is appropriate in this case.
-Closure tag specifies a function and the type of the return value of the function.
+Не так сложно создать программу для вывода списка файлов, изменив `list2.c` из предыдущего подраздела.
+Одна проблема в том, что GInfoFile не имеет свойств.
+Тег lookup ищет свойство, поэтому он бесполезен для поиска имени файла из объекта GFileInfo.
+Вместо этого в данном случае подходит тег closure.
+Тег closure указывает функцию и тип возвращаемого значения функции.
 
 @@@if gfm
 ~~~C
@@ -345,59 +345,59 @@ get_file_name (GtkListItem *item, GFileInfo *info) {
 ~~~
 @@@end
 
-- The string "gchararray" is a type name.
-The type "gchar" is a type name and it is the same as C type "char".
-Therefore, "gchararray" is "an array of char type", which is the same as string type.
-It is used to get the type of GValue object.
-GValue is a generic value and it can contain various type of values.
-For example, the type name can be gboolean, gchar (char), gint (int), gfloat (float), gdouble (double), gchararray (char *) and so on.
-These type names are the names of the fundamental types that are registered to the type system.
-See [GObject tutorial](https://github.com/ToshioCP/Gobject-tutorial/blob/main/gfm/sec5.md#gvalue).
-- Closure tag has type attribute and function attribute.
-Function attribute specifies the function name and type attribute specifies the type of the return value of the function.
-The contents of closure tag (it is between \<closure...\> and\</closure\>) is parameters of the function.
-`<lookup name="item">GtkListItem</lookup>` gives the value of the item property of the GtkListItem.
-This will be the second argument of the function.
-The first parameter is always the GListItem instance, which is a 'this' object.
-The 'this' object is explained in section 31.
-- `gtk_file_name` function is the callback function for the closure tag.
-It first checks the `info` parameter.
-Because it can be NULL when GListItem `item` is unbounded.
-If it's GFileInfo, it returns the copied filename.
-Because the return value (filename) of `g_file_info_get_name` is owned by GFileInfo object.
-So, the the string needs to be duplicated to give the ownership to the caller.
-Binding tag binds the "label" property of the GtkLabel to the closure tag.
+- Строка "gchararray" — это имя типа.
+Тип "gchar" — это имя типа, и он совпадает с типом C "char".
+Поэтому "gchararray" — это "массив типа char", что совпадает с типом строки.
+Он используется для получения типа объекта GValue.
+GValue — это обобщённое значение, и оно может содержать различные типы значений.
+Например, имя типа может быть gboolean, gchar (char), gint (int), gfloat (float), gdouble (double), gchararray (char *) и так далее.
+Эти имена типов — это имена фундаментальных типов, зарегистрированных в системе типов.
+См. [GObject tutorial](https://github.com/ToshioCP/Gobject-tutorial/blob/main/gfm/sec5.md#gvalue).
+- Тег closure имеет атрибут type и атрибут function.
+Атрибут function указывает имя функции, а атрибут type указывает тип возвращаемого значения функции.
+Содержимое тега closure (между \<closure...\> и\</closure\>) — это параметры функции.
+`<lookup name="item">GtkListItem</lookup>` даёт значение свойства item GtkListItem.
+Это будет второй аргумент функции.
+Первый параметр всегда является экземпляром GListItem, который является объектом 'this'.
+Объект 'this' объясняется в разделе 31.
+- Функция `gtk_file_name` является функцией обратного вызова для тега closure.
+Сначала она проверяет параметр `info`.
+Потому что он может быть NULL, когда GListItem `item` не связан.
+Если это GFileInfo, она возвращает скопированное имя файла.
+Потому что возвращаемое значение (имя файла) `g_file_info_get_name` принадлежит объекту GFileInfo.
+Поэтому строку нужно дублировать, чтобы передать владение вызывающей стороне.
+Тег binding связывает свойство "label" GtkLabel с тегом closure.
 
-The whole program (`list3.c`) is as follows.
-The program is located in [src/misc](misc) directory.
+Вся программа (`list3.c`) следующая.
+Программа расположена в каталоге [src/misc](misc).
 
 @@@include
 misc/list3.c
 @@@
 
-The ui data (xml data above) is used to build the GListItem template at runtime.
-GtkBuilder refers to the symbol table to find the function `get_file_name`.
+Ui-данные (xml-данные выше) используются для построения шаблона GListItem во время выполнения.
+GtkBuilder обращается к таблице символов для поиска функции `get_file_name`.
 
-Generally, a symbol table is used by a linker to link objects to an executable file.
-It includes function names and their location.
-A linker usually doesn't put a symbol table into the created executable file.
-But if `--export-dynamic` option is given, the linker adds the symbol table to the executable file.
+Как правило, таблица символов используется компоновщиком для связывания объектов в исполняемый файл.
+Она включает имена функций и их местоположение.
+Компоновщик обычно не помещает таблицу символов в созданный исполняемый файл.
+Но если задана опция `--export-dynamic`, компоновщик добавляет таблицу символов в исполняемый файл.
 
-To accomplish it, an option `-Wl,--export-dynamic` is given to the C compiler.
+Для этого компилятору C передаётся опция `-Wl,--export-dynamic`.
 
-- `-Wl` is a C compiler option that passes the following option to the linker.
-- `--export-dynamic` is a linker option.
-The following is cited from the linker document.
-"When creating a dynamically linked executable, add all symbols to the dynamic symbol table.
-The dynamic symbol table is the set of symbols which are visible from dynamic objects at run time."
+- `-Wl` — это опция компилятора C, которая передаёт следующую опцию компоновщику.
+- `--export-dynamic` — это опция компоновщика.
+Следующее цитируется из документации компоновщика.
+"При создании динамически связанного исполняемого файла добавить все символы в динамическую таблицу символов.
+Динамическая таблица символов — это набор символов, которые видны из динамических объектов во время выполнения."
 
-Compile and execute it.
+Скомпилируйте и выполните её.
 
 ~~~
 $ gcc -Wl,--export-dynamic `pkg-config --cflags gtk4` list3.c `pkg-config --libs gtk4`
 ~~~
 
-You can also make a shell script to compile `list3.c`
+Вы также можете создать shell-скрипт для компиляции `list3.c`
 
 @@@if gfm
 ~~~bash
@@ -409,15 +409,15 @@ gcc -Wl,--export-dynamic `pkg-config --cflags gtk4` $1.c `pkg-config --libs gtk4
 ~~~
 @@@end
 
-Save this one liner to a file `comp`.
-Then, copy it to `$HOME/bin` and give it executable permission.
+Сохраните эту одну строку в файл `comp`.
+Затем скопируйте его в `$HOME/bin` и дайте ему права на выполнение.
 
 ~~~
 $ cp comp $HOME/bin/comp
 $ chmod +x $HOME/bin/comp
 ~~~
 
-You can compile `list3.c` and execute it, like this:
+Вы можете скомпилировать `list3.c` и выполнить его так:
 
 ~~~
 $ comp list3
