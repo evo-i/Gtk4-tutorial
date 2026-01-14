@@ -1,41 +1,41 @@
-# Build system
+# Система сборки
 
-## Managing big source files
+## Управление большими исходными файлами
 
-We've compiled a small editor so far.
-The program is not complicated yet, but if it grows bigger, it will be difficult to maintain.
-So, we should do the following now.
+До сих пор мы компилировали небольшой редактор.
+Программа пока не сложная, но если она станет больше, её будет трудно поддерживать.
+Поэтому нам следует сделать следующее сейчас.
 
-- We've had only one C source file and put everything in it.
-We need to divide and organize it.
-- There are two compilers, `gcc` and `glib-compile-resources`.
-We should control them with one build tool.
+- У нас был только один исходный файл C, и мы поместили всё в него.
+Нам нужно разделить и организовать его.
+- Есть два компилятора, `gcc` и `glib-compile-resources`.
+Мы должны управлять ими с помощью одного инструмента сборки.
 
-## Divide a C source file into two parts.
+## Разделение исходного файла C на две части.
 
-When you divide C source file into several parts, each file should contain one thing.
-For example, our source has two things, the definition of TfeTextView and functions related to GtkApplication and GtkApplicationWindow.
-It is a good idea to separate them into two files, `tfetextview.c` and `tfe.c`.
+Когда вы разделяете исходный файл C на несколько частей, каждый файл должен содержать одну вещь.
+Например, наш исходный код имеет две вещи: определение TfeTextView и функции, связанные с GtkApplication и GtkApplicationWindow.
+Хорошая идея — разделить их на два файла, `tfetextview.c` и `tfe.c`.
 
-- `tfetextview.c` includes the definition and functions of TfeTextView.
-- `tfe.c` includes functions like `main`, `app_activate`, `app_open` and so on, which relate to GtkApplication and GtkApplicationWindow.
+- `tfetextview.c` включает определение и функции TfeTextView.
+- `tfe.c` включает функции типа `main`, `app_activate`, `app_open` и так далее, которые относятся к GtkApplication и GtkApplicationWindow.
 
-Now we have three source files, `tfetextview.c`, `tfe.c` and `tfe3.ui`.
-The `3` of `tfe3.ui` is like a version number.
-Managing version with filenames is one possible idea but it also has a problem.
-You need to rewrite filename in each version and it affects to contents of source files that refer to filenames.
-So, we should take `3` away from the filename.
+Теперь у нас есть три исходных файла: `tfetextview.c`, `tfe.c` и `tfe3.ui`.
+Цифра `3` в `tfe3.ui` похожа на номер версии.
+Управление версиями с помощью имён файлов — одна из возможных идей, но у неё также есть проблема.
+Вам нужно переписывать имя файла в каждой версии, и это влияет на содержимое исходных файлов, которые ссылаются на имена файлов.
+Поэтому мы должны убрать `3` из имени файла.
 
-In `tfe.c` the function `tfe_text_view_new` is invoked to create a TfeTextView instance.
-But it is defined in `tfetextview.c`, not `tfe.c`.
-The lack of the declaration (not definition) of `tfe_text_view_new` makes an error when `tfe.c` is compiled.
-The declaration is necessary in `tfe.c`.
-That public information is usually written in header files.
-These have a `.h` suffix like `tfetextview.h`.
-The header files are included by C source files.
-For example, `tfetextview.h` is included by `tfe.c`.
+В `tfe.c` функция `tfe_text_view_new` вызывается для создания экземпляра TfeTextView.
+Но она определена в `tfetextview.c`, а не в `tfe.c`.
+Отсутствие объявления (не определения) `tfe_text_view_new` вызывает ошибку при компиляции `tfe.c`.
+Объявление необходимо в `tfe.c`.
+Эта публичная информация обычно записывается в заголовочные файлы.
+Они имеют суффикс `.h`, например `tfetextview.h`.
+Заголовочные файлы включаются в исходные файлы C.
+Например, `tfetextview.h` включается в `tfe.c`.
 
-The source files are shown below.
+Исходные файлы показаны ниже.
 
 `tfetextview.h`
 
@@ -55,7 +55,7 @@ tfe4/tfetextview.c
 tfe4/tfe.c
 @@@
 
-The ui file `tfe.ui` is the same as `tfe3.ui` in the previous section.
+UI-файл `tfe.ui` такой же, как `tfe3.ui` в предыдущем разделе.
 
 `tfe.gresource.xml`
 
@@ -63,72 +63,72 @@ The ui file `tfe.ui` is the same as `tfe3.ui` in the previous section.
 tfe4/tfe.gresource.xml
 @@@
 
-Dividing a file makes it easy to maintain.
-But now we face a new problem.
-The number of build steps increased.
+Разделение файла облегчает поддержку.
+Но теперь мы сталкиваемся с новой проблемой.
+Количество шагов сборки увеличилось.
 
-- Compiling the ui file `tfe.ui` into `resources.c`.
-- Compiling `tfe.c` into `tfe.o` (object file).
-- Compiling `tfetextview.c` into `tfetextview.o`.
-- Compiling `resources.c` into `resources.o`.
-- Linking all the object files into application `tfe`.
+- Компиляция ui-файла `tfe.ui` в `resources.c`.
+- Компиляция `tfe.c` в `tfe.o` (объектный файл).
+- Компиляция `tfetextview.c` в `tfetextview.o`.
+- Компиляция `resources.c` в `resources.o`.
+- Компоновка всех объектных файлов в приложение `tfe`.
 
-Build tools manage the steps.
+Инструменты сборки управляют этими шагами.
 
-## Meson and Ninja
+## Meson и Ninja
 
-I'll explain the Meson and Ninja build tools.
+Я объясню инструменты сборки Meson и Ninja.
 
-Other possible tools are Make and Autotools.
-They are traditional tools but slower than Ninja.
-So, many developers have switched to Meson and Ninja lately.
-For example, GTK 4 uses them.
+Другие возможные инструменты — Make и Autotools.
+Это традиционные инструменты, но они медленнее, чем Ninja.
+Поэтому многие разработчики в последнее время переключились на Meson и Ninja.
+Например, GTK 4 использует их.
 
-You need to create `meson.build` file first.
+Сначала вам нужно создать файл `meson.build`.
 
 @@@include
 tfe4/meson.build
 @@@
 
-- 1: The function `project` defines things about the project.
-The first argument is the name of the project and the second is the programming language.
-- 3: The function `dependency` defines a dependency that is taken by `pkg-config`.
-We put `gtk4` as an argument.
-- 5: The function `import` imports a module.
-In line 5, the gnome module is imported and assigned to the variable `gnome`.
-The gnome module provides helper tools to build GTK programs.
-- 6: The method `.compile_resources` is from the gnome module.
-It compiles files to resources, as instructed by the xml file.
-In line 6, the resource filename is `resources`, which means `resources.c` and `resources.h`, and the xml file is `tfe.gresource.xml`.
-This method generates C source file by default.
-- 8: Defines source files.
-- 10: The `executable` function generates a target file by compiling source files.
-The first argument is the filename of the target. The following arguments are source files.
-The last two arguments have keys and values.
-For example, the fourth argument has a key `dependencies` , a delimiter (`:`) and a value `gtkdep`.
-This type of parameter is called *keyword parameter* or *kwargs*.
-The value `gtkdep` is defined in line 3.
-The last argument tells Meson and Ninja that this project shouldn't install the executable file.
-So it is just compiled in the build directory.
+- 1: функция `project` определяет вещи о проекте.
+Первый аргумент — это имя проекта, а второй — язык программирования.
+- 3: функция `dependency` определяет зависимость, которая берётся с помощью `pkg-config`.
+Мы помещаем `gtk4` в качестве аргумента.
+- 5: функция `import` импортирует модуль.
+В строке 5 импортируется модуль gnome и присваивается переменной `gnome`.
+Модуль gnome предоставляет вспомогательные инструменты для построения программ GTK.
+- 6: метод `.compile_resources` из модуля gnome.
+Он компилирует файлы в ресурсы, как указано в xml-файле.
+В строке 6 имя файла ресурса — `resources`, что означает `resources.c` и `resources.h`, а xml-файл — `tfe.gresource.xml`.
+Этот метод по умолчанию генерирует исходный файл C.
+- 8: определяет исходные файлы.
+- 10: функция `executable` генерирует целевой файл путём компиляции исходных файлов.
+Первый аргумент — это имя файла цели. Следующие аргументы — исходные файлы.
+Последние два аргумента имеют ключи и значения.
+Например, четвёртый аргумент имеет ключ `dependencies`, разделитель (`:`) и значение `gtkdep`.
+Этот тип параметра называется *ключевым параметром* или *kwargs*.
+Значение `gtkdep` определено в строке 3.
+Последний аргумент сообщает Meson и Ninja, что этот проект не должен устанавливать исполняемый файл.
+Поэтому он просто компилируется в каталоге сборки.
 
-Now run meson and ninja.
+Теперь запустите meson и ninja.
 
     $ meson setup _build
     $ ninja -C _build
 
-meson has two arguments.
+meson имеет два аргумента.
 
-- setup: The first argument is a command of meson.
-Setup is the default, so you can leave it out.
-But it is recommended to write it explicitly since version 0.64.0.
-- The second argument is the name of the build directory.
+- setup: первый аргумент — это команда meson.
+Setup является значением по умолчанию, поэтому вы можете его опустить.
+Но рекомендуется писать его явно начиная с версии 0.64.0.
+- Второй аргумент — это имя каталога сборки.
 
-Then, the executable file `tfe` is generated under the directory `_build`.
+Затем исполняемый файл `tfe` генерируется в каталоге `_build`.
 
     $ _build/tfe tfe.c tfetextview.c
 
-A window appears.
-It includes a notebook with two pages.
-One is `tfe.c` and the other is `tfetextview.c`.
+Появляется окно.
+Оно включает блокнот с двумя страницами.
+Одна — `tfe.c`, а другая — `tfetextview.c`.
 
-For further information, see [The Meson Build system](https://mesonbuild.com/).
+Для получения дополнительной информации см. [The Meson Build system](https://mesonbuild.com/).
