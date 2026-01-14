@@ -1,15 +1,15 @@
-# Ui file for menu and action entries
+# UI-файл для меню и записей действий
 
-## Ui file for menu
+## UI-файл для меню
 
-You may have thought that building menus was really bothersome.
-Yes, the program was complicated and it needs lots of time to code them.
-The situation is similar to building widgets.
-When we built widgets, using ui file was a good way to avoid such complication.
-The same goes for menus.
+Вы, возможно, подумали, что создание меню было действительно утомительным.
+Да, программа была сложной, и на её написание требовалось много времени.
+Ситуация похожа на создание виджетов.
+Когда мы создавали виджеты, использование ui-файла было хорошим способом избежать таких сложностей.
+То же самое относится и к меню.
 
-The ui file for menus has interface and menu tags.
-The file starts and ends with interface tags.
+UI-файл для меню содержит теги interface и menu.
+Файл начинается и заканчивается тегами interface.
 
 ~~~xml
 <interface>
@@ -18,9 +18,9 @@ The file starts and ends with interface tags.
 </interface>
 ~~~
 
-`menu` tag corresponds to GMenu object.
-`id` attribute defines the name of the object.
-It will be referred by GtkBuilder.
+Тег `menu` соответствует объекту GMenu.
+Атрибут `id` определяет имя объекта.
+На него будет ссылаться GtkBuilder.
 
 ~~~xml
 <submenu>
@@ -32,15 +32,15 @@ It will be referred by GtkBuilder.
 </submenu>
 ~~~
 
-`item` tag corresponds to an item in the GMenu which has the same structure as GMenuItem.
-The item above has a label attribute.
-Its value is "New".
-The item also has an action attribute and its value is "win.new".
-"win" is a prefix and "new" is an action name.
-`submenu` tag corresponds to both GMenuItem and GMenu.
-The GMenuItem has a link to GMenu.
+Тег `item` соответствует элементу в GMenu, который имеет ту же структуру, что и GMenuItem.
+Приведённый выше элемент имеет атрибут label.
+Его значение — "New".
+Элемент также имеет атрибут action, и его значение — "win.new".
+"win" — это префикс, а "new" — имя действия.
+Тег `submenu` соответствует как GMenuItem, так и GMenu.
+GMenuItem содержит ссылку на GMenu.
 
-The ui file above can be described as follows.
+UI-файл выше можно описать следующим образом.
 
 ~~~xml
 <item>
@@ -54,32 +54,32 @@ The ui file above can be described as follows.
 </item>
 ~~~
 
-`link` tag expresses the link to submenu.
-And at the same time it also expresses the submenu itself.
-This file illustrates the relationship between the menus and items better than the prior ui file.
-But `submenu` tag is simple and easy to understand.
-So, we usually prefer the former ui style.
+Тег `link` выражает ссылку на подменю.
+И в то же время он также выражает само подменю.
+Этот файл иллюстрирует взаимосвязь между меню и элементами лучше, чем предыдущий ui-файл.
+Но тег `submenu` прост и понятен.
+Поэтому мы обычно предпочитаем первый стиль ui.
 
-For further information, see [GTK 4 API reference -- PopoverMenu](https://docs.gtk.org/gtk4/class.PopoverMenu.html#menu-models).
+Для получения дополнительной информации см. [GTK 4 API reference -- PopoverMenu](https://docs.gtk.org/gtk4/class.PopoverMenu.html#menu-models).
 
-The following is a screenshot of the sample program `menu3`.
-It is located in the directory [src/menu3](menu3).
+Ниже приведён скриншот примера программы `menu3`.
+Она находится в каталоге [src/menu3](menu3).
 
 ![menu3](../image/menu3.png){width=6.0cm height=5.055cm}
 
-The following is the ui file for `menu3`.
+Ниже приведён ui-файл для `menu3`.
 
 @@@include
 menu3/menu3.ui
 @@@
 
-The ui file is converted to the resource by the resource compiler `glib-compile-resouces` with xml file.
+UI-файл преобразуется в ресурс компилятором ресурсов `glib-compile-resouces` с помощью xml-файла.
 
 @@@include
 menu3/menu3.gresource.xml
 @@@
 
-GtkBuilder builds menus from the resource.
+GtkBuilder создаёт меню из ресурса.
 
 ~~~C
 GtkBuilder *builder = gtk_builder_new_from_resource ("/com/github/ToshioCP/menu3/menu3.ui");
@@ -89,19 +89,19 @@ gtk_application_set_menubar (GTK_APPLICATION (app), menubar);
 g_object_unref (builder);
 ~~~
 
-The builder instance is freed after the GMenuModel `menubar` is inserted to the application.
-If you do it before the insertion, bad thing will happen -- your computer might freeze.
-It is because you don't own the `menubar` instance.
-The function `gtk_builder_get_object` just returns the pointer to `menubar` and doesn't increase the reference count of `menubar`.
-So, if you released `bulder` before `gtk_application_set_menubar`, `builder` would be destroyed and `menubar` as well.
+Экземпляр builder освобождается после того, как GMenuModel `menubar` добавляется в приложение.
+Если вы сделаете это до вставки, произойдёт плохая вещь — ваш компьютер может зависнуть.
+Это происходит потому, что вы не владеете экземпляром `menubar`.
+Функция `gtk_builder_get_object` просто возвращает указатель на `menubar` и не увеличивает счётчик ссылок `menubar`.
+Поэтому, если вы освободите `bulder` до `gtk_application_set_menubar`, `builder` будет уничтожен, а вместе с ним и `menubar`.
 
-## Action entry
+## Запись действия
 
-The coding for building actions and signal handlers is bothersome work as well.
-Therefore, it should be automated.
-You can implement them easily with GActionEntry structure and `g_action_map_add_action_entries` function.
+Написание кода для создания действий и обработчиков сигналов также является утомительной работой.
+Поэтому это следует автоматизировать.
+Вы можете легко реализовать их с помощью структуры GActionEntry и функции `g_action_map_add_action_entries`.
 
-GActionEntry contains action name, signal handlers, parameter and state.
+GActionEntry содержит имя действия, обработчики сигналов, параметр и состояние.
 
 ~~~C
 typedef struct _GActionEntry GActionEntry;
@@ -122,7 +122,7 @@ struct _GActionEntry
   gsize padding[3];
 };
 ~~~
-For example, the actions in the previous section are:
+Например, действия из предыдущего раздела:
 
 ~~~C
 { "fullscreen", NULL, NULL, "false", fullscreen_changed }
@@ -130,30 +130,30 @@ For example, the actions in the previous section are:
 { "quit", quit_activated, NULL, NULL, NULL },
 ~~~
 
-- Fullscreen action is stateful, but doesn't have parameters.
-So, the third element (parameter type) is NULL.
-[GVariant text format](https://docs.gtk.org/glib/gvariant-text.html) provides "true" and "false" as boolean GVariant values.
-The initial state of the action is false (the fourth element).
-It doesn't have activate handler, so the second element is NULL.
-Instead, it has change-state handler.
-The fifth element `fullscreen_changed` is the handler.
-- Color action is stateful and has a parameter.
-The parameter type is string.
-[GVariant format strings](https://docs.gtk.org/glib/gvariant-format-strings.html) provides string formats to represent GVariant types.
-The third element "s" means GVariant string type.
-GVariant text format defines that strings are surrounded by single or double quotes.
-So, the string red is 'red' or "red".
-The fourth element is `"'red'"`, which is a C string format and the string is 'red'.
-You can write `"\"red\""` instead.
-The second element `color_activated` is the activate handler.
-The action doesn't have change-state handler, so the fifth element is NULL.
-- Quit action is non-stateful and has no parameter.
-So, the third and fourth elements are NULL.
-The second element `quit_activated` is the activate handler.
-The action doesn't have change-state handler, so the fifth element is NULL.
+- Действие Fullscreen является статическим, но не имеет параметров.
+Таким образом, третий элемент (тип параметра) — NULL.
+[Текстовый формат GVariant](https://docs.gtk.org/glib/gvariant-text.html) предоставляет "true" и "false" как булевы значения GVariant.
+Начальное состояние действия — false (четвёртый элемент).
+Оно не имеет обработчика activate, поэтому второй элемент — NULL.
+Вместо этого у него есть обработчик change-state.
+Пятый элемент `fullscreen_changed` — это обработчик.
+- Действие Color является статическим и имеет параметр.
+Тип параметра — строка.
+[Строки формата GVariant](https://docs.gtk.org/glib/gvariant-format-strings.html) предоставляют строковые форматы для представления типов GVariant.
+Третий элемент "s" означает строковый тип GVariant.
+Текстовый формат GVariant определяет, что строки окружаются одинарными или двойными кавычками.
+Таким образом, строка red — это 'red' или "red".
+Четвёртый элемент — `"'red'"`, что является форматом строки C, а строка — 'red'.
+Вы можете написать `"\"red\""` вместо этого.
+Второй элемент `color_activated` — обработчик activate.
+Действие не имеет обработчика change-state, поэтому пятый элемент — NULL.
+- Действие Quit не является статическим и не имеет параметра.
+Таким образом, третий и четвёртый элементы — NULL.
+Второй элемент `quit_activated` — обработчик activate.
+Действие не имеет обработчика change-state, поэтому пятый элемент — NULL.
 
-The function `g_action_map_add_action_entries` does everything
-to create GSimpleAction instances and add them to a GActionMap (an application or window).
+Функция `g_action_map_add_action_entries` выполняет всё необходимое
+для создания экземпляров GSimpleAction и добавления их в GActionMap (приложение или окно).
 
 ~~~C
 const GActionEntry app_entries[] = {
@@ -164,13 +164,13 @@ g_action_map_add_action_entries (G_ACTION_MAP (app), app_entries,
                                  G_N_ELEMENTS (app_entries), app);
 ~~~
 
-The code above does:
+Код выше выполняет:
 
-- Builds the "color" and "quit" actions
-- Connects the action and the "activate" signal handlers (`color_activated` and `quit_activated`).
-- Adds the actions to the action map `app`.
+- Создаёт действия "color" и "quit"
+- Подключает действия и обработчики сигнала "activate" (`color_activated` и `quit_activated`).
+- Добавляет действия в карту действий `app`.
 
-The same goes for the other action.
+То же самое относится к другому действию.
 
 ~~~C
 const GActionEntry win_entries[] = {
@@ -179,18 +179,18 @@ const GActionEntry win_entries[] = {
 g_action_map_add_action_entries (G_ACTION_MAP (win), win_entries,
                                  G_N_ELEMENTS (win_entries), win);
 ~~~
-The code above does:
+Код выше выполняет:
 
-- Builds the "fullscreen" action.
-- Connects the action and the signal handler `fullscreen_changed`
-- Its initial state is set to false.
-- Adds the action to the action map `win`.
+- Создаёт действие "fullscreen".
+- Подключает действие и обработчик сигнала `fullscreen_changed`
+- Его начальное состояние устанавливается в false.
+- Добавляет действие в карту действий `win`.
 
-## Example
+## Пример
 
-Source files are `menu3.c`, `menu3.ui`, `menu3.gresource.xml` and `meson.build`.
-They are in the directory [src/menu3](menu3).
-The following are `menu3.c` and `meson.build`.
+Исходные файлы: `menu3.c`, `menu3.ui`, `menu3.gresource.xml` и `meson.build`.
+Они находятся в каталоге [src/menu3](menu3).
+Ниже приведены `menu3.c` и `meson.build`.
 
 @@@include
 menu3/menu3.c
@@ -202,19 +202,19 @@ meson.build
 menu3/meson.build
 @@@
 
-Action handlers need to follow the following format.
+Обработчики действий должны следовать следующему формату.
 
 ~~~C
 static void
 handler (GSimpleAction *action_name, GVariant *parameter, gpointer user_data) { ... ... ... }
 ~~~
 
-You can't write, for example, "GApplication *app" instead of "gpointer user_data".
-Because `g_action_map_add_action_entries` expects that handlers follow the format above.
+Вы не можете написать, например, "GApplication *app" вместо "gpointer user_data".
+Потому что `g_action_map_add_action_entries` ожидает, что обработчики следуют формату выше.
 
-There are `menu2_ui.c` and `menu2.ui` under the `menu` directory.
-They are other examples to show menu ui file and `g_action_map_add_action_entries`.
-It includes a stateful action with parameters.
+В каталоге `menu` находятся `menu2_ui.c` и `menu2.ui`.
+Это другие примеры, демонстрирующие ui-файл меню и `g_action_map_add_action_entries`.
+Он включает статическое действие с параметрами.
 
 ~~~xml
 <item>
@@ -224,6 +224,6 @@ It includes a stateful action with parameters.
 </item>
 ~~~
 
-Action name and target are separated like this.
-Action attribute includes prefix and name only.
-You can't write like `<attribute name="action">app.color::red</attribute>`.
+Имя действия и цель разделены таким образом.
+Атрибут action включает только префикс и имя.
+Вы не можете написать `<attribute name="action">app.color::red</attribute>`.
