@@ -1,61 +1,61 @@
-# Prerequisite and License
+# Предварительные требования и лицензия
 
-## Prerequisite
+## Предварительные требования
 
-### GTK on a Linux OS
+### GTK в операционной системе Linux
 
-This tutorial describes GTK version 4 libraries.
-Although GTK is primarily designed for Linux using the C compiler, it is now widely used on other platforms, including Windows and macOS, through various language bindings such as Vala, Python, Rust, and Ruby.
-However, this tutorial describes only *C programs on Linux*.
+Этот учебник описывает библиотеки GTK версии 4.
+Хотя GTK в первую очередь разработан для Linux с использованием компилятора C, он сейчас широко используется на других платформах, включая Windows и macOS, через различные языковые привязки, такие как Vala, Python, Rust и Ruby.
+Однако этот учебник описывает только *программы на C для Linux*.
 
-If you want to try the examples in the tutorial, you need:
+Если вы хотите попробовать примеры из учебника, вам необходимо:
 
-- PC with Linux distribution like Ubuntu or Debian.
+- ПК с дистрибутивом Linux, таким как Ubuntu или Debian.
 - GCC.
-- GTK 4 (version 4.10.1 or later).
+- GTK 4 (версия 4.10.1 или новее).
 
-The stable version of GTK is 4.20.3 at present (December 28, 2025).
-The examples in this tutorial have been tested with GTK version 4.10.
-The version 4.10 added some new classes and functions and makes some classes and functions deprecated.
-Some example programs in this tutorial don't work on the older version.
+Стабильная версия GTK на данный момент (28 декабря 2025 года) — 4.20.3.
+Примеры в этом учебнике были протестированы с GTK версии 4.10.
+Версия 4.10 добавила некоторые новые классы и функции и сделала некоторые классы и функции устаревшими.
+Некоторые примеры программ в этом учебнике не работают на более старых версиях.
 
-### Ruby and rake for making the document
+### Ruby и rake для создания документа
 
-This repository includes Ruby programs.
-They are used to make GFM (GitHub Flavoured Markdown) files, HTML files, LaTeX files and a PDF file.
+Этот репозиторий включает программы на Ruby.
+Они используются для создания GFM (GitHub Flavoured Markdown) файлов, HTML файлов, LaTeX файлов и PDF файла.
 
-You need:
+Вам необходимо:
 
 - Linux.
-- Ruby programming language.
-There are two ways to install it.
-One is installing the distribution's package.
-The other is using a Ruby version manager such as rbenv, asdf, or mise.
-Using a version manager is recommended if you want to use the latest version of Ruby.
+- Язык программирования Ruby.
+Существует два способа установки.
+Один — установка пакета дистрибутива.
+Другой — использование менеджера версий Ruby, такого как rbenv, asdf или mise.
+Рекомендуется использовать менеджер версий, если вы хотите использовать последнюю версию Ruby.
 - Rake.
 
-## License
+## Лицензия
 
 Copyright (C) 2020,2023  ToshioCP (Toshio Sekiya)
 
-GTK4-tutorial repository contains tutorial documents and programs such as converters, generators and controllers.
-All of them comprise the 'GTK4-tutorial' package.
-This package is simply called 'GTK4-tutorial' in the following description.
+Репозиторий GTK4-tutorial содержит учебные документы и программы, такие как конвертеры, генераторы и контроллеры.
+Все они составляют пакет 'GTK4-tutorial'.
+Этот пакет в следующем описании просто называется 'GTK4-tutorial'.
 
-GTK4-tutorial is free; you can redistribute it and/or modify it under the terms of the following licenses.
+GTK4-tutorial является свободным; вы можете распространять и/или модифицировать его на условиях следующих лицензий.
 
-- The license of documents in GTK4-tutorial is the GNU Free Documentation License as published by the Free Software Foundation; either version 1.3 of the License or, at your option, any later version.
-The documents are Markdown, HTML and image files.
-If you generate a PDF file by running `rake pdf`, it is also considered part of the documents.
-- The license of programs in GTK4-tutorial is the GNU General Public License as published by the Free Software Foundation; either version 3 of the License or, at your option, any later version.
-The programs are written in C, Ruby and other languages.
+- Лицензия документов в GTK4-tutorial — это лицензия GNU Free Documentation License, опубликованная Free Software Foundation; либо версия 1.3 лицензии, либо (по вашему выбору) любая более поздняя версия.
+Документами являются файлы Markdown, HTML и изображения.
+Если вы создаете PDF файл, запустив `rake pdf`, он также считается частью документов.
+- Лицензия программ в GTK4-tutorial — это GNU General Public License, опубликованная Free Software Foundation; либо версия 3 лицензии, либо (по вашему выбору) любая более поздняя версия.
+Программы написаны на C, Ruby и других языках.
 
-GTK4-tutorial is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU License web pages for more details.
+GTK4-tutorial распространяется в надежде, что он будет полезен, но БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ; даже без подразумеваемой гарантии ТОВАРНОЙ ПРИГОДНОСТИ или ПРИГОДНОСТИ ДЛЯ ОПРЕДЕЛЕННОЙ ЦЕЛИ.
+Для получения более подробной информации смотрите веб-страницы лицензий GNU.
 
 - [GNU Free Documentation License](https://www.gnu.org/licenses/fdl-1.3.html)
 - [GNU General Public License](https://www.gnu.org/licenses/gpl-3.0.html)
 
-The licenses above are effective as of April 15, 2023.
-Before that, GPL covered all the contents of the GTK4-tutorial.
-But GFDL1.3 is more appropriate for documents so the license was changed.
+Указанные выше лицензии вступили в силу 15 апреля 2023 года.
+До этого GPL покрывала все содержимое GTK4-tutorial.
+Но GFDL1.3 более подходит для документов, поэтому лицензия была изменена.
