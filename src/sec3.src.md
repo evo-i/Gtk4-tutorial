@@ -1,22 +1,22 @@
-# GtkApplication and GtkApplicationWindow
+# GtkApplication и GtkApplicationWindow
 
 ## GtkApplication
 
-### GtkApplication and g\_application\_run
+### GtkApplication и g\_application\_run
 
-People write programming codes to make an application.
-What are applications?
-Applications are software that runs using libraries, which are the OS, frameworks and so on.
-In GTK 4 programming, the GtkApplication is a program (or executable) that runs using Gtk libraries.
+Люди пишут программный код для создания приложения.
+Что такое приложения?
+Приложения — это программное обеспечение, которое работает с использованием библиотек, таких как ОС, фреймворки и так далее.
+В программировании GTK 4, GtkApplication — это программа (или исполняемый файл), которая работает с использованием библиотек Gtk.
 
-The basic way to write a GtkApplication is as follows.
+Базовый способ написания GtkApplication выглядит следующим образом.
 
-- Create a GtkApplication instance.
-- Run the application.
+- Создать экземпляр GtkApplication.
+- Запустить приложение.
 
-That's all.
-Very simple.
-The following is the C code representing the scenario above.
+Вот и всё.
+Очень просто.
+Ниже приведен код на C, представляющий вышеописанный сценарий.
 
 @@@include
 misc/pr1.c
