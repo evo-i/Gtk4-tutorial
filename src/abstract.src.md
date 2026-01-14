@@ -1,63 +1,63 @@
-#### Contents of this Repository
+#### Содержание этого репозитория
 
-Now that GTK 4 is widely used, "GTK" usually means GTK 4.
-Therefore, this tutorial simply says "GTK" except where the version needs to be explicitly mentioned.
+Поскольку GTK 4 широко используется, "GTK" обычно означает GTK 4.
+Поэтому в этом учебнике просто говорится "GTK", за исключением случаев, когда необходимо явно указать версию.
 
-This tutorial illustrates how to write C programs with the GTK library.
-It focuses on beginners, so the contents are limited to the basics.
-The table of contents is at the end of this README.md.
+Этот учебник показывает, как писать программы на C с использованием библиотеки GTK.
+Он ориентирован на начинающих, поэтому содержание ограничено основами.
+Оглавление находится в конце этого README.md.
 
-- Section 3 to 23 describe the basics, with the example of a simple editor `tfe` (Text File Editor).
-- Section 24 to 27 describe GtkDrawingArea.
-- Section 28 describes Drag and Drop.
-- Section 29 to 33 describe the list model and the list view (GtkListView, GtkGridView, and GtkColumnView).
-It also describes GtkExpression.
+- Разделы с 3 по 23 описывают основы на примере простого редактора `tfe` (Text File Editor - текстовый редактор файлов).
+- Разделы с 24 по 27 описывают GtkDrawingArea.
+- Раздел 28 описывает перетаскивание (Drag and Drop).
+- Разделы с 29 по 33 описывают модель списка и представление списка (GtkListView, GtkGridView и GtkColumnView).
+Также описывается GtkExpression.
 
-The latest version of the tutorial is located at the [GTK4-tutorial GitHub repository](https://github.com/ToshioCP/Gtk4-tutorial).
-You can read it directly without downloading.
+Последняя версия учебника находится в [репозитории GTK4-tutorial на GitHub](https://github.com/ToshioCP/Gtk4-tutorial).
+Вы можете читать его напрямую без загрузки.
 
-There's a [GitHub Page](https://toshiocp.github.io/Gtk4-tutorial/) which is the HTML version of the tutorial.
+Также доступна [страница GitHub](https://toshiocp.github.io/Gtk4-tutorial/), которая является HTML-версией учебника.
 
-#### GTK Documentation
+#### Документация GTK
 
-Please refer to the [GTK API Reference](https://docs.gtk.org/gtk4/index.html)
-and the [GNOME Developer Documentation Website](https://developer.gnome.org/) for further information.
-These websites were opened in August 2021.
+Для получения дополнительной информации обратитесь к [справочнику GTK API](https://docs.gtk.org/gtk4/index.html)
+и [веб-сайту документации для разработчиков GNOME](https://developer.gnome.org/).
+Эти веб-сайты были открыты в августе 2021 года.
 
-If you want to know about GObject and the type system, please refer to the [GObject tutorial](https://github.com/ToshioCP/Gobject-tutorial).
-GObject is the base of GTK, so it is important for developers to understand it as well as GTK.
+Если вы хотите узнать о GObject и системе типов, обратитесь к [учебнику по GObject](https://github.com/ToshioCP/Gobject-tutorial).
+GObject является основой GTK, поэтому разработчикам важно понимать его так же хорошо, как и GTK.
 
-#### Contribution
+#### Вклад в проект
 
-This tutorial is still under development and unstable.
-Even though the example codes have been tested on GTK (version 4.10.1), bugs may still exist.
-If you find any bugs, errors, or mistakes in the tutorial and C examples, please let me know.
-You can post them to [GitHub issues](https://github.com/ToshioCP/Gtk4-tutorial/issues).
-You can also post updated files to [pull request](https://github.com/ToshioCP/Gtk4-tutorial/pulls).
-One thing you need to be careful about is to correct the source files, which are under the 'src' directory.
-Don't modify the files under `gfm` or `html` directories.
-After modifying some source files, run `rake` to create GFM (GitHub Flavoured Markdown) files and run `rake html` to create HTML files.
+Этот учебник все еще находится в разработке и нестабилен.
+Несмотря на то, что примеры кода были протестированы на GTK (версия 4.10.1), в них все еще могут быть ошибки.
+Если вы найдете какие-либо ошибки или неточности в учебнике и примерах на C, пожалуйста, дайте мне знать.
+Вы можете опубликовать их в [GitHub issues](https://github.com/ToshioCP/Gtk4-tutorial/issues).
+Вы также можете отправить обновленные файлы через [pull request](https://github.com/ToshioCP/Gtk4-tutorial/pulls).
+Важно помнить, что исправлять нужно исходные файлы, которые находятся в директории 'src'.
+Не изменяйте файлы в директориях `gfm` или `html`.
+После изменения исходных файлов запустите `rake` для создания GFM (GitHub Flavoured Markdown) файлов и `rake html` для создания HTML файлов.
 
-If you have a question, feel free to post it to `issue`.
-All questions are helpful and will make this tutorial better.
+Если у вас есть вопрос, не стесняйтесь опубликовать его в `issue`.
+Все вопросы полезны и помогут сделать этот учебник лучше.
 
-#### How to get Gtk 4 tutorial in HTML or PDF format
+#### Как получить учебник по GTK 4 в формате HTML или PDF
 
-If you want to get the tutorial in HTML or PDF format, build them with `rake` command, which is a ruby version of make.
-Type `rake html` for HTML.
-Type `rake pdf` for PDF.
+Если вы хотите получить учебник в формате HTML или PDF, соберите их с помощью команды `rake`, которая является версией make на Ruby.
+Наберите `rake html` для HTML.
+Наберите `rake pdf` для PDF.
 @@@if gfm
-There is a document \("[How to build GTK 4 Tutorial](Readme_for_developers.src.md)"\) for further information.
+Дополнительная информация содержится в документе \("[Как собрать учебник по GTK 4](Readme_for_developers.src.md)"\).
 @@@elif html
-There is a document \("[How to build GTK 4 Tutorial](Readme_for_developers.src.md)"\) for further information.
+Дополнительная информация содержится в документе \("[Как собрать учебник по GTK 4](Readme_for_developers.src.md)"\).
 @@@elif latex
-An appendix "How to build GTK 4 Tutorial" describes how to make them.
+Приложение "Как собрать учебник по GTK 4" описывает, как их создать.
 @@@end
 
-#### License
+#### Лицензия
 
-The license of this repository is written in [Section1](sec1.src.md).
-In short:
+Лицензия этого репозитория описана в [Разделе 1](sec1.src.md).
+Вкратце:
 
-- GFDL1.3 for documents
-- GPL3 for programs
+- GFDL1.3 для документов
+- GPL3 для программ

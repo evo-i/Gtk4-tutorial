@@ -1,44 +1,44 @@
-# How to Build the Gtk4 Tutorial
+# Как собрать учебник по Gtk4
 
-## Quick Start Guide
+## Краткое руководство
 
-1. You will need a Linux operating system, Ruby, Rake, Pandoc, and a LaTeX system.
-2. Download this repository and extract its contents.
-3. Change your current directory to the root directory of the source files.
-4. Run `rake html` to create HTML files. These files will be generated in the `docs` directory.
-5. Run `rake pdf` to create a PDF file. The file is generated in the `latex` directory.
+1. Вам понадобится операционная система Linux, Ruby, Rake, Pandoc и система LaTeX.
+2. Загрузите этот репозиторий и извлеките его содержимое.
+3. Измените текущий каталог на корневой каталог исходных файлов.
+4. Запустите `rake html` для создания HTML-файлов. Эти файлы будут созданы в каталоге `docs`.
+5. Запустите `rake pdf` для создания PDF-файла. Файл создаётся в каталоге `latex`.
 
-## Prerequisites
+## Предварительные требования
 
-- Linux operating system:
-The programs in this repository have been tested on Ubuntu 21.04.
-- Files in this repository:
-There are two ways to obtain the files:
-  1. Using Git:
-Run `git clone https://github.com/ToshioCP/Gtk4-tutorial.git` in your terminal.
-  2. Download Zip:
-Click the green `Code` button on the repository's main page and select "Download ZIP".
-- Ruby and Rake.
-- Pandoc: Used to convert Markdown to HTML and/or LaTeX.
-- Latex system: Tex Live 2020 or later is recommended for generating the PDF file.
+- Операционная система Linux:
+Программы в этом репозитории были протестированы на Ubuntu 21.04.
+- Файлы в этом репозитории:
+Есть два способа получить файлы:
+  1. Использование Git:
+Выполните `git clone https://github.com/ToshioCP/Gtk4-tutorial.git` в вашем терминале.
+  2. Загрузка Zip:
+Нажмите зелёную кнопку `Code` на главной странице репозитория и выберите "Download ZIP".
+- Ruby и Rake.
+- Pandoc: используется для преобразования Markdown в HTML и/или LaTeX.
+- Система Latex: рекомендуется Tex Live 2020 или более поздняя версия для генерации PDF-файла.
 
-## Markdown Variants and .src.md Files
+## Варианты Markdown и файлы .src.md
 
 ### GitHub Flavored Markdown (GFM)
 
-When you visit the [Gtk4_tutorial GitHub repository](https://github.com/ToshioCP/Gtk4-tutorial), the `README.md` file is displayed on the main page.
-This file is written in Markdown, which typically uses the .md extension.
+Когда вы посещаете [репозиторий Gtk4_tutorial на GitHub](https://github.com/ToshioCP/Gtk4-tutorial), файл `README.md` отображается на главной странице.
+Этот файл написан на Markdown, который обычно использует расширение .md.
 
-There are several dialects of Markdown.
-The `README.md` file uses "GitHub Flavored Markdown" or simply, GFM.
-The files in the `gfm` directory are also written in GFM.
-For more details, please refer to the [GitHub Flavor Markdown spec](https://github.github.com/gfm/).
+Существует несколько диалектов Markdown.
+Файл `README.md` использует "GitHub Flavored Markdown" или просто GFM.
+Файлы в каталоге `gfm` также написаны на GFM.
+Для получения дополнительной информации обратитесь к [спецификации GitHub Flavor Markdown](https://github.github.com/gfm/).
 
-### Pandoc's Markdown
+### Markdown Pandoc
 
-This tutorial also utilizes another dialect known as "Pandoc's Markdown."
-Pandoc is a powerful tool for converting between formats such as Markdown, HTML, LaTeX, and Word (.docx).
-In this project, this specific dialect is used when converting the source files into HTML or LaTeX.
+Этот учебник также использует другой диалект, известный как "Markdown Pandoc."
+Pandoc — это мощный инструмент для преобразования между форматами, такими как Markdown, HTML, LaTeX и Word (.docx).
+В этом проекте этот конкретный диалект используется при преобразовании исходных файлов в HTML или LaTeX.
 
 ## The .src.md File and @@@ Commands
 
