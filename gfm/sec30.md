@@ -1,29 +1,29 @@
 Up: [README.md](../README.md),  Prev: [Section 29](sec29.md), Next: [Section 31](sec31.md)
 
-# GtkGridView and activate signal
+# GtkGridView и сигнал activate
 
-GtkGridView is similar to GtkListView.
-It displays a GListModel as a grid, which is like a square tessellation.
+GtkGridView похож на GtkListView.
+Он отображает GListModel в виде сетки, что похоже на квадратную мозаику.
 
 ![Grid](../image/list4.png)
 
-This is often seen when you use a file browser like GNOME Files (Nautilus).
+Это часто встречается при использовании файлового браузера, такого как GNOME Files (Nautilus).
 
-In this section, let's make a very simple file browser `list4`.
-It just shows the files in the current directory.
-And a user can choose list or grid by clicking on buttons in the tool bar.
-Each item in the list or grid has an icon and a filename.
-In addition, `list4` provides the way to open the `tfe` text editor to show a text file.
-A user can do that by double clicking on an item or pressing enter key when an item is selected.
+В этом разделе давайте создадим очень простой файловый браузер `list4`.
+Он просто показывает файлы в текущем каталоге.
+И пользователь может выбрать список или сетку, нажав на кнопки на панели инструментов.
+Каждый элемент в списке или сетке имеет значок и имя файла.
+Кроме того, `list4` предоставляет способ открыть текстовый редактор `tfe` для показа текстового файла.
+Пользователь может сделать это, дважды щёлкнув по элементу или нажав клавишу enter, когда элемент выбран.
 
 ## GtkDirectoryList
 
-GtkDirectoryList implements GListModel and it contains information of files in a certain directory.
-The items of the list are GFileInfo objects.
+GtkDirectoryList реализует GListModel и содержит информацию о файлах в определённом каталоге.
+Элементы списка — это объекты GFileInfo.
 
-In the `list4` source files, GtkDirectoryList is described in a ui file and built by GtkBuilder.
-The GtkDirectoryList instance is assigned to the "model" property of a GtkSingleSelection instance.
-And the GtkSingleSelection instance is assigned to the "model" property of a GListView or GGridView instance.
+В исходных файлах `list4` GtkDirectoryList описан в ui-файле и построен с помощью GtkBuilder.
+Экземпляр GtkDirectoryList присваивается свойству "model" экземпляра GtkSingleSelection.
+И экземпляр GtkSingleSelection присваивается свойству "model" экземпляра GListView или GGridView.
 
 ~~~
 GtkListView (model property) => GtkSingleSelection (model property) => GtkDirectoryList
@@ -32,7 +32,7 @@ GtkGridView (model property) => GtkSingleSelection (model property) => GtkDirect
 
 ![DirectoryList](../image/directorylist.png)
 
-The following is a part of the ui file `list4.ui`.
+Следующее — часть ui-файла `list4.ui`.
 
 ~~~xml
 <object class="GtkListView" id="list">
@@ -51,25 +51,25 @@ The following is a part of the ui file `list4.ui`.
 </object>
 ~~~
 
-GtkDirectoryList has an "attributes" property.
-It is attributes of GFileInfo such as "standard::name", "standard::icon" and "standard::content-type".
+GtkDirectoryList имеет свойство "attributes".
+Это атрибуты GFileInfo, такие как "standard::name", "standard::icon" и "standard::content-type".
 
-- standard::name is a filename.
-- standard::icon is an icon of the file. It is a GIcon object.
-- standard::content-type is a content-type.
-Content-type is the same as mime type for the internet.
-For example, "text/plain" is a text file, "text/x-csrc" is a C source code and so on.
-("text/x-csrc"is not registered to IANA media types.
-Such "x-" subtype is not a standard mime type.)
-Content type is also used by desktop systems.
+- standard::name — это имя файла.
+- standard::icon — это значок файла. Это объект GIcon.
+- standard::content-type — это тип содержимого.
+Тип содержимого совпадает с mime-типом для интернета.
+Например, "text/plain" — это текстовый файл, "text/x-csrc" — это исходный код C и так далее.
+("text/x-csrc" не зарегистрирован в типах медиа IANA.
+Такой подтип "x-" не является стандартным mime-типом.)
+Тип содержимого также используется настольными системами.
 
-GtkGridView uses the same GtkSingleSelection instance (`singleselection`).
-So, its model property is set to it.
+GtkGridView использует тот же экземпляр GtkSingleSelection (`singleselection`).
+Поэтому его свойство model установлено на него.
 
-## Ui file of the window
+## Ui-файл окна
 
-The window is built with the following ui file.
-(See the screenshot at the beginning of this section).
+Окно построено с помощью следующего ui-файла.
+(См. скриншот в начале этого раздела).
 
 ~~~xml
  1 <?xml version="1.0" encoding="UTF-8"?>
@@ -147,44 +147,44 @@ The window is built with the following ui file.
 73 
 ~~~
 
-The file consists of two parts.
-The first part begins at the line 3 and ends at line 57.
-This part is the widgets from the top level window to the scrolled window.
-It also includes two buttons.
-The second part begins at line 58 and ends at line 71.
-This is the part of GtkListView and GtkGridView.
+Файл состоит из двух частей.
+Первая часть начинается на строке 3 и заканчивается на строке 57.
+Эта часть — виджеты от окна верхнего уровня до окна с прокруткой.
+Она также включает две кнопки.
+Вторая часть начинается на строке 58 и заканчивается на строке 71.
+Это часть GtkListView и GtkGridView.
 
-- 13-17, 42-46: Two labels are dummy labels.
-They just work as a space to put the two buttons at the appropriate position.
-- 18-41: GtkButton `btnlist` and `btngrid`.
-These two buttons work as selection buttons to switch from list to grid and vice versa.
-These two buttons are connected to a stateful action `win.view`.
-This action has a parameter.
-Such action consists of prefix, action name and parameter.
-The prefix of the action is `win`, which means the action belongs to the top level window.
-The prefix gives the scope of the action.
-The action name is `view`.
-The parameters are `list` or `grid`, which show the state of the action.
-A parameter is also called a target, because it is a target to which the action changes its state.
-We often write the detailed action like "win.view::list" or "win.view::grid".
-- 21-22: The properties "action-name" and "action-target" belong to GtkActionable interface.
-GtkButton implements GtkActionable.
-The action name is "win.view" and the target is "list".
-Generally, a target is GVariant, which can be string, integer, float and so on.
-You need to use GVariant text format to write GVariant value in ui files.
-If the type of the GVariant value is string, then the value with GVariant text format is bounded by single quotes or double quotes.
-Because ui file is xml format text, single quote cannot be written without escape.
-Its escape sequence is \&apos;.
-Therefore, the target 'list' is written as \&apos;list\&apos;.
-Because the button is connected to the action, "clicked" signal handler isn't needed.
-- 23-27: The child widget of the button is GtkImage.
-GtkImage has a "resource" property.
-It is a GResource and GtkImage reads an image data from the resource and sets the image.
-This resource is built from 24x24-sized png image data, which is an original icon.
+- 13-17, 42-46: Две метки — это фиктивные метки.
+Они просто работают как пространство для размещения двух кнопок в соответствующей позиции.
+- 18-41: GtkButton `btnlist` и `btngrid`.
+Эти две кнопки работают как кнопки выбора для переключения из списка в сетку и наоборот.
+Эти две кнопки подключены к действию с состоянием `win.view`.
+Это действие имеет параметр.
+Такое действие состоит из префикса, имени действия и параметра.
+Префикс действия — `win`, что означает, что действие принадлежит окну верхнего уровня.
+Префикс даёт область действия.
+Имя действия — `view`.
+Параметры — `list` или `grid`, которые показывают состояние действия.
+Параметр также называется целью (target), потому что это цель, на которую действие меняет своё состояние.
+Мы часто пишем подробное действие как "win.view::list" или "win.view::grid".
+- 21-22: Свойства "action-name" и "action-target" принадлежат интерфейсу GtkActionable.
+GtkButton реализует GtkActionable.
+Имя действия — "win.view", а цель — "list".
+Как правило, цель — это GVariant, который может быть строкой, целым числом, числом с плавающей точкой и так далее.
+Вам нужно использовать текстовый формат GVariant для записи значения GVariant в ui-файлах.
+Если тип значения GVariant — строка, то значение в текстовом формате GVariant ограничивается одинарными или двойными кавычками.
+Поскольку ui-файл — это текст в формате xml, одинарная кавычка не может быть записана без экранирования.
+Её escape-последовательность — \&apos;.
+Поэтому цель 'list' записывается как \&apos;list\&apos;.
+Поскольку кнопка подключена к действию, обработчик сигнала "clicked" не нужен.
+- 23-27: Дочерний виджет кнопки — GtkImage.
+GtkImage имеет свойство "resource".
+Это GResource, и GtkImage читает данные изображения из ресурса и устанавливает изображение.
+Этот ресурс построен из данных изображения png размером 24x24, которое является оригинальным значком.
 - 50-53: GtkScrolledWindow.
-Its child widget will be set with GtkListView or GtkGridView.
+Его дочерний виджет будет установлен с помощью GtkListView или GtkGridView.
 
-The action `view` is created, connected to the "activate" signal handler and inserted to the window (action map) as follows.
+Действие `view` создаётся, подключается к обработчику сигнала "activate" и вставляется в окно (action map) следующим образом.
 
 ~~~C
 act_view = g_simple_action_new_stateful ("view", g_variant_type_new("s"), g_variant_new_string ("list"));
@@ -192,13 +192,13 @@ g_signal_connect (act_view, "activate", G_CALLBACK (view_activated), NULL);
 g_action_map_add_action (G_ACTION_MAP (win), G_ACTION (act_view));
 ~~~
 
-The signal handler `view_activated` will be explained later.
+Обработчик сигнала `view_activated` будет объяснён позже.
 
-## Factories
+## Фабрики
 
-Each view (GtkListView and GtkGridView) has its own factory because its items have different structure of widgets.
-The factories are GtkBuilderListItemFactory objects.
-Their ui files are as follows.
+Каждое представление (GtkListView и GtkGridView) имеет свою собственную фабрику, потому что его элементы имеют разную структуру виджетов.
+Фабрики — это объекты GtkBuilderListItemFactory.
+Их ui-файлы следующие.
 
 factory_list.ui
 
@@ -275,12 +275,12 @@ factory_grid.ui
 33 
 ~~~
 
-The two files above are almost same.
-The difference is:
+Два файла выше почти одинаковы.
+Разница:
 
-- The orientation of the box
-- The icon size
-- The position of the text of the label
+- Ориентация блока
+- Размер значка
+- Положение текста метки
 
 ~~~
 $ cd list4; diff factory_list.ui factory_grid.ui
@@ -296,10 +296,10 @@ $ cd list4; diff factory_list.ui factory_grid.ui
 >             <property name="xalign">0.5</property>
 ~~~
 
-Two properties "gicon" (property of GtkImage) and "label" (property of GtkLabel) are in the ui files above.
-Because GFileInfo doesn't have properties correspond to icon or filename, the factory uses closure tag to bind "gicon" and "label" properties to GFileInfo information.
-A function `get_icon` gets GIcon from the GFileInfo object.
-And a function `get_file_name` gets a filename from the GFileInfo object.
+Два свойства "gicon" (свойство GtkImage) и "label" (свойство GtkLabel) находятся в ui-файлах выше.
+Поскольку GFileInfo не имеет свойств, соответствующих значку или имени файла, фабрика использует тег closure для привязки свойств "gicon" и "label" к информации GFileInfo.
+Функция `get_icon` получает GIcon из объекта GFileInfo.
+И функция `get_file_name` получает имя файла из объекта GFileInfo.
 
 ~~~C
  1 GIcon *
@@ -317,17 +317,17 @@ And a function `get_file_name` gets a filename from the GFileInfo object.
 13 }
 ~~~
 
-One important thing is the ownership of the return values.
-The return value is owned by the caller.
-So, `g_obect_ref` or `g_strdup` is necessary.
+Одна важная вещь — это владение возвращаемыми значениями.
+Возвращаемое значение принадлежит вызывающей стороне.
+Поэтому необходимы `g_obect_ref` или `g_strdup`.
 
-## An activate signal handler of the button action
+## Обработчик сигнала activate действия кнопки
 
-An activate signal handler `view_activate` switches the view.
-It does two things.
+Обработчик сигнала activate `view_activate` переключает представление.
+Он делает две вещи.
 
-- Changes the child widget of GtkScrolledWindow.
-- Changes the CSS of buttons to show the current state.
+- Изменяет дочерний виджет GtkScrolledWindow.
+- Изменяет CSS кнопок, чтобы показать текущее состояние.
 
 ~~~C
  1 static void
@@ -350,29 +350,29 @@ It does two things.
 18 }
 ~~~
 
-The second parameter of this handler is the target of the clicked button.
-Its type is GVariant.
+Второй параметр этого обработчика — это цель нажатой кнопки.
+Его тип — GVariant.
 
-- If `btnlist` has been clicked, then `parameter` is a GVariant of the string "list".
-- If `btngrid` has been clicked, then `parameter` is a GVariant of the string "grid".
+- Если `btnlist` была нажата, то `parameter` — это GVariant строки "list".
+- Если `btngrid` была нажата, то `parameter` — это GVariant строки "grid".
 
-The third parameter `user_data` points NULL and it is ignored here.
+Третий параметр `user_data` указывает на NULL и здесь игнорируется.
 
-- 3: `g_variant_get_string` gets the string from the GVariant variable.
-- 7-13: Sets the child of `scr`.
-The function `gtk_scrolled_window_set_child` decreases the reference count of the old child by one.
-And it increases the reference count of the new child by one.
-- 14-16: Sets the CSS for the buttons.
-The background of the clicked button will be silver color and the other button will be white.
-- 17: Changes the state of the action.
+- 3: `g_variant_get_string` получает строку из переменной GVariant.
+- 7-13: Устанавливает дочерний элемент `scr`.
+Функция `gtk_scrolled_window_set_child` уменьшает счётчик ссылок старого дочернего элемента на единицу.
+И она увеличивает счётчик ссылок нового дочернего элемента на единицу.
+- 14-16: Устанавливает CSS для кнопок.
+Фон нажатой кнопки будет серебристого цвета, а другая кнопка будет белой.
+- 17: Изменяет состояние действия.
  
-## Activate signal on GtkListView and GtkGridView
+## Сигнал activate на GtkListView и GtkGridView
 
-Views (GtkListView and GtkGridView) have an "activate" signal.
-It is emitted when an item in the view is double clicked or the enter key is pressed.
-You can do anything you like by connecting the "activate" signal to the handler.
+Представления (GtkListView и GtkGridView) имеют сигнал "activate".
+Он испускается при двойном щелчке по элементу в представлении или нажатии клавиши enter.
+Вы можете делать всё, что вам нравится, подключив сигнал "activate" к обработчику.
 
-The example `list4` launches `tfe` text file editor if the item of the list is a text file.
+Пример `list4` запускает текстовый редактор `tfe`, если элемент списка является текстовым файлом.
 
 ~~~C
 static void
@@ -394,18 +394,18 @@ grid_activate (GtkGridView *grid, int position, gpointer user_data) {
   g_signal_connect (GTK_GRID_VIEW (grid), "activate", G_CALLBACK (grid_activate), NULL);
 ~~~
 
-The second parameter of each handler is the position of the item (GFileInfo) of the GListModel.
-So you can get the item with `g_list_model_get_item` function.
+Второй параметр каждого обработчика — это позиция элемента (GFileInfo) GListModel.
+Поэтому вы можете получить элемент с помощью функции `g_list_model_get_item`.
 
-### Content type and application launch
+### Тип содержимого и запуск приложения
 
-The function `launch_tfe_with_file` gets a file from the GFileInfo instance.
-If the file is a text file, it launches `tfe` with the file.
+Функция `launch_tfe_with_file` получает файл из экземпляра GFileInfo.
+Если файл является текстовым файлом, она запускает `tfe` с файлом.
 
-GFileInfo has information about file type.
-The file type is like "text/plain", "text/x-csrc" and so on.
-It is called content type.
-Content type can be got with `g_file_info_get_content_type` function.
+GFileInfo содержит информацию о типе файла.
+Тип файла похож на "text/plain", "text/x-csrc" и так далее.
+Это называется типом содержимого.
+Тип содержимого можно получить с помощью функции `g_file_info_get_content_type`.
 
 ~~~C
  1 static void
@@ -448,32 +448,32 @@ Content type can be got with `g_file_info_get_content_type` function.
 38 }
 ~~~
 
-- 13: Gets the content type of the file from GFileInfo.
-- 14-16: Prints the content type if "debug" is defined.
-This is only useful to know a content type of a file.
-If you don't want this, delete or uncomment the definition `#define debug 1` iat line 6 in the source file.
-- 17-22: If no content type or the content type doesn't begin with "text/",the function returns.
-- 23: Creates GAppInfo object of `tfe` application.
-GAppInfo is an interface and the variable `appinfo` points a GDesktopAppInfo instance.
-GAppInfo is a collection of information of applications.
-- 32: Launches the application (`tfe`) with an argument `file`.
-`g_app_info_launch` has four parameters.
-The first parameter is GAppInfo object.
-The second parameter is a list of GFile objects.
-In this function, only one GFile instance is given to `tfe`, but you can give more arguments.
-The third parameter is GAppLaunchContext, but this program gives NULL instead.
-The last parameter is the pointer to the pointer to a GError.
-- 36: `g_list_free_full` frees the memories used by the list and items.
+- 13: Получает тип содержимого файла из GFileInfo.
+- 14-16: Выводит тип содержимого, если "debug" определён.
+Это полезно только для того, чтобы узнать тип содержимого файла.
+Если вы не хотите этого, удалите или закомментируйте определение `#define debug 1` на строке 6 в исходном файле.
+- 17-22: Если нет типа содержимого или тип содержимого не начинается с "text/", функция возвращается.
+- 23: Создаёт объект GAppInfo приложения `tfe`.
+GAppInfo — это интерфейс, и переменная `appinfo` указывает на экземпляр GDesktopAppInfo.
+GAppInfo — это коллекция информации о приложениях.
+- 32: Запускает приложение (`tfe`) с аргументом `file`.
+`g_app_info_launch` имеет четыре параметра.
+Первый параметр — объект GAppInfo.
+Второй параметр — список объектов GFile.
+В этой функции только один экземпляр GFile передаётся в `tfe`, но вы можете передать больше аргументов.
+Третий параметр — GAppLaunchContext, но эта программа передаёт NULL вместо него.
+Последний параметр — это указатель на указатель на GError.
+- 36: `g_list_free_full` освобождает память, используемую списком и элементами.
 
-If your distribution supports GTK 4, using `g_app_info_launch_default_for_uri` is convenient.
-The function automatically determines the default application from the file and launches it.
-For example, if the file is text, then it launches GNOME text editor with the file.
-Such feature comes from desktop.
+Если ваш дистрибутив поддерживает GTK 4, использование `g_app_info_launch_default_for_uri` удобно.
+Функция автоматически определяет приложение по умолчанию из файла и запускает его.
+Например, если файл текстовый, то она запускает текстовый редактор GNOME с файлом.
+Такая функция исходит от рабочего стола.
 
-## Compilation and execution
+## Компиляция и выполнение
 
-The source files are located in [src/list4](../src/list4) directory.
-To compile and execute list4, type as follows.
+Исходные файлы расположены в каталоге [src/list4](../src/list4).
+Для компиляции и выполнения list4 введите следующее.
 
 ~~~
 $ cd list4 # or cd src/list4. It depends your current directory.
@@ -482,19 +482,19 @@ $ ninja -C _build
 $ _build/list4
 ~~~
 
-Then a file list appears as a list style.
-Click on a button on the tool bar so that you can change the style to grid or back to list.
-Double click "list4.c" item, then `tfe` text editor runs with the argument "list4.c".
-The following is the screenshot.
+Затем появляется список файлов в стиле списка.
+Нажмите на кнопку на панели инструментов, чтобы вы могли изменить стиль на сетку или обратно на список.
+Дважды щёлкните по элементу "list4.c", затем текстовый редактор `tfe` запустится с аргументом "list4.c".
+Ниже приведён скриншот.
 
 ![Screenshot](../image/screenshot_list4.png)
 
-## "gbytes" property of GtkBuilderListItemFactory
+## Свойство "gbytes" GtkBuilderListItemFactory
 
-GtkBuilderListItemFactory has "gbytes" property.
-The property contains a byte sequence of ui data.
-If you use this property, you can put the contents of `factory_list.ui` and `factory_grid.ui`into `list4.ui`.
-The following shows a part of the new ui file (`list5.ui`).
+GtkBuilderListItemFactory имеет свойство "gbytes".
+Свойство содержит последовательность байтов ui-данных.
+Если вы используете это свойство, вы можете поместить содержимое `factory_list.ui` и `factory_grid.ui` в `list4.ui`.
+Ниже показана часть нового ui-файла (`list5.ui`).
 
 ~~~xml
   <object class="GtkListView" id="list">
@@ -547,16 +547,16 @@ The following shows a part of the new ui file (`list5.ui`).
   </object>
 ~~~
 
-CDATA section begins with "<![CDATA[" and ends with "]]>".
-The contents of CDATA section is recognized as a string.
-Any character, even if it is a key syntax marker such as '<' or '>', is recognized literally.
-Therefore, the text between "<![CDATA[" and "]]>" is inserted to "bytes" property as it is.
+Секция CDATA начинается с "<![CDATA[" и заканчивается "]]>".
+Содержимое секции CDATA распознаётся как строка.
+Любой символ, даже если это маркер ключевого синтаксиса, такой как '<' или '>', распознаётся буквально.
+Поэтому текст между "<![CDATA[" и "]]>" вставляется в свойство "bytes" как есть.
 
-This method decreases the number of ui files.
-But, the new ui file is a bit complicated especially for the beginners.
-If you feel some difficulty, it is better for you to separate the ui file.
+Этот метод уменьшает количество ui-файлов.
+Но новый ui-файл немного сложен, особенно для начинающих.
+Если вы чувствуете некоторую сложность, лучше для вас разделить ui-файл.
 
-A directory [src/list5](../src/list5) includes the ui file above.
+Каталог [src/list5](../src/list5) включает ui-файл выше.
 
 
 Up: [README.md](../README.md),  Prev: [Section 29](sec29.md), Next: [Section 31](sec31.md)

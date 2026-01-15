@@ -1,34 +1,34 @@
 Up: [README.md](../README.md),  Prev: [Section 22](sec22.md), Next: [Section 24](sec24.md)
 
-# Pango, CSS and Application
+# Pango, CSS и приложение
 
 ## PangoFontDescription
 
-PangoFontDescription is a C structure for a font.
-You can get font family, style, weight and size.
-You can also get a string that includes font attributes.
-For example, suppose that the PangoFontDescription has a font of "Noto Sans Mono", "Bold", "Italic" and 12 points of size.
-Then the string converted from the PangoFontDescription is "Noto Sans Mono Bold Italic 12".
+PangoFontDescription — это структура C для шрифта.
+Вы можете получить семейство шрифта, стиль, насыщенность и размер.
+Вы также можете получить строку, которая включает атрибуты шрифта.
+Например, предположим, что PangoFontDescription содержит шрифт "Noto Sans Mono", "Bold", "Italic" и размер 12 пунктов.
+Тогда строка, преобразованная из PangoFontDescription, будет "Noto Sans Mono Bold Italic 12".
 
-- Font family is  "Noto Sans Mono".
-- Font style is "Italic".
-- Font weight is "Bold", or 700.
-- Font size is 12 pt.
+- Семейство шрифта — "Noto Sans Mono".
+- Стиль шрифта — "Italic".
+- Насыщенность шрифта — "Bold", или 700.
+- Размер шрифта — 12 pt.
 
-The font in CSS is different from the string from PangoFontDescription.
+Шрифт в CSS отличается от строки из PangoFontDescription.
 
 - `font: bold italic 12pt "Noto Sans Mono"`
 - `Noto Sans Mono Bold Italic 12`
 
-So, it may be easier to use each property, i.e. font-family, font-style, font-weight and font-size, to convert a PangoFontDescription data to CSS.
+Поэтому может быть проще использовать каждое свойство отдельно, т.е. font-family, font-style, font-weight и font-size, для преобразования данных PangoFontDescription в CSS.
 
-Refer to
-[Pango document](https://docs.gtk.org/Pango/index.html)
-and [W3C CSS Fonts Module Level 3](https://www.w3.org/TR/css-fonts-3/) for further information.
+Обратитесь к
+[документации Pango](https://docs.gtk.org/Pango/index.html)
+и [W3C CSS Fonts Module Level 3](https://www.w3.org/TR/css-fonts-3/) для получения дополнительной информации.
 
-## Converter from PangoFontDescription to CSS
+## Конвертер из PangoFontDescription в CSS
 
-Two files `pfd2css.h` and `pfd2css.c` include the converter from PangoFontDescription to CSS.
+Два файла `pfd2css.h` и `pfd2css.c` содержат конвертер из PangoFontDescription в CSS.
 
 ~~~C
  1 #pragma once
@@ -57,8 +57,8 @@ Two files `pfd2css.h` and `pfd2css.c` include the converter from PangoFontDescri
 24 pfd2css_size (PangoFontDescription *pango_font_desc);
 ~~~
 
-The five functions are public.
-The first function is a convenient function to set other four CSS at once.
+Пять функций являются публичными.
+Первая функция — это удобная функция для установки четырех других CSS-свойств одновременно.
 
 ~~~C
  1 #include <pango/pango.h>
@@ -142,38 +142,38 @@ The first function is a convenient function to set other four CSS at once.
 79 }
 ~~~
 
-- The function `pfd2css_family` returns font family.
-- The function `pfd2css_style` returns font style which is one of "normal", "italic" or "oblique".
-- The function `pfd2css_weight` returns font weight in integer. See the list below.
-- The function `pfd2css_size` returns font size.
-  - If the font description size is absolute, it returns the size of device unit, which is pixel. Otherwise the unit is point.
-  - The function `pango_font_description_get_size` returns the integer of the size but it is multiplied by `PANGO_SCALE`.
-So, you need to divide it by `PANGO_SCALE`.
-The `PANGO_SCALE` is currently 1024, but this might be changed in the future.
-If the font size is 12pt, the size in pango is `12*PANGO_SCALE=12*1024=12288`.
-- The function `pfd2css` returns a string of the font.
-For example, if a font "Noto Sans Mono Bold Italic 12" is given,
-it returns "font-family: Noto Sans Mono; font-style: italic; font-weight: 700; font-size: 12pt;".
+- Функция `pfd2css_family` возвращает семейство шрифта.
+- Функция `pfd2css_style` возвращает стиль шрифта, который является одним из "normal", "italic" или "oblique".
+- Функция `pfd2css_weight` возвращает насыщенность шрифта в виде целого числа. См. список ниже.
+- Функция `pfd2css_size` возвращает размер шрифта.
+  - Если размер описания шрифта абсолютный, она возвращает размер в единицах устройства, то есть в пикселях. В противном случае единицей измерения является пункт.
+  - Функция `pango_font_description_get_size` возвращает целое число размера, но оно умножено на `PANGO_SCALE`.
+Поэтому вам нужно разделить его на `PANGO_SCALE`.
+`PANGO_SCALE` в настоящее время равен 1024, но это может быть изменено в будущем.
+Если размер шрифта 12pt, размер в pango составляет `12*PANGO_SCALE=12*1024=12288`.
+- Функция `pfd2css` возвращает строку шрифта.
+Например, если задан шрифт "Noto Sans Mono Bold Italic 12",
+она возвращает "font-family: Noto Sans Mono; font-style: italic; font-weight: 700; font-size: 12pt;".
 
-The font weight number is one of:
+Число насыщенности шрифта может быть одним из:
 
-- 100 - Thin
-- 200 - Extra Light (Ultra Light)
-- 300 - Light
-- 400 - Normal
-- 500 - Medium
-- 600 - Semi Bold (Demi Bold)
-- 700 - Bold
-- 800 - Extra Bold (Ultra Bold)
-- 900 - Black (Heavy)
+- 100 - Thin (Тонкий)
+- 200 - Extra Light (Ultra Light) (Сверхлегкий)
+- 300 - Light (Легкий)
+- 400 - Normal (Нормальный)
+- 500 - Medium (Средний)
+- 600 - Semi Bold (Demi Bold) (Полужирный)
+- 700 - Bold (Жирный)
+- 800 - Extra Bold (Ultra Bold) (Сверхжирный)
+- 900 - Black (Heavy) (Черный)
 
-## Application object
+## Объект приложения
 
-### TfeApplication class
+### Класс TfeApplication
 
-TfeApplication class is a child of GtkApplication.
-It has some instance variables.
-The header file defines the type macro and a public function.
+Класс TfeApplication является дочерним классом GtkApplication.
+Он имеет несколько переменных экземпляра.
+Заголовочный файл определяет макрос типа и публичную функцию.
 
 ~~~C
 1 #pragma once
@@ -187,8 +187,8 @@ The header file defines the type macro and a public function.
 9 tfe_application_new (const char* application_id, GApplicationFlags flag);
 ~~~
 
-The following code is extracted from `tfeapplication.c`.
-It builds TfeApplication class and instance.
+Следующий код извлечен из `tfeapplication.c`.
+Он создает класс и экземпляр TfeApplication.
 
 ```C
 #include <gtk/gtk.h>
@@ -233,31 +233,31 @@ tfe_application_new (const char* application_id, GApplicationFlags flag) {
 }
 ```
 
-- The structure `_TfeApplication` is defined.
-It has four members.
-One is its parents and the others are kinds of instance variables.
-The members are usually initialized in the instance initialization function.
-And they are released in the disposal function or freed in the finalization function.
-The members are:
-  - win: main window instance
-  - settings: GSettings instance.it is bound to "font-desc" item in the GSettings
-  - provider: a provider for the font of the textview.
-- The macro `G_DEFINE_FINAL_TYPE` defines `tfe_application_get_type` function and some other useful things.
-- The function `tfe_application_class_init` initializes the TfeApplication class.
-It overrides four class methods.
-Three class methods `startup`, `activate` and `open` points the default signal handlers.
-The overriding changes the default handlers.
-You can connect the handlers with `g_signal_connect` macro but the result is different.
-The macro connects a user handler to the signal.
-The default handler still exists and no change is made to them.
-- The function `tfe_application_init` initializes an instance.
-  - Creates a new GSettings instance and make `app->settings` point it. Then connects the handler `changed_font_cb` to the "changed::font-desc" signal.
-  - Creates a new GtkCssProvider instance and make `app->provider` point it.
-- The function `tfe_application_dispose` releases the GSettings and GtkCssProvider instances.
-Then, call the parent's dispose handler. It is called "chaining up".
-See [GObject document](https://docs.gtk.org/gobject/tutorial.html#chaining-up).
+- Определена структура `_TfeApplication`.
+Она имеет четыре члена.
+Один из них — родительский объект, остальные являются переменными экземпляра.
+Члены обычно инициализируются в функции инициализации экземпляра.
+И они освобождаются в функции удаления или очищаются в функции финализации.
+Члены:
+  - win: экземпляр главного окна
+  - settings: экземпляр GSettings, привязанный к элементу "font-desc" в GSettings
+  - provider: провайдер для шрифта текстового представления.
+- Макрос `G_DEFINE_FINAL_TYPE` определяет функцию `tfe_application_get_type` и некоторые другие полезные вещи.
+- Функция `tfe_application_class_init` инициализирует класс TfeApplication.
+Она переопределяет четыре метода класса.
+Три метода класса `startup`, `activate` и `open` указывают на обработчики сигналов по умолчанию.
+Переопределение изменяет обработчики по умолчанию.
+Вы можете подключить обработчики с помощью макроса `g_signal_connect`, но результат будет другим.
+Макрос подключает пользовательский обработчик к сигналу.
+Обработчик по умолчанию все еще существует и не изменяется.
+- Функция `tfe_application_init` инициализирует экземпляр.
+  - Создает новый экземпляр GSettings и устанавливает `app->settings` на него. Затем подключает обработчик `changed_font_cb` к сигналу "changed::font-desc".
+  - Создает новый экземпляр GtkCssProvider и устанавливает `app->provider` на него.
+- Функция `tfe_application_dispose` освобождает экземпляры GSettings и GtkCssProvider.
+Затем вызывает обработчик dispose родителя. Это называется "цепочкой вызовов вверх" (chaining up).
+См. [документацию GObject](https://docs.gtk.org/gobject/tutorial.html#chaining-up).
 
-### Startup signal handlers
+### Обработчики сигнала startup
 
 ~~~C
  1 static void
@@ -299,42 +299,42 @@ See [GObject document](https://docs.gtk.org/gobject/tutorial.html#chaining-up).
 37 }
 ~~~
 
-The function `app_startup` replace the default signal handlers.
-It does five things.
+Функция `app_startup` заменяет обработчики сигналов по умолчанию.
+Она выполняет пять действий.
 
-- Calls the parent's startup handler. It is called "chaining up".
-The "startup" default handler runs before user handlers.
-So the call for the parent's handler must be done at the beginning.
-- Creates the main window.
-This application has only one top level window.
-In that case, it is a good way to create the window in the startup handler, which is called only once.
-Activate or open handlers can be called twice or more.
-Therefore, if you create a window in the activate or open handler, two or more windows can be created.
-- Sets the default display CSS to "textview {padding: 10px;}".
-It sets the GtkTextView, or TfeTextView, padding to 10px and makes the text easier to read.
-This CSS is fixed and never changed through the application life.
-- Adds another CSS provider, which is pointed by `app->provider`, to the default display.
-This CSS depends on the GSettings "font-desc" value and it can be changed during the application life time.
-And calls `changed_font_cb` to update the font CSS setting.
-- Sets application accelerator with the function `gtk_application_set_accels_for_action`.
-Accelerators are kinds of short cut key functions.
-For example, `Ctrl+O` is an accelerator to activate "open" action.
-Accelerators are written in the array `action-accels[]`.
-Its element is a structure `struct {const char *action; const char *accels[2];}`.
-The member `action` is an action name.
-The member `accels` is an array of two pointers.
-For example, `{"win.open", { "<Control>o", NULL }}` tells that the accelerator `Ctrl+O` is connected to the "win.open" action.
-The second element of `accels` is NULL which is the end mark.
-You can define more than one accelerator keys and the list must ends with NULL (zero).
-If you want to do so, the array length needs to be three or more.
-For example, `{"win.open", { "<Control>o", "<Alt>o", NULL }}` means two accelerators `Ctrl+O` and `Alt+O` is connected to the "win.open" action.
-The parser recognizes "\<control\>o", "\<Shift\>\<Alt\>F2", "\<Ctrl\>minus" and so on.
-If you want to use symbol key like "\<Ctrl\>-", use "\<Ctrl\>minus" instead.
-Such relation between lower case and symbol (character code) is specified in [`gdkkeysyms.h`](https://gitlab.gnome.org/GNOME/gtk/-/blob/master/gdk/gdkkeysyms.h) in the GTK 4 source code.
+- Вызывает обработчик startup родителя. Это называется "цепочкой вызовов вверх" (chaining up).
+Обработчик "startup" по умолчанию запускается до пользовательских обработчиков.
+Поэтому вызов обработчика родителя должен быть выполнен в начале.
+- Создает главное окно.
+Это приложение имеет только одно окно верхнего уровня.
+В этом случае хороший способ — создать окно в обработчике startup, который вызывается только один раз.
+Обработчики activate или open могут быть вызваны два или более раз.
+Поэтому, если вы создаете окно в обработчике activate или open, может быть создано два или более окон.
+- Устанавливает CSS по умолчанию для дисплея в "textview {padding: 10px;}".
+Это устанавливает отступ для GtkTextView, или TfeTextView, в 10px и делает текст более читабельным.
+Этот CSS фиксирован и никогда не меняется в течение жизни приложения.
+- Добавляет еще один CSS-провайдер, на который указывает `app->provider`, к дисплею по умолчанию.
+Этот CSS зависит от значения "font-desc" в GSettings и может быть изменен в течение времени работы приложения.
+И вызывает `changed_font_cb` для обновления настройки CSS шрифта.
+- Устанавливает ускорители приложения с помощью функции `gtk_application_set_accels_for_action`.
+Ускорители — это разновидность функций горячих клавиш.
+Например, `Ctrl+O` — это ускоритель для активации действия "open".
+Ускорители записываются в массиве `action-accels[]`.
+Его элемент — это структура `struct {const char *action; const char *accels[2];}`.
+Член `action` — это имя действия.
+Член `accels` — это массив из двух указателей.
+Например, `{"win.open", { "<Control>o", NULL }}` сообщает, что ускоритель `Ctrl+O` подключен к действию "win.open".
+Второй элемент `accels` — это NULL, который является конечной меткой.
+Вы можете определить более одной клавиши ускорителя, и список должен заканчиваться NULL (нулем).
+Если вы хотите это сделать, длина массива должна быть три или более.
+Например, `{"win.open", { "<Control>o", "<Alt>o", NULL }}` означает, что два ускорителя `Ctrl+O` и `Alt+O` подключены к действию "win.open".
+Парсер распознает "\<control\>o", "\<Shift\>\<Alt\>F2", "\<Ctrl\>minus" и так далее.
+Если вы хотите использовать символьную клавишу, например "\<Ctrl\>-", используйте вместо этого "\<Ctrl\>minus".
+Такая связь между нижним регистром и символом (код символа) указана в [`gdkkeysyms.h`](https://gitlab.gnome.org/GNOME/gtk/-/blob/master/gdk/gdkkeysyms.h) в исходном коде GTK 4.
 
-### Activate and open signal handlers
+### Обработчики сигналов activate и open
 
-Two functions `app_activate` and `app_open` replace the default signal handlers.
+Две функции `app_activate` и `app_open` заменяют обработчики сигналов по умолчанию.
 
 ~~~C
  1 static void
@@ -354,10 +354,10 @@ Two functions `app_activate` and `app_open` replace the default signal handlers.
 15 }
 ~~~
  
-The original default handlers don't do useful works and you don't need to chain up to the parent's default handlers.
-They just create notebook pages and show the top level window.
+Исходные обработчики по умолчанию не выполняют полезной работы, и вам не нужно вызывать обработчики родителя по умолчанию.
+Они просто создают страницы блокнота и показывают окно верхнего уровня.
 
-### CSS font setting
+### Настройка CSS шрифта
 
 ~~~C
  1 static void
@@ -380,19 +380,19 @@ They just create notebook pages and show the top level window.
 18 }
 ~~~
 
-The function `changed_font_cb` is a handler for "changed::font-desc" signal on the GSettings instance.
-The signal name is "changed" and "font-desc" is a key name.
-This signal is emitted when the value of the "font-desc" key is changed.
-The value is bound to the "font-desc" property of the GtkFontDialogButton instance.
-Therefore, the handler `changed_font_cb` is called when the user selects and updates a font through the font dialog.
+Функция `changed_font_cb` является обработчиком сигнала "changed::font-desc" на экземпляре GSettings.
+Имя сигнала — "changed", а "font-desc" — это имя ключа.
+Этот сигнал испускается, когда изменяется значение ключа "font-desc".
+Значение привязано к свойству "font-desc" экземпляра GtkFontDialogButton.
+Поэтому обработчик `changed_font_cb` вызывается, когда пользователь выбирает и обновляет шрифт через диалог шрифта.
 
-A string is retrieved from the GSetting database and converts it into a pango font description.
-And a CSS string is made by the function `pfd2css` and `g_strdup_printf`.
-Then the css provider is set to the string.
-The provider has been inserted to the current display in advance.
-So, the font is applied to the display.
+Строка извлекается из базы данных GSetting и преобразуется в описание шрифта pango.
+И строка CSS создается функциями `pfd2css` и `g_strdup_printf`.
+Затем CSS-провайдер устанавливается в эту строку.
+Провайдер уже был заранее добавлен к текущему дисплею.
+Таким образом, шрифт применяется к дисплею.
 
-## Other files
+## Другие файлы
 
 main.c
 
@@ -415,7 +415,7 @@ main.c
 16 
 ~~~
 
-Resource XML file.
+Файл ресурсов XML.
 
 ~~~xml
 1 <?xml version="1.0" encoding="UTF-8"?>
@@ -429,7 +429,7 @@ Resource XML file.
 9 </gresources>
 ~~~
 
-GSchema XML file
+Файл GSchema XML
 
 ~~~xml
  1 <?xml version="1.0" encoding="UTF-8"?>
@@ -464,39 +464,39 @@ Meson.build
 15 gnome.post_install (glib_compile_schemas: true)
 ~~~
 
-- The function `project` defines project and initialize meson.
-The first argument is the project name and the second is the language name.
-The other arguments are keyword arguments.
-- The function `dependency` defines the denpendent library.
-Tfe depends GTK4.
-This is used to create `pkg-config` option in the command line of C compiler to include header files and link libraries.
-The returned object `gtkdep` is used as an argument to the `executable` function later.
-- The function `import` imports an extension module.
-The GNOME module has some convenient methods like `gnome.compile_resources` and `gnome.compile_schemas`.
-- The method `gnome.compile_resources` compiles and creates resource files.
-The first argument is the resource name without extension and the second is the name of XML file.
-The returned value is an array `['resources,c', 'resources.h']`.
-- The function `gnome.compile_schemas` compiles the schema files in the current directory.
-This just creates `gschemas.compiled` in the build directory.
-It is used to test the executable binary in the build directory.
-The function doesn't install the schema file.
-- The function `files` creates a File Object.
-- The function `executable` defines the compilation elements such as target name, source files, dependencies and installation.
-The target name is "tfe".
-The source files are elements of 'sourcefiles' and `resources'.
-It uses GTK4 libraries.
-It can be installed.
-- The last three lines are post install work.
-The variable `schema_dir` is the directory stored the schema file.
-If meson runs with `--prefix=$HOME/.local` argument, it is `$HOME/.local/share/glib-2.9/schemas`.
-The function `install_data` copies the first argument file into the second argument directory.
-The method `gnome.post_install` runs `glib-compile-schemas` and updates `gschemas_compiled` file.
+- Функция `project` определяет проект и инициализирует meson.
+Первый аргумент — это имя проекта, а второй — имя языка.
+Другие аргументы — это именованные аргументы.
+- Функция `dependency` определяет зависимую библиотеку.
+Tfe зависит от GTK4.
+Это используется для создания опции `pkg-config` в командной строке компилятора C для включения заголовочных файлов и связывания библиотек.
+Возвращаемый объект `gtkdep` используется в качестве аргумента функции `executable` позже.
+- Функция `import` импортирует модуль расширения.
+Модуль GNOME имеет несколько удобных методов, таких как `gnome.compile_resources` и `gnome.compile_schemas`.
+- Метод `gnome.compile_resources` компилирует и создает файлы ресурсов.
+Первый аргумент — это имя ресурса без расширения, а второй — имя XML-файла.
+Возвращаемое значение — это массив `['resources,c', 'resources.h']`.
+- Функция `gnome.compile_schemas` компилирует файлы схем в текущем каталоге.
+Это просто создает `gschemas.compiled` в каталоге сборки.
+Он используется для тестирования исполняемого двоичного файла в каталоге сборки.
+Функция не устанавливает файл схемы.
+- Функция `files` создает объект File.
+- Функция `executable` определяет элементы компиляции, такие как имя цели, исходные файлы, зависимости и установка.
+Имя цели — "tfe".
+Исходные файлы — это элементы 'sourcefiles' и `resources'.
+Он использует библиотеки GTK4.
+Он может быть установлен.
+- Последние три строки — это работа после установки.
+Переменная `schema_dir` — это каталог, в котором хранится файл схемы.
+Если meson запускается с аргументом `--prefix=$HOME/.local`, это `$HOME/.local/share/glib-2.9/schemas`.
+Функция `install_data` копирует файл первого аргумента в каталог второго аргумента.
+Метод `gnome.post_install` запускает `glib-compile-schemas` и обновляет файл `gschemas_compiled`.
 
-## Compilation and installation.
+## Компиляция и установка
 
-If you want to install it to your local area, use `--prefix=$HOME/.local` or `--prefix=$HOME` option.
-If you want to install it to the system area, no option is needed.
-It will be installed under `/user/local` directory.
+Если вы хотите установить его в вашу локальную область, используйте опцию `--prefix=$HOME/.local` или `--prefix=$HOME`.
+Если вы хотите установить его в системную область, никакой опции не требуется.
+Он будет установлен в каталог `/user/local`.
 
 ~~~
 $ meson setup --prefix=$HOME/.local _build
@@ -504,7 +504,7 @@ $ ninja -C _build
 $ ninja -C _build install
 ~~~
 
-You need root privilege to install it to the system area..
+Вам нужны права root для установки в системную область.
 
 ~~~
 $ meson setup _build
@@ -512,26 +512,26 @@ $ ninja -C _build
 $ sudo ninja -C _build install
 ~~~
 
-Source files are in [src/tfe6](../src/tfe6) directory.
+Исходные файлы находятся в каталоге [src/tfe6](../src/tfe6).
 
-We made a very small text editor.
-You can add features to this editor.
-When you add a new feature, be careful about the structure of the program.
-Maybe you need to divide a file into several files.
-It isn't good to put many things into one file.
-And it is important to think about the relationship between source files and widget structures.
+Мы создали очень маленький текстовый редактор.
+Вы можете добавить функции к этому редактору.
+Когда вы добавляете новую функцию, будьте осторожны со структурой программы.
+Возможно, вам нужно разделить файл на несколько файлов.
+Нехорошо помещать много вещей в один файл.
+И важно думать о взаимосвязи между исходными файлами и структурами виджетов.
 
-The source files are in the [Gtk4 tutorial GitHub repository](https://github.com/ToshioCP/Gtk4-tutorial).
-Download it and see `src/tfe6` directory.
+Исходные файлы находятся в [репозитории GitHub учебника Gtk4](https://github.com/ToshioCP/Gtk4-tutorial).
+Загрузите его и посмотрите каталог `src/tfe6`.
 
-Note: When the menu button is clicked, error messages are printed.
+Примечание: Когда нажимается кнопка меню, печатаются сообщения об ошибках.
 
 ```
 (tfe:31153): Gtk-CRITICAL **: 13:05:40.746: _gtk_css_corner_value_get_x: assertion 'corner->class == &GTK_CSS_VALUE_CORNER' failed
 ```
 
-I found a [message](https://discourse.gnome.org/t/menu-button-gives-error-messages-with-latest-gtk4/15689) in the GNOME Discourse.
-The comment says that GTK 4.10 has a bug and it is fixed in the version 4.10.5.
-I haven't check 4.10.5 yet, where the UBUNTU GTK4 is still 4.10.4.
+Я нашел [сообщение](https://discourse.gnome.org/t/menu-button-gives-error-messages-with-latest-gtk4/15689) в GNOME Discourse.
+Комментарий говорит, что GTK 4.10 имеет ошибку, и она исправлена в версии 4.10.5.
+Я еще не проверил 4.10.5, где UBUNTU GTK4 все еще 4.10.4.
 
 Up: [README.md](../README.md),  Prev: [Section 22](sec22.md), Next: [Section 24](sec24.md)

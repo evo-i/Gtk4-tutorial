@@ -1,64 +1,64 @@
 Up: [README.md](../README.md),  Prev: [Section 1](sec1.md), Next: [Section 3](sec3.md)
 
-# Preparation
+# Подготовка
 
-## Installing GTK on Linux distributions
+## Установка GTK в дистрибутивах Linux
 
-This section describes how to install GTK on Linux distributions.
+В этом разделе описывается, как установить GTK в дистрибутивах Linux.
 
-There are two ways to install GTK:
+Существует два способа установки GTK:
 
-- Install from distribution packages.
-- Build from source.
+- Установка из пакетов дистрибутива.
+- Сборка из исходного кода.
 
-### Installation from distribution packages
+### Установка из пакетов дистрибутива
 
-This is the easiest way to install.
-The following command installs the GTK (version 4) development files on Ubuntu.
+Это самый простой способ установки.
+Следующая команда устанавливает файлы разработки GTK (версия 4) в Ubuntu.
 
 ~~~
 $ sudo apt install libgtk-4-dev
 ~~~
 
-It is important to install the development package (libgtk-4-dev).
-Otherwise, you will not be able to compile any GTK-based programs.
+Важно установить пакет разработки (libgtk-4-dev).
+В противном случае вы не сможете компилировать программы на основе GTK.
 
-Fedora, Debian, Arch, Gentoo, and OpenSUSE also have GTK packages.
-See the website of your distribution for further information.
+Fedora, Debian, Arch, Gentoo и OpenSUSE также имеют пакеты GTK.
+Для получения дополнительной информации см. веб-сайт вашего дистрибутива.
 
-Package information for Arch, Debian/Ubuntu, and Fedora is described on the GTK website: [Installing GTK from packages](https://www.gtk.org/docs/installations/linux#installing-gtk-from-packages).
+Информация о пакетах для Arch, Debian/Ubuntu и Fedora описана на веб-сайте GTK: [Installing GTK from packages](https://www.gtk.org/docs/installations/linux#installing-gtk-from-packages).
 
-### Installation from source
+### Установка из исходного кода
 
-If you want to install the development version of GTK, you need to build it from source.
-See the [Compiling the GTK Libraries](https://docs.gtk.org/gtk4/building.html) section of the GTK API reference.
+Если вы хотите установить версию GTK для разработчиков, вам нужно собрать её из исходного кода.
+См. раздел [Compiling the GTK Libraries](https://docs.gtk.org/gtk4/building.html) справочника GTK API.
 
-## How to download this repository
+## Как загрузить этот репозиторий
 
-There are two ways: zip and git.
-Downloading a zip file is the easiest way.
-However, if you use git and clone this repository, you can easily update your local repository with the `git pull` command.
+Есть два способа: zip и git.
+Загрузка zip-файла — самый простой способ.
+Однако, если вы используете git и клонируете этот репозиторий, вы можете легко обновить свой локальный репозиторий с помощью команды `git pull`.
 
-### Download a zip file
+### Загрузка zip-файла
 
-- Open your browser and navigate to [this repository](https://github.com/ToshioCP/Gtk4-tutorial).
-- Click on the green `<> Code` button. A dropdown menu will appear; click `Download ZIP`.
-- The repository will be downloaded as a zip file to your computer.
-- Unzip the file.
+- Откройте браузер и перейдите к [этому репозиторию](https://github.com/ToshioCP/Gtk4-tutorial).
+- Нажмите на зелёную кнопку `<> Code`. Появится выпадающее меню; нажмите `Download ZIP`.
+- Репозиторий будет загружен как zip-файл на ваш компьютер.
+- Распакуйте файл.
 
-### Clone the repository
+### Клонирование репозитория
 
-- Click on the green `<> Code` button. A dropdown menu will appear. The first section is `Clone` with three tabs.
-Click the `HTTPS` tab and click the copy icon to the right of `https://github.com/ToshioCP/Gtk4-tutorial.git`.
-- Open a terminal and type `git clone `, then press Ctrl+Shift+V.
-The command line will look like `git clone https://github.com/ToshioCP/Gtk4-tutorial.git`.
-Press Enter.
-- The directory `Gtk4-tutorial` will be created. This directory is a local copy of the repository.
+- Нажмите на зелёную кнопку `<> Code`. Появится выпадающее меню. Первый раздел — `Clone` с тремя вкладками.
+Нажмите вкладку `HTTPS` и нажмите значок копирования справа от `https://github.com/ToshioCP/Gtk4-tutorial.git`.
+- Откройте терминал и введите `git clone `, затем нажмите Ctrl+Shift+V.
+Командная строка будет выглядеть так: `git clone https://github.com/ToshioCP/Gtk4-tutorial.git`.
+Нажмите Enter.
+- Будет создана директория `Gtk4-tutorial`. Эта директория является локальной копией репозитория.
 
-## Examples in the tutorial
+## Примеры в учебнике
 
-Examples are under the `src` directory.
-For example, the first example of the tutorial is `pr1.c` and its path is `src/misc/pr1.c`.
-Therefore, you do not need to type the examples manually.
+Примеры находятся в директории `src`.
+Например, первый пример учебника — это `pr1.c`, и его путь — `src/misc/pr1.c`.
+Поэтому вам не нужно вводить примеры вручную.
 
 Up: [README.md](../README.md),  Prev: [Section 1](sec1.md), Next: [Section 3](sec3.md)

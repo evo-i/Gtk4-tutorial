@@ -1,129 +1,129 @@
-# Composite widgets and alert dialog
+# Составные виджеты и диалог предупреждения
 
-The source files are in the [Gtk4 tutorial GitHub repository](https://github.com/ToshioCP/Gtk4-tutorial).
-Download it and see `src/tfe6` directory.
+Исходные файлы находятся в [репозитории GitHub Gtk4 tutorial](https://github.com/ToshioCP/Gtk4-tutorial).
+Загрузите его и посмотрите директорию `src/tfe6`.
 
-## An outline of new Tfe text editor
+## Структура нового текстового редактора Tfe
 
-Tfe text editor will be restructured.
-The program is divided into six parts.
+Текстовый редактор Tfe будет реструктурирован.
+Программа разделена на шесть частей.
 
-- Main program: the C main function.
-- TfeApplication object: It is like GtkApplication but keeps GSettings and CSS Provider.
-- TfeWindow object: It is a window with buttons and a notebook.
-- TfePref object: A preference dialog.
-- TfeAlert object: An alert dialog.
-- pdf2css.h and pdf2css.c: Font and CSS utility functions.
+- Главная программа: функция main на C.
+- Объект TfeApplication: Похож на GtkApplication, но хранит GSettings и CSS Provider.
+- Объект TfeWindow: Это окно с кнопками и блокнотом.
+- Объект TfePref: Диалог настроек.
+- Объект TfeAlert: Диалог предупреждения.
+- pdf2css.h и pdf2css.c: Утилиты для работы с шрифтами и CSS.
 
-This section describes TfeAlert.
-Others will be explained in the following sections.
+Этот раздел описывает TfeAlert.
+Остальные будут объяснены в следующих разделах.
 
-## Composite widgets
+## Составные виджеты
 
-The alert dialog is like this:
+Диалог предупреждения выглядит так:
 
 ![Alert dialog](../image/alert.png){width=4.2cm height=1.7cm}
 
-Tfe uses it when a user quits the application or closes a notebook without saving data to files.
+Tfe использует его, когда пользователь закрывает приложение или закрывает блокнот без сохранения данных в файлы.
 
-The dialog has a title, buttons, an icon and a message.
-Therefore, it consists of several widgets.
-Such dialog is called a composite widget.
+Диалог имеет заголовок, кнопки, иконку и сообщение.
+Следовательно, он состоит из нескольких виджетов.
+Такой диалог называется составным виджетом.
 
-Composite widgets are defined with template XMLs.
-The class is built in the class initialization function and the instances are built and desposed by the following functions.
+Составные виджеты определяются с помощью шаблонов XML.
+Класс создается в функции инициализации класса, а экземпляры создаются и освобождаются следующими функциями.
 
 - gtk\_widget\_init\_template
 - gtk\_widget\_dispose\_template
 
-TfeAlert is a good example to know composite widgets.
-It is defined with the three files.
+TfeAlert — хороший пример для изучения составных виджетов.
+Он определен в трех файлах.
 
-- tfealert.ui: XML file
-- tfealert.h: Header file
-- tfealert.c: C program file
+- tfealert.ui: XML-файл
+- tfealert.h: Заголовочный файл
+- tfealert.c: Файл программы на C
 
-## The XML file
+## XML-файл
 
-A template tag is used in a composite widget XML.
+В XML составного виджета используется тег template.
 
 @@@include
 tfe6/tfealert.ui
 @@@
 
-- 3: A template tag defines a composite widget.
-The class attribute tells the class name of the composite widget.
-The parent attribute tells the parent class of the composite widget.
-So, TfeAlert is a child class of GtkWindow.
-A parent attribute is an option and you can leave it out.
-But it is recommended to write it in the template tag.
-- 4-6: Its three properties are defined.
-These properties are inherited from GtkWindow.
-The titlebar property has a widget for a custom title bar.
-The typical widget is GtkHeaderBar.
-- 8: If the property "show-title-buttons" is TRUE, the title buttons like close, minimize and maximize are shown.
-Otherwise it is not shown.
-The TfeAlert object is not resizable.
-It is closed when either of the two buttons, cancel or accept, is clicked.
-Therefore the title buttons are not necessary and this property is set to FALSE.
-- 9-14: The bar has a title, which is a GtkLabel widget.
-The default title is "Are you sure?" but it can be replaced by an instance method.
-- 15-32: The bar has two buttons, cancel and accept.
-The cancel button is on the left so the child tag has `type="start"` attribute.
-The accept button is on the right so the child tag has `type="end"` attribute.
-The dialog is shown when the user clicked the close button or the quit menu without saving the data.
-Therefore, it is safer for the user to click on the cancel button of the alert dialog.
-So, the cancel button has a "suggested-action" CSS class.
-Ubuntu colors the button green but the color can be blue or other appropriate one defined by the system.
-In the same way the accept button has a "destructive-action" CSS class and is colored red.
-Two buttons have signals which are defined by the signal tags.
-- 35-54: A horizontal box has an image icon and a label.
-- 44-47: The GtkImage widget displays an image.
-The "icon-name" property is an icon name in the icon theme.
-The theme depends on your system.
-You can check it with an icon browser.
+- 3: Тег template определяет составной виджет.
+Атрибут class указывает имя класса составного виджета.
+Атрибут parent указывает родительский класс составного виджета.
+Таким образом, TfeAlert является дочерним классом GtkWindow.
+Атрибут parent необязателен, и его можно опустить.
+Но рекомендуется указывать его в теге template.
+- 4-6: Определены три его свойства.
+Эти свойства унаследованы от GtkWindow.
+Свойство titlebar содержит виджет для пользовательской строки заголовка.
+Типичный виджет — GtkHeaderBar.
+- 8: Если свойство "show-title-buttons" имеет значение TRUE, отображаются кнопки заголовка, такие как закрыть, свернуть и развернуть.
+В противном случае они не отображаются.
+Объект TfeAlert не изменяется в размерах.
+Он закрывается при нажатии любой из двух кнопок: отмена или принять.
+Поэтому кнопки заголовка не нужны, и это свойство установлено в FALSE.
+- 9-14: Панель имеет заголовок, который является виджетом GtkLabel.
+Заголовок по умолчанию — "Are you sure?", но его можно заменить методом экземпляра.
+- 15-32: На панели есть две кнопки: отмена и принять.
+Кнопка отмены находится слева, поэтому тег child имеет атрибут `type="start"`.
+Кнопка принять находится справа, поэтому тег child имеет атрибут `type="end"`.
+Диалог отображается, когда пользователь нажал кнопку закрытия или меню выхода без сохранения данных.
+Поэтому для пользователя безопаснее нажать кнопку отмены в диалоге предупреждения.
+Таким образом, кнопка отмены имеет CSS-класс "suggested-action".
+Ubuntu окрашивает кнопку в зеленый цвет, но цвет может быть синим или другим подходящим, определенным системой.
+Точно так же кнопка принять имеет CSS-класс "destructive-action" и окрашена в красный цвет.
+Обе кнопки имеют сигналы, которые определены тегами signal.
+- 35-54: Горизонтальный блок содержит иконку изображения и метку.
+- 44-47: Виджет GtkImage отображает изображение.
+Свойство "icon-name" — это имя иконки в теме иконок.
+Тема зависит от вашей системы.
+Вы можете проверить это с помощью браузера иконок.
 
 ~~~
 $ gtk4-icon-browser
 ~~~
 
-The "dialog-warning" icon is something like this.
+Иконка "dialog-warning" выглядит примерно так.
 
 ![dialog-warning icon is like ...](../image/dialog_warning.png){width=4.19cm height=1.62cm}
 
-These are made by my hand.
-The real image on the alert dialog is nicer.
+Они сделаны вручную.
+Реальное изображение в диалоге предупреждения выглядит лучше.
 
-It is possible to define the alert widget as a child of GtkDialog.
-But GtkDialog is deprecated since GTK version 4.10.
-And users should use GtkWindow instead of GtkDialog.
+Можно определить виджет предупреждения как дочерний от GtkDialog.
+Но GtkDialog устарел, начиная с версии GTK 4.10.
+И пользователям следует использовать GtkWindow вместо GtkDialog.
 
-## The header file
+## Заголовочный файл
 
-The header file is similar to the one of TfeTextView.
+Заголовочный файл похож на файл TfeTextView.
 
 @@@include
 tfe6/tfealert.h
 @@@
 
-- 5-6: These two lines are always needed to define a new object.
-`TFE_TYPE_ALERT` is the type of TfeAlert object and it is a macro expanded into `tfe_alert_get_type ()`.
-G\_DECLARE\_FINAL\_TYPE macro is expanded into:
-  - The declaration of the function `tfe_alert_get_type`
-  - `TfeAlert` is defined as a typedef of `struct _TfeAlert`, which is defined in the C file.
-  - `TFE_ALERT` and `TFE_IS_ALERT` macro is defined as a cast and type check function.
-  - `TfeAlertClass` structure is defined as a final class.
-- 8-13: The TfeAlert class has a "response" signal.
-It has a parameter and the parameter type is defined as a `TfeAlertResponseType` enumerative constant.
-- 15-31: Getter and setter methods.
-- 33-37: Functions to create a instance.
-The function `tfe_alert_new_with_data` is a convenience function, which creates an instance and sets data at once.
+- 5-6: Эти две строки всегда необходимы для определения нового объекта.
+`TFE_TYPE_ALERT` — это тип объекта TfeAlert, и это макрос, разворачиваемый в `tfe_alert_get_type ()`.
+Макрос G\_DECLARE\_FINAL\_TYPE разворачивается в:
+  - Объявление функции `tfe_alert_get_type`
+  - `TfeAlert` определяется как typedef для `struct _TfeAlert`, которая определена в C-файле.
+  - Макросы `TFE_ALERT` и `TFE_IS_ALERT` определяются как функции приведения типа и проверки типа.
+  - Структура `TfeAlertClass` определяется как финальный класс.
+- 8-13: Класс TfeAlert имеет сигнал "response".
+Он имеет параметр, и тип параметра определен как перечисляемая константа `TfeAlertResponseType`.
+- 15-31: Методы получения и установки.
+- 33-37: Функции для создания экземпляра.
+Функция `tfe_alert_new_with_data` — это вспомогательная функция, которая создает экземпляр и устанавливает данные одновременно.
 
-## The C file
+## C-файл
 
-### Functions for composite widgets
+### Функции для составных виджетов
 
-The following codes are extracted from `tfealert.c`.
+Следующий код извлечен из `tfealert.c`.
 
 @@@if gfm
 ```C
@@ -235,94 +235,94 @@ tfe_alert_new (void) {
 ```
 @@@end
 
-- The macro `G_DEFINE_FINAL_TYPE` is available since GLib version 2.70.
-It is used only for a final type class.
-You can use `G_DEFINE_TYPE` macro instead.
-They are expanded into:
-  - The declaration of the functions `tfe_alert_init` and `tfe_alert_class_init`.
-They are defined in the following part of the C program.
-  - The definition of the variable `tfe_alert_parent_class`.
-  - The definition of the function `tfe_alert_get_type`.
-- The names of the members of `_TfeAlert`, which are `lb_title`, `lb_message`, `btn_accept` and `btn_cancel`,
-must be the same as the id attribute in the XML file `tfealert.ui`.
-- The function `tfe_alert_class_init` initializes the composite widget class.
-  - The function `gtk_widget_class_set_template_from_resource` sets the template of the class.
-The template is built from the XML resource "tfealert.ui".
-At this moment no instance is created.
-It just makes the class recognize the structure of the object.
-That’s why the top level tag is not object but template in the XML file.
-  - The function macro `gtk_widget_class_bind_template_child` connects the member of TfeAlert and the object class in the template.
-So, for example, you can access to `lb_title` GtkLabel instance via `alert->lb_title` where `alert` is an instance of TfeAlert class.
-  - The function `gtk_widget_class_bind_template_callback` connects the callback function and the `handler` attribute of the signal tag in the XML.
-For example, the "clicked" signal on the cancel button has a handler named "cancel\_cb" in the signal tag.
-And the function `cancel_cb` exists in the C file above.
-These two are connected so when the signal is emitted the function `cancel_cb` is called.
-You can add `static` storage class to the callback function thanks to this connection.
-- The function `tfe_alert_init` initializes the newly created instance.
-You need to call `gtk_widget_init_template` to create and initialize the child widgets in the template.
-- The function `tfe_alert_despose` releases objects.
-The function `gtk_widget_despose_template` clears the template children.
-- The function `tfe_alert_new` creates the composite widget TfeAlert instance.
-It creates not only TfeAlert itself but also all the child widgets that the composite widget has.
+- Макрос `G_DEFINE_FINAL_TYPE` доступен с версии GLib 2.70.
+Он используется только для финальных классов.
+Вместо него можно использовать макрос `G_DEFINE_TYPE`.
+Они разворачиваются в:
+  - Объявление функций `tfe_alert_init` и `tfe_alert_class_init`.
+Они определены в следующей части программы на C.
+  - Определение переменной `tfe_alert_parent_class`.
+  - Определение функции `tfe_alert_get_type`.
+- Имена членов `_TfeAlert`, которые являются `lb_title`, `lb_message`, `btn_accept` и `btn_cancel`,
+должны совпадать с атрибутом id в XML-файле `tfealert.ui`.
+- Функция `tfe_alert_class_init` инициализирует класс составного виджета.
+  - Функция `gtk_widget_class_set_template_from_resource` устанавливает шаблон класса.
+Шаблон строится из XML-ресурса "tfealert.ui".
+В этот момент экземпляр не создается.
+Это просто заставляет класс распознать структуру объекта.
+Вот почему тег верхнего уровня в XML-файле — template, а не object.
+  - Макрос-функция `gtk_widget_class_bind_template_child` связывает член TfeAlert и класс объекта в шаблоне.
+Таким образом, например, вы можете получить доступ к экземпляру GtkLabel `lb_title` через `alert->lb_title`, где `alert` — это экземпляр класса TfeAlert.
+  - Функция `gtk_widget_class_bind_template_callback` связывает функцию обратного вызова и атрибут `handler` тега signal в XML.
+Например, сигнал "clicked" на кнопке отмены имеет обработчик с именем "cancel\_cb" в теге signal.
+И функция `cancel_cb` существует в C-файле выше.
+Они связаны, поэтому когда сигнал испускается, вызывается функция `cancel_cb`.
+Благодаря этой связи вы можете добавить класс хранения `static` к функции обратного вызова.
+- Функция `tfe_alert_init` инициализирует вновь созданный экземпляр.
+Необходимо вызвать `gtk_widget_init_template`, чтобы создать и инициализировать дочерние виджеты в шаблоне.
+- Функция `tfe_alert_despose` освобождает объекты.
+Функция `gtk_widget_despose_template` очищает дочерние элементы шаблона.
+- Функция `tfe_alert_new` создает экземпляр составного виджета TfeAlert.
+Она создает не только сам TfeAlert, но и все дочерние виджеты, которые имеет составной виджет.
 
-### Other functions
+### Другие функции
 
-The following is the full codes of `tfealert.c`.
+Ниже приведен полный код `tfealert.c`.
 
 @@@include
 tfe6/tfealert.c
 @@@
 
-The function `tfe_alert_new_with_data` is used more often than `tfe_alert_new` to create a new instance.
-It creates the instance and sets three data at the same time.
-The following is the common process when you use the TfeAlert class.
+Функция `tfe_alert_new_with_data` используется чаще, чем `tfe_alert_new`, для создания нового экземпляра.
+Она создает экземпляр и устанавливает три данных одновременно.
+Ниже приведен общий процесс при использовании класса TfeAlert.
 
-- Call `tfe_alert_new_with_data` and create an instance.
-- Call `gtk_window_set_transient_for` to set the transient parent window.
-- Call `gtk_window_present` to show the TfeAlert dialog.
-- Connect "response" signal and a handler.
-- The user clicks on the cancel or accept button.
-Then the dialog emits the "response" signal and destroy itself.
-- The user catches the signal and do something.
+- Вызовите `tfe_alert_new_with_data` и создайте экземпляр.
+- Вызовите `gtk_window_set_transient_for`, чтобы установить временное родительское окно.
+- Вызовите `gtk_window_present`, чтобы показать диалог TfeAlert.
+- Подключите сигнал "response" и обработчик.
+- Пользователь нажимает кнопку отмены или принятия.
+Затем диалог испускает сигнал "response" и уничтожает себя.
+- Пользователь перехватывает сигнал и что-то делает.
 
-The rest of the program is:
+Остальная часть программы:
 
-- 14-19: An array for a signal id. You can use a variable instead of an array because the class has only one signal.
-But using an array is a common way.
-- 21-31: Signal handlers. They emits the "response" signal and destroy the instance itself.
-- 33-61: Getters and setters.
-- 85-95: Creates the "response" signal.
-- 103-110: A convenience function `tfe_alert_new_with_data` creates an instance and sets labels.
+- 14-19: Массив для идентификатора сигнала. Можно использовать переменную вместо массива, потому что у класса только один сигнал.
+Но использование массива — это обычный способ.
+- 21-31: Обработчики сигналов. Они испускают сигнал "response" и уничтожают сам экземпляр.
+- 33-61: Методы получения и установки.
+- 85-95: Создает сигнал "response".
+- 103-110: Вспомогательная функция `tfe_alert_new_with_data` создает экземпляр и устанавливает метки.
 
-## An example
+## Пример
 
-There's an example in the `src/tfe6/example` directory.
-It shows how to use TfeAlert.
-The program is `src/example/ex_alert.c`.
+В директории `src/tfe6/example` есть пример.
+Он показывает, как использовать TfeAlert.
+Программа находится в `src/example/ex_alert.c`.
 
 @@@include
 tfe6/example/ex_alert.c
 @@@
 
-The "activate" signal handler `app_activate` initializes the alert dialog.
+Обработчик сигнала "activate" `app_activate` инициализирует диалог предупреждения.
 
-- A TfeAlert instance is created.
-- Its "response" signal is connected to the handler `alert_response_cb`.
-- TfeAlert class is a sub class of GtkWindow so it can be a top level window that is connected to an application instance.
-The function `gtk_window_set_application` does that.
-- The dialog is shown.
+- Создается экземпляр TfeAlert.
+- Его сигнал "response" подключается к обработчику `alert_response_cb`.
+- Класс TfeAlert является подклассом GtkWindow, поэтому он может быть окном верхнего уровня, подключенным к экземпляру приложения.
+Функция `gtk_window_set_application` делает это.
+- Диалог отображается.
 
-A user clicks on either the cancel button or the accept button.
-Then, the "response" signal is emitted and the dialog is destroyed.
-The signal handler `alert_response_cb` checks the response and prints "Accept" or "Cancel".
-If an error happens, it prints "Unexpected error".
+Пользователь нажимает либо на кнопку отмены, либо на кнопку принятия.
+Затем испускается сигнал "response", и диалог уничтожается.
+Обработчик сигнала `alert_response_cb` проверяет ответ и печатает "Accept" или "Cancel".
+Если происходит ошибка, он печатает "Unexpected error".
 
-You can compile it with meson and ninja.
+Вы можете скомпилировать его с помощью meson и ninja.
 
 ```
 $ cd src/tfe6/example
 $ meson setup _build
 $ ninja -C _build
 $ _build/ex_alert
-Accept #<= if you clicked on the accept button
+Accept #<= если вы нажали на кнопку принятия
 ```

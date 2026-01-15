@@ -1,19 +1,19 @@
 Up: [README.md](../README.md),  Prev: [Section 8](sec8.md), Next: [Section 10](sec10.md)
 
-# GtkBuilder and UI file
+# GtkBuilder и UI-файл
 
-## New, Open, Save and Close buttons
+## Кнопки New, Open, Save и Close
 
-We made a very simple editor in the previous section.
-It reads files at the start and writes them out at the end of the program.
-It works, but is not so good.
-It would be better if we had "New", "Open", "Save" and "Close" buttons.
-This section describes how to put those buttons into the window.
+В предыдущем разделе мы создали очень простой редактор.
+Он читает файлы в начале и записывает их в конце программы.
+Он работает, но не очень хорошо.
+Было бы лучше, если бы у нас были кнопки "New", "Open", "Save" и "Close".
+Этот раздел описывает, как поместить эти кнопки в окно.
 
 ![Screenshot of the file editor](../image/screenshot_tfe2.png)
 
-The screenshot above shows the layout.
-The function `app_open` in the source code `tfe2.c` is as follows.
+Снимок экрана выше показывает макет.
+Функция `app_open` в исходном коде `tfe2.c` выглядит следующим образом.
 
 ~~~C
  1 static void
@@ -104,36 +104,36 @@ The function `app_open` in the source code `tfe2.c` is as follows.
 86 }
 ~~~
 
-The function `app_open` builds the widgets in the main application window.
+Функция `app_open` строит виджеты в главном окне приложения.
 
-- 26-28: Creates a GtkApplicationWindow instance and sets the title and default size.
-- 30-31: Creates a GtkBox instance `boxv`.
-It is a vertical box and a child of GtkApplicationWindow.
-It has two children.
-The first child is a horizontal box.
-The second child is a GtkNotebook.
-- 33-34: Creates a GtkBox instance `boxh` and appends it to `boxv` as the first child.
-- 36-41: Creates three dummy labels.
-The labels `dmy1` and `dmy3` has a character width of ten.
-The other label `dmy2` has the hexpand property set to TRUE.
-This makes the label expand horizontally to be as long as possible.
-- 42-45: Creates four buttons.
-- 47-53: Appends these GtkLabel and GtkButton to `boxh`.
-- 55-58: Creates a GtkNotebook instance and sets hexpand and vexpand properties to be TRUE.
-This makes it expand horizontally and vertically to be as big as possible.
-It is appended to `boxv` as the second child.
+- 26-28: создаёт экземпляр GtkApplicationWindow и устанавливает заголовок и размер по умолчанию.
+- 30-31: создаёт экземпляр GtkBox `boxv`.
+Это вертикальный контейнер и дочерний элемент GtkApplicationWindow.
+У него два дочерних элемента.
+Первый дочерний элемент — это горизонтальный контейнер.
+Второй дочерний элемент — это GtkNotebook.
+- 33-34: создаёт экземпляр GtkBox `boxh` и добавляет его к `boxv` как первый дочерний элемент.
+- 36-41: создаёт три фиктивные метки.
+Метки `dmy1` и `dmy3` имеют ширину в десять символов.
+Другая метка `dmy2` имеет свойство hexpand, установленное в TRUE.
+Это заставляет метку расширяться по горизонтали настолько, насколько это возможно.
+- 42-45: создаёт четыре кнопки.
+- 47-53: добавляет эти GtkLabel и GtkButton к `boxh`.
+- 55-58: создаёт экземпляр GtkNotebook и устанавливает свойства hexpand и vexpand в TRUE.
+Это заставляет его расширяться по горизонтали и вертикали, чтобы быть настолько большим, насколько это возможно.
+Он добавляется к `boxv` как второй дочерний элемент.
 
-The number of widget-build lines is 33(=58-26+1).
-We also needed many variables (`boxv`, `boxh`, `dmy1`, ...), and most of them are used only for building the widgets.
-Is there any good solution to reduce this work?
+Количество строк построения виджетов составляет 33(=58-26+1).
+Нам также понадобилось много переменных (`boxv`, `boxh`, `dmy1`, ...), и большинство из них используются только для построения виджетов.
+Есть ли какое-нибудь хорошее решение для сокращения этой работы?
 
-Gtk provides GtkBuilder.
-It reads user interface (UI) data and builds a window.
-It reduces this cumbersome work.
+Gtk предоставляет GtkBuilder.
+Он читает данные пользовательского интерфейса (UI) и строит окно.
+Это сокращает эту обременительную работу.
 
-## The UI File
+## UI-файл
 
-Look at the UI file `tfe3.ui` that defines the widget structure.
+Посмотрите на UI-файл `tfe3.ui`, который определяет структуру виджетов.
 
 ~~~xml
  1 <?xml version="1.0" encoding="UTF-8"?>
@@ -197,42 +197,42 @@ Look at the UI file `tfe3.ui` that defines the widget structure.
 59 </interface>
 ~~~
 
-The is an XML file.
-Tags begin with `<` and end with `>`.
-There are two types of tags, the start tag and the end tag.
-For example, `<interface>` is a start tag and `</interface>` is an end tag.
-The UI file begins and ends with interface tags.
-Some tags, for example object tags, can have class and id attributes in their start tag.
+Это XML-файл.
+Теги начинаются с `<` и заканчиваются на `>`.
+Существует два типа тегов: открывающий тег и закрывающий тег.
+Например, `<interface>` — это открывающий тег, а `</interface>` — это закрывающий тег.
+UI-файл начинается и заканчивается тегами interface.
+Некоторые теги, например, теги object, могут иметь атрибуты class и id в своём открывающем теге.
 
-- 1: XML declaration.
-It specifies that the XML version is 1.0 and the encoding is UTF-8.
-- 3-6: An object tag with `GtkApplicationWindow` class and `win` id.
-This is the top level window.
-It defines three properties:
-the `title` property is "file editor", the `default-width` property is 600, and the `default-height` property is 400.
-- 7: Child tag means a child widget.
-For example, line 7 tells us that GtkBox object is a child widget of `win`.
+- 1: объявление XML.
+Оно указывает, что версия XML — 1.0, а кодировка — UTF-8.
+- 3-6: тег object с классом `GtkApplicationWindow` и идентификатором `win`.
+Это окно верхнего уровня.
+Он определяет три свойства:
+свойство `title` — "file editor", свойство `default-width` — 600, а свойство `default-height` — 400.
+- 7: тег child означает дочерний виджет.
+Например, строка 7 говорит нам, что объект GtkBox является дочерним виджетом `win`.
 
-Compare this ui file and the lines 26-58 in the `app_open` function of `tfe2.c`.
-Both build the same window with its descendant widgets.
+Сравните этот ui-файл и строки 26-58 в функции `app_open` файла `tfe2.c`.
+Оба строят одно и то же окно с его дочерними виджетами.
 
-You can check the ui file with `gtk4-builder-tool`.
+Вы можете проверить ui-файл с помощью `gtk4-builder-tool`.
 
-- `gtk4-builder-tool validate <ui file name>` validates the ui file.
-If the ui file includes some syntactical error, `gtk4-builder-tool` prints the error.
-- `gtk4-builder-tool simplify <ui file name>` simplifies the ui file and prints the result.
-If the `--replace` option is given, it replaces the ui file with the simplified one.
-If the ui file specifies the default value of a property, that property will be removed.
-For example, the default orientation is horizontal so the simplification removes line 12.
-Some values are simplified too.
-For example, "TRUE" and "FALSE" become "1" and "0", respectively.
-However, "TRUE" and "FALSE" are better for maintenance.
+- `gtk4-builder-tool validate <имя ui-файла>` проверяет ui-файл.
+Если ui-файл содержит какую-либо синтаксическую ошибку, `gtk4-builder-tool` выводит ошибку.
+- `gtk4-builder-tool simplify <имя ui-файла>` упрощает ui-файл и выводит результат.
+Если задана опция `--replace`, он заменяет ui-файл упрощённым.
+Если ui-файл указывает значение свойства по умолчанию, это свойство будет удалено.
+Например, ориентация по умолчанию — горизонтальная, поэтому упрощение удаляет строку 12.
+Некоторые значения также упрощаются.
+Например, "TRUE" и "FALSE" становятся "1" и "0" соответственно.
+Однако "TRUE" и "FALSE" лучше для поддержки.
 
-It is a good idea to check your ui file before compiling.
+Хорошая идея — проверить ваш ui-файл перед компиляцией.
 
 ## GtkBuilder
 
-GtkBuilder builds widgets based on a ui file.
+GtkBuilder строит виджеты на основе ui-файла.
 
 ~~~C
 GtkBuilder *build;
@@ -244,17 +244,17 @@ nb = GTK_WIDGET (gtk_builder_get_object (build, "nb"));
 g_object_unref(build);
 ~~~
 
-The function `gtk_builder_new_from_file` reads the file `tfe3.ui`.
-Then, it builds the widgets and creates a GtkBuilder object.
-All the widgets are connected based on the parent-children relationship described in the ui file.
-We can retrieve objects from the builder object with the `gtk_builder_get_object` function.
-The top level window, which has an id of "win" in the ui file, is taken and assigned to the variable `win`.
-The window's application property is set to `app` with the `gtk_window_set_application` function.
-The GtkNotebook, which has the id "nb" in the ui file, is also taken and assigned to the variable `nb`.
-After the window and application are connected, we no longer need the GtkBuilder instance.
-It is released with the `g_object_unref` function.
+Функция `gtk_builder_new_from_file` читает файл `tfe3.ui`.
+Затем она строит виджеты и создаёт объект GtkBuilder.
+Все виджеты соединяются на основе отношения родитель-дети, описанного в ui-файле.
+Мы можем извлечь объекты из объекта builder с помощью функции `gtk_builder_get_object`.
+Окно верхнего уровня, которое имеет идентификатор "win" в ui-файле, извлекается и присваивается переменной `win`.
+Свойство application окна устанавливается в `app` с помощью функции `gtk_window_set_application`.
+GtkNotebook, который имеет идентификатор "nb" в ui-файле, также извлекается и присваивается переменной `nb`.
+После того, как окно и приложение соединены, нам больше не нужен экземпляр GtkBuilder.
+Он освобождается с помощью функции `g_object_unref`.
 
-The ui file reduces lines in the C source file.
+UI-файл сокращает строки в исходном файле C.
 
 ~~~
 $ cd tfe; diff tfe2.c tfe3.c
@@ -319,11 +319,11 @@ $ cd tfe; diff tfe2.c tfe3.c
 > 
 ~~~
 
-`61,104c62,66` means that 44 (=104-61+1) lines are changed to 5 (=66-62+1) lines.
-Therefore, 39 lines are reduced.
-Using a ui file not only shortens C source files, but also makes the widgets' structure clear.
+`61,104c62,66` означает, что 44 (=104-61+1) строки изменены на 5 (=66-62+1) строк.
+Следовательно, 39 строк сокращены.
+Использование ui-файла не только сокращает исходные файлы C, но и делает структуру виджетов более ясной.
 
-Now I'll show you the `app_open` function in the C file `tfe3.c`.
+Теперь я покажу вам функцию `app_open` в файле C `tfe3.c`.
 
 ~~~C
  1 static void
@@ -376,12 +376,12 @@ Now I'll show you the `app_open` function in the C file `tfe3.c`.
 48 }
 ~~~
 
-The whole source code of `tfe3.c` is stored in the [src/tfe](../src/tfe) directory.
+Полный исходный код `tfe3.c` хранится в директории [src/tfe](../src/tfe).
 
-### Using ui string
+### Использование ui-строки
 
-GtkBuilder can build widgets with a string.
-Use `gtk_builder_new_from_string` instead of `gtk_builder_new_from_file`.
+GtkBuilder может строить виджеты с помощью строки.
+Используйте `gtk_builder_new_from_string` вместо `gtk_builder_new_from_file`.
 
 ~~~C
 char *uistring;
@@ -402,28 +402,28 @@ uistring =
 build = gtk_builder_new_from_string (uistring, -1);
 ~~~
 
-This method has an advantage and disadvantage.
-The advantage is that the ui string is written in the source code.
-So, no ui file is needed at runtime.
-The disadvantage is that writing the C string is a bit bothersome,
-as the xml needs quoting and special characters need escaping.
-If you want to use this method, you should write a script that transforms ui files into C-strings.
+Этот метод имеет преимущество и недостаток.
+Преимущество в том, что ui-строка записана в исходном коде.
+Таким образом, ui-файл не нужен во время выполнения.
+Недостаток в том, что написание строки C немного обременительно,
+поскольку xml требует кавычек, а специальные символы требуют экранирования.
+Если вы хотите использовать этот метод, вам следует написать скрипт, который преобразует ui-файлы в C-строки.
 
-- Replace backslashes with two backslashes.
-- Add a backslash before each double quote.
-- Add double quotes at the left and right of the string in each line.
+- Замените обратные слэши двумя обратными слэшами.
+- Добавьте обратный слэш перед каждой двойной кавычкой.
+- Добавьте двойные кавычки слева и справа от строки в каждой строке.
 
-Or, if you have `jq` installed, you can use `jq -R < tfe3.ui` to do the quoting and escaping for you.
+Или, если у вас установлен `jq`, вы можете использовать `jq -R < tfe3.ui` для выполнения кавычек и экранирования.
 
 ### Gresource
 
-A Gresource is similar to a string, except that a Gresource is compressed binary data, not text data.
-The `glib-compile-resources` program compiles ui files into Gresources.
-It can compile not only text files but also binary files such as images, sounds and so on.
-After compilation, it bundles them up into one Gresource object.
+Gresource похож на строку, за исключением того, что Gresource — это сжатые двоичные данные, а не текстовые данные.
+Программа `glib-compile-resources` компилирует ui-файлы в Gresources.
+Она может компилировать не только текстовые файлы, но и двоичные файлы, такие как изображения, звуки и так далее.
+После компиляции она объединяет их в один объект Gresource.
 
-An xml file is necessary for the resource compiler `glib-compile-resources`.
-It describes resource files.
+XML-файл необходим для компилятора ресурсов `glib-compile-resources`.
+Он описывает файлы ресурсов.
 
 ~~~xml
 1 <?xml version="1.0" encoding="UTF-8"?>
@@ -434,16 +434,16 @@ It describes resource files.
 6 </gresources>
 ~~~
 
-- 2: `gresources` tag can include multiple gresources (gresource tags).
-However, this xml has only one gresource.
-- 3: The gresource has a prefix `/com/github/ToshioCP/tfe3`.
-- 4: The name of the gresource is `tfe3.ui`.
-The resource will be pointed with `/com/github/ToshioCP/tfe3/tfe3.ui` by GtkBuilder.
-The pattern is "prefix" + "name".
-If you want to add more files, insert them between line 4 and 5.
+- 2: тег `gresources` может включать несколько gresources (теги gresource).
+Однако этот xml имеет только один gresource.
+- 3: gresource имеет префикс `/com/github/ToshioCP/tfe3`.
+- 4: имя gresource — `tfe3.ui`.
+На ресурс будет указывать GtkBuilder с помощью `/com/github/ToshioCP/tfe3/tfe3.ui`.
+Шаблон — "префикс" + "имя".
+Если вы хотите добавить больше файлов, вставьте их между строками 4 и 5.
 
-Save this xml text to `tfe3.gresource.xml`.
-The gresource compiler `glib-compile-resources` shows its usage with the argument `--help`.
+Сохраните этот xml-текст в `tfe3.gresource.xml`.
+Компилятор gresource `glib-compile-resources` показывает своё использование с аргументом `--help`.
 
 ```
 $ glib-compile-resources --help
@@ -474,14 +474,14 @@ Application Options:
   -C, --compiler               The target C compiler (default: the CC environment variable)
   ```
 
-Now run the compiler.
+Теперь запустите компилятор.
 
 ~~~
 $ glib-compile-resources tfe3.gresource.xml --target=resources.c --generate-source
 ~~~
 
-Then a C source file `resources.c` is generated.
-Modify `tfe3.c` and save it as `tfe3_r.c`.
+Затем генерируется исходный файл C `resources.c`.
+Измените `tfe3.c` и сохраните его как `tfe3_r.c`.
 
 ~~~C
 #include "resources.c"
@@ -492,18 +492,18 @@ build = gtk_builder_new_from_resource ("/com/github/ToshioCP/tfe3/tfe3.ui");
 ... ... ...
 ~~~
 
-The function `gtk_builder_new_from_resource` builds widgets from a resource.
+Функция `gtk_builder_new_from_resource` строит виджеты из ресурса.
 
-Then, compile and run it.
+Затем скомпилируйте и запустите.
 
 ~~~
 $ comp tfe3_r
 $ ./a.out tfe2.c
 ~~~
 
-A window appears and it is the same as the screenshot at the beginning of this page.
+Появляется окно, и оно такое же, как снимок экрана в начале этой страницы.
 
-Generally, resources are best for C programs.
-If you use other languages like Ruby, strings are better than resources.
+Вообще говоря, ресурсы лучше всего подходят для программ на C.
+Если вы используете другие языки, такие как Ruby, строки лучше, чем ресурсы.
 
 Up: [README.md](../README.md),  Prev: [Section 8](sec8.md), Next: [Section 10](sec10.md)

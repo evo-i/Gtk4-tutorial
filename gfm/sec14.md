@@ -1,15 +1,15 @@
 Up: [README.md](../README.md),  Prev: [Section 13](sec13.md), Next: [Section 15](sec15.md)
 
-# Functions in GtkNotebook
+# Функции в GtkNotebook
 
-GtkNotebook is a very important object in the text file editor `tfe`.
-It connects the application and TfeTextView objects.
-A set of public functions are declared in `tfenotebook.h`.
-The word "tfenotebook" is used only in filenames.
-There's no "TfeNotebook" object.
+GtkNotebook — это очень важный объект в текстовом редакторе файлов `tfe`.
+Он соединяет приложение и объекты TfeTextView.
+Набор публичных функций объявлен в `tfenotebook.h`.
+Слово "tfenotebook" используется только в именах файлов.
+Нет объекта "TfeNotebook".
 
-The source files are in the directory `src/tfe5`.
-You can get them by downloading the [repository](https://github.com/ToshioCP/Gtk4-tutorial).
+Исходные файлы находятся в каталоге `src/tfe5`.
+Вы можете получить их, загрузив [репозиторий](https://github.com/ToshioCP/Gtk4-tutorial).
 
 ~~~C
  1 void
@@ -29,29 +29,29 @@ You can get them by downloading the [repository](https://github.com/ToshioCP/Gtk
 15 
 ~~~
 
-This header file describes the public functions in `tfenotebook.c`.
+Этот заголовочный файл описывает публичные функции в `tfenotebook.c`.
 
-- 1-2: `notebook_page_save` saves the current page to the file of which the name specified in the tab.
-If the name is `untitled` or `untitled` followed by digits, a file chooser dialog appears and a user can choose or specify a filename.
-- 4-5: `notebook_page_close` closes the current page.
-- 7-8: `notebook_page_open` shows a file chooser dialog and a user can choose a file. The contents of the file is inserted to a new page.
-- 10-11: `notebook_page_new_with_file` creates a new page and a file given as an argument is read and inserted into the page.
-- 13-14: `notebook_page_new` creates a new empty page.
+- 1-2: `notebook_page_save` сохраняет текущую страницу в файл, имя которого указано на вкладке.
+Если имя `untitled` или `untitled` с последующими цифрами, появляется диалог выбора файла, и пользователь может выбрать или указать имя файла.
+- 4-5: `notebook_page_close` закрывает текущую страницу.
+- 7-8: `notebook_page_open` показывает диалог выбора файла, и пользователь может выбрать файл. Содержимое файла вставляется на новую страницу.
+- 10-11: `notebook_page_new_with_file` создаёт новую страницу, и файл, переданный в качестве аргумента, читается и вставляется на страницу.
+- 13-14: `notebook_page_new` создаёт новую пустую страницу.
 
-You probably find that the functions except `notebook_page_close` are higher level functions of
+Вы, вероятно, обнаружите, что функции, за исключением `notebook_page_close`, являются функциями более высокого уровня для
 
 - `tfe_text_view_save`
 - `tef_text_view_open`
 - `tfe_text_view_new_with_file`
 - `tfe_text_view_new`
 
-respectively.
+соответственно.
 
-There are two layers.
-One of them is `tfe_text_view ...`, which is the lower level layer.
-The other is `notebook ...`, which is the higher level layer.
+Есть два уровня.
+Один из них — `tfe_text_view ...`, который является уровнем нижнего уровня.
+Другой — `notebook ...`, который является уровнем более высокого уровня.
 
-Now let's look at the program of each function.
+Теперь давайте посмотрим на программу каждой функции.
 
 ## notebook\_page\_new
 
@@ -95,31 +95,31 @@ Now let's look at the program of each function.
 37 }
 ~~~
 
-- 26-37: The function `notebook_page_new`.
-- 28: The function `g_return_if_fail` checks the argument. It's necessary because the function is public.
-- 33: Creates TfeTextView object.
-- 34: Creates filename, which is "Untitled", "Untitled1", ... .
-- 1-8: The function `get_untitled`.
-- 3: Static variable `c` is initialized at the first call of this function. After that `c` keeps its value unless it is changed explicitly.
-- 4-7: Increases `c` by one and if it is zero, it returns "Untitled". If it is a positive integer, it returns "Untitled\<the integer\>", for example, "Untitled1", "Untitled2", and so on.
-The function `g_strdup_printf` creates a string and it should be freed by `g_free` when it becomes useless.
-The caller of `get_untitled` is in charge of freeing the string.
-- 36: Calls `notebook_page_build` to build a new page.
-- 37: Frees `filename`.
-- 10- 24: The function `notebook_page_build`.
-A parameter with `const` qualifier doesn't change in the function.
-It means that the argument `filename` is owned by the caller.
-The caller needs to free it when it becomes useless.
-- 12: Creates GtkScrolledWindow.
-- 17: Inserts `tv` to GtkScrolledWindow as a child.
-- 18-19: Creates GtkLabel, then appends `scr` and `lab` to the GtkNotebook instance `nb`.
-- 20-21: Sets "tab-expand" property to TRUE.
-The function `g_object_set` sets properties on an object.
-The object can be any object derived from GObject.
-In many cases, an object has its own function to set its properties, but sometimes doesn't.
-In that case, use `g_object_set` to set the property.
-- 22: Sets the current page to the newly created page.
-- 23: Connects "change-file" signal and the handler `file_changed_cb`.
+- 26-37: функция `notebook_page_new`.
+- 28: функция `g_return_if_fail` проверяет аргумент. Это необходимо, потому что функция является публичной.
+- 33: создаёт объект TfeTextView.
+- 34: создаёт имя файла, которое будет "Untitled", "Untitled1", ... .
+- 1-8: функция `get_untitled`.
+- 3: статическая переменная `c` инициализируется при первом вызове этой функции. После этого `c` сохраняет своё значение, если оно не изменено явно.
+- 4-7: увеличивает `c` на единицу, и если оно равно нулю, возвращает "Untitled". Если это положительное целое число, возвращает "Untitled\<целое число\>", например, "Untitled1", "Untitled2" и так далее.
+Функция `g_strdup_printf` создаёт строку, и она должна быть освобождена с помощью `g_free`, когда станет ненужной.
+Вызывающая сторона `get_untitled` отвечает за освобождение строки.
+- 36: вызывает `notebook_page_build` для построения новой страницы.
+- 37: освобождает `filename`.
+- 10-24: функция `notebook_page_build`.
+Параметр с квалификатором `const` не изменяется в функции.
+Это означает, что аргумент `filename` принадлежит вызывающей стороне.
+Вызывающая сторона должна освободить его, когда он станет ненужным.
+- 12: создаёт GtkScrolledWindow.
+- 17: вставляет `tv` в GtkScrolledWindow в качестве дочернего элемента.
+- 18-19: создаёт GtkLabel, затем добавляет `scr` и `lab` к экземпляру GtkNotebook `nb`.
+- 20-21: устанавливает свойство "tab-expand" в TRUE.
+Функция `g_object_set` устанавливает свойства объекта.
+Объект может быть любым объектом, производным от GObject.
+Во многих случаях у объекта есть собственная функция для установки его свойств, но иногда её нет.
+В этом случае используйте `g_object_set` для установки свойства.
+- 22: устанавливает текущую страницу на вновь созданную страницу.
+- 23: подключает сигнал "change-file" и обработчик `file_changed_cb`.
 
 ## notebook\_page\_new\_with\_file
 
@@ -140,10 +140,10 @@ In that case, use `g_object_set` to set the property.
 14 }
 ~~~
 
-- 9-10: Calls `tfe_text_view_new_with_file`.
-If the function returns NULL, an error has happened.
-Then, it does nothing and returns.
-- 11-13: Gets the filename, builds a new page and frees `filename`.
+- 9-10: вызывает `tfe_text_view_new_with_file`.
+Если функция возвращает NULL, произошла ошибка.
+Тогда она ничего не делает и возвращает управление.
+- 11-13: получает имя файла, строит новую страницу и освобождает `filename`.
 
 ## notebook\_page\_open
 
@@ -177,63 +177,63 @@ Then, it does nothing and returns.
 27 }
 ~~~
 
-- 18-27: The function `notebook_page_open`.
-- 24: Creates TfeTextView object.
-- 25: Connects the signal "open-response" and the handler `open_response_cb`.
-- 26: Calls `tfe_text_view_open`.
-The "open-response" signal will be emitted later in this function to inform the result.
-- 1-16: The handler `open_response_cb`.
-- 6-8: If the response code is not `TFE_OPEN_RESPONSE_SUCCESS`, the instance `tv` will be destroyed.
-It has floating reference, which will be explained later.
-A floating reference needs to be converted into an ordinary reference before releasing it.
-The function `g_object_ref_sink` does that.
-After that, the function `g_object_unref` releases `tv` and decreases the reference count by one.
-Finally the reference count becomes zero and `tv` is destroyed.
-- 9-15: Otherwise, it builds a new page with `tv`.
+- 18-27: функция `notebook_page_open`.
+- 24: создаёт объект TfeTextView.
+- 25: подключает сигнал "open-response" и обработчик `open_response_cb`.
+- 26: вызывает `tfe_text_view_open`.
+Сигнал "open-response" будет испущен позже в этой функции для информирования о результате.
+- 1-16: обработчик `open_response_cb`.
+- 6-8: если код ответа не `TFE_OPEN_RESPONSE_SUCCESS`, экземпляр `tv` будет уничтожен.
+Он имеет плавающую ссылку, которая будет объяснена позже.
+Плавающую ссылку необходимо преобразовать в обычную ссылку перед её освобождением.
+Функция `g_object_ref_sink` делает это.
+После этого функция `g_object_unref` освобождает `tv` и уменьшает счётчик ссылок на единицу.
+В конечном итоге счётчик ссылок становится нулевым, и `tv` уничтожается.
+- 9-15: в противном случае строится новая страница с `tv`.
 
-## Floating reference
+## Плавающая ссылка
 
-All the widgets are derived from GInitiallyUnowned.
-GObject and GInitiallyUnowned are almost the same.
-The difference is like this.
-When an instance of GInitiallyUnowned is created, the instance has a "floating reference".
-On the other hand, when an instance of GObject (not GInitiallyUnowned) is created, it has "normal reference".
-Their descendants inherits them, so every widget has a floating reference just after the creation.
-Non-widget class, for example, GtkTextBuffer is a direct sub class of GObject and it has normal reference.
+Все виджеты являются производными от GInitiallyUnowned.
+GObject и GInitiallyUnowned почти одинаковы.
+Разница вот в чём.
+Когда создаётся экземпляр GInitiallyUnowned, экземпляр имеет "плавающую ссылку".
+С другой стороны, когда создаётся экземпляр GObject (не GInitiallyUnowned), он имеет "нормальную ссылку".
+Их потомки наследуют их, поэтому каждый виджет имеет плавающую ссылку сразу после создания.
+Класс, не являющийся виджетом, например, GtkTextBuffer, является прямым подклассом GObject и имеет нормальную ссылку.
 
-The function `g_object_ref_sink` converts the floating reference into a normal reference.
-If the instance doesn't have a floating reference, `g_object_ref_sink` simply increases the reference count by one.
-It is used when an widget is added to another widget as a child.
+Функция `g_object_ref_sink` преобразует плавающую ссылку в нормальную ссылку.
+Если экземпляр не имеет плавающей ссылки, `g_object_ref_sink` просто увеличивает счётчик ссылок на единицу.
+Она используется, когда виджет добавляется к другому виджету в качестве дочернего элемента.
 
 ~~~
-GtkTextView *tv = gtk_text_view_new (); // Floating reference
+GtkTextView *tv = gtk_text_view_new (); // Плавающая ссылка
 GtkScrolledWindow *scr = gtk_scrolled_window_new ();
-gtk_scrolled_window_set_child (scr, tv); // Scrolled window sink the tv's floating reference and tv's reference count becomes one.
+gtk_scrolled_window_set_child (scr, tv); // Scrolled window поглощает плавающую ссылку tv, и счётчик ссылок tv становится единицей.
 ~~~
 
-When `tv` is added to `scr` as a child, `g_object_ref_sink` is used.
+Когда `tv` добавляется к `scr` в качестве дочернего элемента, используется `g_object_ref_sink`.
 
 ~~~
 g_object_ref_sink (tv);
 ~~~
 
-So, the floating reference is converted into an ordinary reference.
-That is to say, floating reference is removed, and the normal reference count is one.
-Thanks to this, the caller doesn't need to decrease tv's reference count.
-If an Object\_A is not a descendant of GInitiallyUnowned, the program is like this:
+Таким образом, плавающая ссылка преобразуется в обычную ссылку.
+То есть, плавающая ссылка удаляется, и нормальный счётчик ссылок становится единицей.
+Благодаря этому вызывающей стороне не нужно уменьшать счётчик ссылок tv.
+Если Object\_A не является потомком GInitiallyUnowned, программа выглядит так:
 
 ~~~
-Object_A *obj_a = object_a_new (); // reference count is one
+Object_A *obj_a = object_a_new (); // счётчик ссылок равен единице
 GtkScrolledWindow *scr = gtk_scrolled_window_new ();
-gtk_scrolled_window_set_child (scr, obj_a); // obj_a's reference count is two
-// obj_a is referred by the caller (this program) and scrolled window
-g_object_unref (obj_a); // obj_a's reference count is one because the caller no longer refers obj_a.
+gtk_scrolled_window_set_child (scr, obj_a); // счётчик ссылок obj_a равен двум
+// на obj_a ссылается вызывающая сторона (эта программа) и scrolled window
+g_object_unref (obj_a); // счётчик ссылок obj_a равен единице, потому что вызывающая сторона больше не ссылается на obj_a.
 ~~~
 
-This example tells us that the caller needs to unref `obj_a`.
+Этот пример показывает нам, что вызывающей стороне нужно выполнить unref для `obj_a`.
 
-If you use `g_object_unref` to an instance that has a floating reference, you need to convert the floating reference to a normal reference in advance.
-See [GObject API reference](https://docs.gtk.org/gobject/floating-refs.html) for further information.
+Если вы используете `g_object_unref` для экземпляра, имеющего плавающую ссылку, вам нужно предварительно преобразовать плавающую ссылку в нормальную ссылку.
+Для получения дополнительной информации см. [GObject API reference](https://docs.gtk.org/gobject/floating-refs.html).
 
 ## notebook\_page\_close
 
@@ -255,12 +255,12 @@ See [GObject API reference](https://docs.gtk.org/gobject/floating-refs.html) for
 15 }
 ~~~
 
-This function closes the current page.
-If the page is the only page the notebook has, then the function destroys the top-level window and quits the application.
+Эта функция закрывает текущую страницу.
+Если страница является единственной страницей в блокноте, то функция уничтожает окно верхнего уровня и завершает приложение.
 
-- 8-10: If the page is the only page the notebook has, it calls `gtk_window_destroy` to destroy the top-level window.
-- 11-13: Otherwise, removes the current page.
-The child widget (TfeTextView) is also destroyed.
+- 8-10: если страница является единственной страницей в блокноте, она вызывает `gtk_window_destroy` для уничтожения окна верхнего уровня.
+- 11-13: в противном случае удаляет текущую страницу.
+Дочерний виджет (TfeTextView) также уничтожается.
 
 ## notebook\_page\_save
 
@@ -289,21 +289,21 @@ The child widget (TfeTextView) is also destroyed.
 ~~~
 
 - 13-21: `notebook_page_save`.
-- 19: Gets the TfeTextView instance belongs to the current page.
-The caller doesn't have the ownership of `tv` so you don't need to care about freeing it.
-- 20: Calls `tfe_text_view_save`.
+- 19: получает экземпляр TfeTextView, принадлежащий текущей странице.
+Вызывающая сторона не владеет `tv`, поэтому вам не нужно заботиться об его освобождении.
+- 20: вызывает `tfe_text_view_save`.
 - 1-11: `get_current_textview`.
-This function gets the TfeTextView object belongs to the current page.
-- 7: Gets the page number of the current page.
-- 8: Gets the child widget `scr`, which is a GtkScrolledWindow instance, of the current page. The object `scr` is owned by the notebook `nb`. So, the caller doesn't need to free it.
-- 9-10: Gets the child widget of `scr`, which is a TfeTextView instance, and returns it.
-The returned instance is owned by `scr` and the caller of `get_cuurent_textview` doesn't need to care about freeing it.
+Эта функция получает объект TfeTextView, принадлежащий текущей странице.
+- 7: получает номер страницы текущей страницы.
+- 8: получает дочерний виджет `scr`, который является экземпляром GtkScrolledWindow, текущей страницы. Объект `scr` принадлежит блокноту `nb`. Поэтому вызывающей стороне не нужно освобождать его.
+- 9-10: получает дочерний виджет `scr`, который является экземпляром TfeTextView, и возвращает его.
+Возвращённый экземпляр принадлежит `scr`, и вызывающей стороне `get_cuurent_textview` не нужно заботиться об его освобождении.
 
-## file\_changed\_cb handler
+## Обработчик file\_changed\_cb
 
-The function `file_changed_cb` is a handler connected to "change-file" signal.
-If a file in a TfeTextView instance is changed, the instance emits this signal.
-This handler changes the label of the GtkNotebookPage.
+Функция `file_changed_cb` — это обработчик, подключённый к сигналу "change-file".
+Если файл в экземпляре TfeTextView изменяется, экземпляр испускает этот сигнал.
+Этот обработчик изменяет метку GtkNotebookPage.
 
 ~~~C
  1 static void
@@ -326,11 +326,11 @@ This handler changes the label of the GtkNotebookPage.
 18 }
 ~~~
 
-- 8: Gets the GFile instance from `tv`.
-- 9: Gets the GkScrolledWindow instance which is the parent widget of `tv`.
-- 10-12: If `file` points a GFile instance, the filename of the GFile is assigned to `filename`.
-Then, unref the GFile object `file`.
-- 13-14: Otherwise (file is NULL), a string `Untitled(number)` is assigned to `filename`.
-- 15-17: Creates a GtkLabel instance `label` with the filename and set the label of the GtkNotebookPage with `label`.
+- 8: получает экземпляр GFile из `tv`.
+- 9: получает экземпляр GkScrolledWindow, который является родительским виджетом `tv`.
+- 10-12: если `file` указывает на экземпляр GFile, имя файла GFile присваивается `filename`.
+Затем освобождает объект GFile `file`.
+- 13-14: в противном случае (file равен NULL) строка `Untitled(число)` присваивается `filename`.
+- 15-17: создаёт экземпляр GtkLabel `label` с именем файла и устанавливает метку GtkNotebookPage с `label`.
 
 Up: [README.md](../README.md),  Prev: [Section 13](sec13.md), Next: [Section 15](sec15.md)

@@ -1,22 +1,22 @@
-# Stateful action
+# Действие с состоянием
 
-Some actions have states.
-The typical values of states are boolean or string.
-However, other types of states are possible if you want.
+Некоторые действия имеют состояния.
+Типичные значения состояний — это булевы или строковые значения.
+Однако, при желании возможны и другие типы состояний.
 
-Actions which have states are called stateful.
+Действия, которые имеют состояния, называются действиями с состоянием (stateful).
 
-## Stateful action without a parameter
+## Действие с состоянием без параметра
 
-Some menus are called toggle menu.
-For example, fullscreen menu has a state which has two values -- fullscreen and non-fullscreen.
-The value of the state is changed every time the menu is clicked.
-An action corresponds to the fullscreen menu also have a state.
-Its value is TRUE or FALSE and it is called boolean value.
-TRUE corresponds to fullscreen and FALSE to non-fullscreen.
+Некоторые меню называются переключаемыми (toggle menu).
+Например, меню полноэкранного режима имеет состояние с двумя значениями -- полноэкранный и неполноэкранный режим.
+Значение состояния изменяется каждый раз при нажатии на меню.
+Действие, соответствующее меню полноэкранного режима, также имеет состояние.
+Его значение — TRUE или FALSE, и это называется булевым значением.
+TRUE соответствует полноэкранному режиму, а FALSE — неполноэкранному.
 
-The following is an example code to implement a fullscreen menu except the signal handler.
-The signal handler will be shown later.
+Ниже приведён пример кода для реализации меню полноэкранного режима, за исключением обработчика сигнала.
+Обработчик сигнала будет показан позже.
 
 ~~~C
 GSimpleAction *act_fullscreen = g_simple_action_new_stateful ("fullscreen",
@@ -27,96 +27,96 @@ g_action_map_add_action (G_ACTION_MAP (win), G_ACTION (act_fullscreen));
 GMenuItem *menu_item_fullscreen = g_menu_item_new ("Full Screen", "win.fullscreen");
 ~~~
 
-- `act_fullscreen` is a GSimpleAction instance.
-It is created with `g_simple_action_new_stateful`.
-The function has three arguments.
-The first argument "fullscreen" is the name of the action.
-The second argument is a parameter type.
-`NULL` means the action doesn't have a parameter.
-The third argument is the initial state of the action.
-It is a GVariant value.
-GVariant will be explained in the next subsection.
-The function `g_variant_new_boolean (FALSE)` returns a boolean type GVariant value which is `FALSE`.
-If there are two or more top level windows, each window has its own `act_fullscreen` action.
-So, the number of the actions is the same as the number of the windows.
-- The action `act_fullscreen` has "change-state" signal. The signal is connected to a  handler `fullscreen_changed`.
-If the fullscreen menu is clicked, then the corresponding action `act_fullscreen` is activated.
-But no handler is connected to the "activate" signal.
-Then, the default behavior for boolean-stated actions with a NULL parameter type like `act_fullscreen` is to toggle them via the “change-state” signal.
-- The action is added to the GtkWindow `win`.
-Therefore, the scope of the action is "win".
-- `menu_item_fullscreen` is a GMenuItem instance.
-There are two arguments.
-The first argument "Full Screen" is the label of `menu_item_fullscreen`.
-The second argument is an action.
-The action "win.fullscreen" has a prefix "win" and an action name "fullscreen".
-The prefix says that the action belongs to the window.
+- `act_fullscreen` — это экземпляр GSimpleAction.
+Он создаётся с помощью `g_simple_action_new_stateful`.
+Функция имеет три аргумента.
+Первый аргумент "fullscreen" — это имя действия.
+Второй аргумент — это тип параметра.
+`NULL` означает, что действие не имеет параметра.
+Третий аргумент — это начальное состояние действия.
+Это значение GVariant.
+GVariant будет объяснён в следующем подразделе.
+Функция `g_variant_new_boolean (FALSE)` возвращает значение GVariant булевого типа, которое равно `FALSE`.
+Если есть два или более окон верхнего уровня, каждое окно имеет собственное действие `act_fullscreen`.
+Таким образом, количество действий равно количеству окон.
+- Действие `act_fullscreen` имеет сигнал "change-state". Сигнал подключён к обработчику `fullscreen_changed`.
+Если кликнуть на меню полноэкранного режима, то соответствующее действие `act_fullscreen` активируется.
+Но ни один обработчик не подключён к сигналу "activate".
+Тогда поведение по умолчанию для действий с булевым состоянием и типом параметра NULL, таких как `act_fullscreen`, заключается в переключении их через сигнал "change-state".
+- Действие добавляется к GtkWindow `win`.
+Следовательно, область видимости действия — "win".
+- `menu_item_fullscreen` — это экземпляр GMenuItem.
+Есть два аргумента.
+Первый аргумент "Full Screen" — это метка `menu_item_fullscreen`.
+Второй аргумент — это действие.
+Действие "win.fullscreen" имеет префикс "win" и имя действия "fullscreen".
+Префикс указывает, что действие принадлежит окну.
 
 @@@include
 menu/menu2.c fullscreen_changed
 @@@
 
-- The handler `fullscreen_changed` has three parameters.
-The first parameter is the action which emits the "change-state" signal.
-The second parameter is the value of the new state of the action.
-The third parameter is a user data which is set in `g_signal_connect`.
-- If the value is boolean type and `TRUE`, then it maximizes the window.
-Otherwise it un-maximizes.
-- Sets the state of the action with `value`.
-Note: At this stage, that means the stage before `g_simple_action_set_state` is called,  the state of the action still has the original value.
-So, you need to set the state with the new value by `g_simple_action_set_state`.
+- Обработчик `fullscreen_changed` имеет три параметра.
+Первый параметр — это действие, которое испускает сигнал "change-state".
+Второй параметр — это значение нового состояния действия.
+Третий параметр — это пользовательские данные, которые установлены в `g_signal_connect`.
+- Если значение имеет булев тип и равно `TRUE`, то окно разворачивается на весь экран.
+В противном случае возвращается к обычному размеру.
+- Устанавливает состояние действия с помощью `value`.
+Примечание: На этом этапе, то есть на этапе до вызова `g_simple_action_set_state`, состояние действия всё ещё имеет исходное значение.
+Поэтому вам нужно установить состояние с новым значением с помощью `g_simple_action_set_state`.
 
-You can use "activate" signal instead of "change-state" signal, or both signals.
-But the way above is the simplest and the best.
+Вы можете использовать сигнал "activate" вместо сигнала "change-state", или оба сигнала.
+Но вышеописанный способ является самым простым и лучшим.
 
 ### GVariant
 
-GVariant is a fundamental type.
-It isn't a child of GObject.
-GVariant can contain boolean, string or other type values.
-For example, the following program assigns TRUE to `value` whose type is GVariant.
+GVariant — это фундаментальный тип.
+Он не является дочерним по отношению к GObject.
+GVariant может содержать булевы значения, строки или значения других типов.
+Например, следующая программа присваивает TRUE переменной `value`, тип которой — GVariant.
 
 ~~~C
 GVariant *value = g_variant_new_boolean (TRUE);
 ~~~
 
-Another example is:
+Другой пример:
 
 ~~~C
 GVariant *value2 = g_variant_new_string ("Hello");
 ~~~
 
-`value2` is a GVariant and it has a string type value "Hello".
-GVariant can contain other types like int16, int32, int64, double and so on.
+`value2` — это GVariant, который имеет строковое значение "Hello".
+GVariant может содержать другие типы, такие как int16, int32, int64, double и так далее.
 
-If you want to get the original value, use g\_variant\_get series functions.
-For example, you can get the boolean value with g\_variant_get_boolean.
+Если вы хотите получить исходное значение, используйте функции серии g\_variant\_get.
+Например, вы можете получить булево значение с помощью g\_variant_get_boolean.
 
 ~~~C
 gboolean bool = g_variant_get_boolean (value);
 ~~~
 
-Since `value` has been created as a boolean type GVariant with `TRUE` value, `bool` equals `TRUE`.
-In the same way, you can get a string from `value2`
+Поскольку `value` был создан как GVariant булевого типа со значением `TRUE`, `bool` равно `TRUE`.
+Точно так же вы можете получить строку из `value2`
 
 ~~~C
 const char *str = g_variant_get_string (value2, NULL);
 ~~~
 
-The second parameter is a pointer to gsize type variable (gsize is defined as unsigned long).
-If it isn't NULL, then the pointed value is used as the length by the function.
-If it is NULL, nothing happens.
-The returned string `str` is owned by the instance and can't be changed or freed by the caller.
+Второй параметр — это указатель на переменную типа gsize (gsize определён как unsigned long).
+Если он не равен NULL, то функция использует указанное значение как длину.
+Если он равен NULL, ничего не происходит.
+Возвращаемая строка `str` принадлежит экземпляру и не может быть изменена или освобождена вызывающей стороной.
 
-## Stateful action with a parameter
+## Действие с состоянием и параметром
 
-Another example of stateful actions is an action corresponds to color select menus.
-For example, there are three menus and each menu has red, green or blue color respectively.
-They determine the background color of a GtkLabel widget.
-One action is connected to the three menus.
-The action has a state whose value is "red", "green" or "blue".
-The values are string.
-Those colors are given to the signal handler as a parameter.
+Другой пример действий с состоянием — это действие, соответствующее меню выбора цвета.
+Например, есть три меню, и каждое меню имеет красный, зелёный или синий цвет соответственно.
+Они определяют цвет фона виджета GtkLabel.
+Одно действие подключено к трём меню.
+Действие имеет состояние, значение которого — "red", "green" или "blue".
+Значения являются строками.
+Эти цвета передаются обработчику сигнала в качестве параметра.
 
 ~~~C
 ... ... ...
@@ -131,37 +131,37 @@ g_signal_connect (act_color, "activate", G_CALLBACK (color_activated), NULL);
 ... ... ...
 ~~~
 
-- GVariantType is a C structure and it keeps a type of GVariant.
-It is created with the function `g_variant_type_new`.
-The argument of the function is a GVariant type string.
-So, `g_variant_type_new("s")` returns a GVariantType structure contains a string type.
-The returned value, GVariantType structure, is owned by the caller.
-So, you need to free it when it becomes useless. 
-- The variable `act_color` points a GSimpleAction instance.
-It is created with `g_simple_action_new_stateful`.
-The function has three arguments.
-The first argument "color" is the name of the action.
-The second argument is a parameter type which is GVariantType.
-`g_variant_type_new("s")` creates GVariantType which is a string type (`G_VARIANT_TYPE_STRING`).
-The third argument is the initial state of the action.
-It is a GVariant.
-The function `g_variant_new_string ("red")` returns a GVariant value which has the string value "red".
-GVariant has a reference count and `g_variant_new_...` series functions returns a GVariant value with a floating reference.
-That means the caller doesn't own the value at this point.
-And `g_simple_action_new_stateful` function consumes the floating reference so you don't need to care about releasing the GVariant instance.
-- The GVariantType structure `vtype` is useless after `g_simple_action_new_stateful`.
-It is released with the function `g_variant_type_free`.
-- The varable `menu_item_red` points a GMenuItem instance.
-The function `g_menu_item_new` has two arguments.
-The first argument "Red" is the label of `menu_item_red`.
-The second argument is a detailed action.
-Its prefix is "app", action name is "color" and target is "red".
-Target is sent to the action as a parameter.
-The same goes for `menu_item_green` and `menu_item_blue`.
-- The function `g_signal_connect` connects the activate signal on the action `act_color` and the handler `color_activated`.
-If one of the three menus is clicked, then the action `act_color` is activated with the target (parameter) which is given by the menu.
+- GVariantType — это структура C, которая хранит тип GVariant.
+Она создаётся с помощью функции `g_variant_type_new`.
+Аргументом функции является строка типа GVariant.
+Таким образом, `g_variant_type_new("s")` возвращает структуру GVariantType, содержащую строковый тип.
+Возвращаемое значение, структура GVariantType, принадлежит вызывающей стороне.
+Поэтому вам нужно освободить её, когда она станет бесполезной.
+- Переменная `act_color` указывает на экземпляр GSimpleAction.
+Он создаётся с помощью `g_simple_action_new_stateful`.
+Функция имеет три аргумента.
+Первый аргумент "color" — это имя действия.
+Второй аргумент — это тип параметра, который является GVariantType.
+`g_variant_type_new("s")` создаёт GVariantType, который является строковым типом (`G_VARIANT_TYPE_STRING`).
+Третий аргумент — это начальное состояние действия.
+Это GVariant.
+Функция `g_variant_new_string ("red")` возвращает значение GVariant, которое имеет строковое значение "red".
+GVariant имеет счётчик ссылок, и функции серии `g_variant_new_...` возвращают значение GVariant с плавающей ссылкой.
+Это означает, что вызывающая сторона не владеет значением на этом этапе.
+А функция `g_simple_action_new_stateful` поглощает плавающую ссылку, поэтому вам не нужно заботиться об освобождении экземпляра GVariant.
+- Структура GVariantType `vtype` становится бесполезной после `g_simple_action_new_stateful`.
+Она освобождается с помощью функции `g_variant_type_free`.
+- Переменная `menu_item_red` указывает на экземпляр GMenuItem.
+Функция `g_menu_item_new` имеет два аргумента.
+Первый аргумент "Red" — это метка `menu_item_red`.
+Второй аргумент — это детализированное действие.
+Его префикс — "app", имя действия — "color", а цель — "red".
+Цель отправляется действию в качестве параметра.
+То же самое касается `menu_item_green` и `menu_item_blue`.
+- Функция `g_signal_connect` подключает сигнал activate действия `act_color` к обработчику `color_activated`.
+Если кликнуть на одно из трёх меню, то действие `act_color` активируется с целью (параметром), которая задаётся меню.
 
-The following is the "activate" signal handler.
+Ниже приведён обработчик сигнала "activate".
 
 ~~~C
 static void
@@ -174,122 +174,122 @@ color_activated(GSimpleAction *action, GVariant *parameter) {
 }
 ~~~
 
-- The handler originally has three parameters.
-The third parameter is a user data set in the `g_signal_connect` function.
-But it is left out because the fourth argument of the `g_signal_connect` has been NULL.
-The first parameter is the action which emits the "activate" signal.
-The second parameter is the parameter, or target, given to the action.
-It is a color specified by the menu.
-- The variable `color` is a CSS string created by `g_strdup_printf`.
-The arguments of `g_strdup_printf` are the same as printf C standard function.
-The function `g_variant_get_string` gets the string contained in `parameter`.
-The string is owned by the instance and you mustn't change or free it.
-The string `label.lb` is a selector.
-It consists of `label`, a node name of GtkLabel, and `lb` which is a class name.
-It selects GtkLabel which has `lb` class.
-For example, menus have GtkLabel to display their labels, but they don't have `lb` class.
-So, the CSS doesn't change their background color.
-The string `{background-color %s}` makes the background color `%s` to which the color from `parameter` is assigned.
-- Frees the string `color`.
-- Changes the state with `g_action_change_state`.
+- Обработчик изначально имеет три параметра.
+Третий параметр — это пользовательские данные, установленные в функции `g_signal_connect`.
+Но он опущен, потому что четвёртый аргумент `g_signal_connect` был NULL.
+Первый параметр — это действие, которое испускает сигнал "activate".
+Второй параметр — это параметр, или цель, переданная действию.
+Это цвет, указанный меню.
+- Переменная `color` — это CSS-строка, созданная с помощью `g_strdup_printf`.
+Аргументы `g_strdup_printf` такие же, как у стандартной функции C printf.
+Функция `g_variant_get_string` получает строку, содержащуюся в `parameter`.
+Строка принадлежит экземпляру, и вы не должны изменять или освобождать её.
+Строка `label.lb` — это селектор.
+Он состоит из `label`, имени узла GtkLabel, и `lb`, которое является именем класса.
+Он выбирает GtkLabel, который имеет класс `lb`.
+Например, меню имеют GtkLabel для отображения своих меток, но у них нет класса `lb`.
+Поэтому CSS не изменяет цвет их фона.
+Строка `{background-color %s}` устанавливает цвет фона `%s`, которому присваивается цвет из `parameter`.
+- Освобождает строку `color`.
+- Изменяет состояние с помощью `g_action_change_state`.
 
-Note: If you haven't set an "activate" signal handler, the signal is forwarded to "change-state" signal.
-So, you can use "change-state" signal instead of "activate" signal.
-See [`src/menu/menu2_change_state.c`](menu/menu2_change_state.c).
+Примечание: Если вы не установили обработчик сигнала "activate", сигнал перенаправляется на сигнал "change-state".
+Таким образом, вы можете использовать сигнал "change-state" вместо сигнала "activate".
+См. [`src/menu/menu2_change_state.c`](menu/menu2_change_state.c).
 
 ### GVariantType
 
-GVariantType gives a type of GVariant.
-GVariantType is created with a type string.
+GVariantType задаёт тип GVariant.
+GVariantType создаётся со строкой типа.
 
-- "b" means boolean type.
-- "s" means string type.
+- "b" означает булев тип.
+- "s" означает строковый тип.
 
-The following program is a simple example.
-It finally outputs the string "s".
+Следующая программа — это простой пример.
+В конце она выводит строку "s".
 
 @@@include
 menu/gvarianttype_test.c
 @@@
 
-- The function `g_variant_type_new` creates a GVariantType structure.
-The argument "s" is a type string.
-It means string.
-The returned structure is owned by the caller.
-When it becomes useless, you need to free it with the function `g_variant_type_free`.
-- The function `g_variant_type_peek_string` takes a peek at `vtype`.
-It is the string "s" given to `vtype` when it was created.
-The string is owned by the instance and the caller can't change or free it.
-- Prints the string to the terminal.
-You can't free `vtype` before `g_print` because the string `type_string` is owned by `vtype`.
-- Frees `vtype`.
+- Функция `g_variant_type_new` создаёт структуру GVariantType.
+Аргумент "s" — это строка типа.
+Он означает строку.
+Возвращаемая структура принадлежит вызывающей стороне.
+Когда она станет бесполезной, вам нужно освободить её с помощью функции `g_variant_type_free`.
+- Функция `g_variant_type_peek_string` заглядывает в `vtype`.
+Это строка "s", которая была передана `vtype` при его создании.
+Строка принадлежит экземпляру, и вызывающая сторона не может изменить или освободить её.
+- Выводит строку в терминал.
+Вы не можете освободить `vtype` до `g_print`, потому что строка `type_string` принадлежит `vtype`.
+- Освобождает `vtype`.
 
-## Example
+## Пример
 
-The following code includes stateful actions above.
-This program has menus like this:
+Следующий код включает описанные выше действия с состоянием.
+Эта программа имеет меню вида:
 
 ![menu2](../image/menu2.png){width=6.03cm height=5.115cm}
 
-- Fullscreen menu toggles the size of the window between maximum and non-maximum.
-If the window is maximum size, which is called full screen, then a check mark is put before "fullscreen" label.
-- Red, green and blue menu determines the back ground color of the label in the window.
-The menus have radio buttons on the left of the menus.
-And the radio button of the selected menu turns on.
-- Quit menu quits the application.
+- Меню Fullscreen переключает размер окна между максимальным и обычным.
+Если окно имеет максимальный размер, что называется полным экраном, то перед меткой "fullscreen" ставится галочка.
+- Меню Red, Green и Blue определяют цвет фона метки в окне.
+Меню имеют переключатели слева от меню.
+И переключатель выбранного меню включается.
+- Меню Quit завершает работу приложения.
 
-The code is as follows.
+Код выглядит следующим образом.
 
 @@@include
 menu/menu2.c
 @@@
 
-- 6-23: Action signal handlers.
-- 25-28: The handler `app_shutdown` is called when the application quits.
-It removes the provider from the display.
-- 30-48: An activate signal handler.
-- 32-34: A new window is created and assigned to `win`.
-Its title and default size are set to "menu2" and 400x300 respectively.
-- 36-38: A new label is created and assigned to `lb`
-The label is given a CSS class "lb".
-It is added to `win` as a child.
-- 40-43: A toggle action is created and assigned to `act_fullscreen`.
-It's connected to the signal handler `fullscreen_changed`.
-It's added to the window, so the action scope is "win".
-So, if there are two or more windows, the actions are created two or more.
-- 45: The function `gtk_application_window_set_show_menubar` adds a menubar to the window.
-- 47: Shows the window.
-- 50-104: A startup signal handler.
-- 52-61: Two actions `act_color` and `act_quit` are created.
-These actions exists only one because the startup handler is called once.
-They are connected to their handlers and added to the application.
-Their scopes are "app".
-- 63-92: Menus are built.
-- 94: The menubar is added to the application.
-- 96-103: A CSS provider is created with the CSS data and added to the default display.
-The "shutdown" signal on the application is connected to a handler "app_shutdown".
-So, the provider is removed from the display and freed when the application quits.
+- 6-23: Обработчики сигналов действий.
+- 25-28: Обработчик `app_shutdown` вызывается при завершении работы приложения.
+Он удаляет провайдер из дисплея.
+- 30-48: Обработчик сигнала activate.
+- 32-34: Создаётся новое окно и присваивается `win`.
+Его заголовок и размер по умолчанию устанавливаются на "menu2" и 400x300 соответственно.
+- 36-38: Создаётся новая метка и присваивается `lb`
+Метке присваивается CSS-класс "lb".
+Она добавляется к `win` в качестве дочернего элемента.
+- 40-43: Создаётся переключаемое действие и присваивается `act_fullscreen`.
+Оно подключается к обработчику сигнала `fullscreen_changed`.
+Оно добавляется к окну, поэтому область видимости действия — "win".
+Таким образом, если есть два или более окон, создаётся два или более действий.
+- 45: Функция `gtk_application_window_set_show_menubar` добавляет панель меню к окну.
+- 47: Показывает окно.
+- 50-104: Обработчик сигнала startup.
+- 52-61: Создаются два действия `act_color` и `act_quit`.
+Эти действия существуют только в одном экземпляре, потому что обработчик startup вызывается один раз.
+Они подключаются к своим обработчикам и добавляются к приложению.
+Их области видимости — "app".
+- 63-92: Создаются меню.
+- 94: Панель меню добавляется к приложению.
+- 96-103: Создаётся CSS-провайдер с CSS-данными и добавляется к дисплею по умолчанию.
+Сигнал "shutdown" приложения подключается к обработчику "app_shutdown".
+Таким образом, провайдер удаляется из дисплея и освобождается при завершении работы приложения.
 
-## Compile
+## Компиляция
 
-Change your current directory to `src/menu`.
+Измените текущий каталог на `src/menu`.
 
 ~~~
 $ comp menu2
 $./a.out
 ~~~
 
-Then, you will see a window and the background color of the content is red.
-You can change the size to maximum and change back to the original size.
-You can change the background color to green or blue.
+Затем вы увидите окно, и цвет фона содержимого будет красным.
+Вы можете изменить размер на максимальный и вернуться к исходному размеру.
+Вы можете изменить цвет фона на зелёный или синий.
 
-If you run the second application during the first application is running, another window will appear in the same screen.
-Both of the window have the same background color.
-Because the `act_color` action has "app" scope and the CSS is applied to the default display shared by the windows.
+Если вы запустите второе приложение во время работы первого приложения, появится ещё одно окно на том же экране.
+Оба окна будут иметь одинаковый цвет фона.
+Потому что действие `act_color` имеет область видимости "app", и CSS применяется к дисплею по умолчанию, общему для окон.
 
 ```
-$ ./a.out & # Run the first application
+$ ./a.out & # Запуск первого приложения
 [1] 82113
-$ ./a.out # Run the second application
+$ ./a.out # Запуск второго приложения
 $ 
 ```

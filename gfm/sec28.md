@@ -1,34 +1,34 @@
 Up: [README.md](../README.md),  Prev: [Section 27](sec27.md), Next: [Section 29](sec29.md)
 
-# Drag and drop
+# Перетаскивание
 
-## What's drag and drop?
+## Что такое перетаскивание?
 
-Drag and drop is also written as "Drag-and-Drop", or "DND" in short.
-DND is like "copy and paste" or "cut and paste".
-If a user drags a UI element, which is a widget, selected part or something, data is transferred from the source to the destination.
+Перетаскивание также записывается как "Drag-and-Drop", или сокращённо "DND".
+DND подобно "копировать и вставить" или "вырезать и вставить".
+Если пользователь перетаскивает элемент пользовательского интерфейса, который является виджетом, выбранной частью или чем-то ещё, данные передаются из источника в назначение.
 
-You probably have experience that you moved a file with DND.
+Вы, вероятно, имели опыт перемещения файла с помощью DND.
 
 ![DND on the GUI file manager](../image/dnd.png)
 
-When the DND starts, the file `sample_file.txt` is given to the system.
-When the DND ends,  the system gives `sample_file.txt` to the directory `sample_folder` in the file manager.
-Therefore, it is like "cut and paste".
-The actual behavior may be different from the explanation here, but the concept is similar.
+Когда DND начинается, файл `sample_file.txt` передаётся системе.
+Когда DND заканчивается, система передаёт `sample_file.txt` в каталог `sample_folder` в файловом менеджере.
+Поэтому это похоже на "вырезать и вставить".
+Фактическое поведение может отличаться от объяснения здесь, но концепция похожа.
 
-## Example for DND
+## Пример для DND
 
-This tutorial provides a simple example in the `src/dnd` directory.
-It has three labels for the source and one label for the destination.
-The source labels have "red", "green" or "blue" labels.
-If a user drags the label to the destination label, the font color will be changed.
+Этот учебник предоставляет простой пример в каталоге `src/dnd`.
+Он имеет три метки для источника и одну метку для назначения.
+Исходные метки имеют метки "red", "green" или "blue".
+Если пользователь перетаскивает метку на метку назначения, цвет шрифта будет изменён.
 
 ![DND example](../image/dnd_canvas.png)
 
-## UI file
+## UI-файл
 
-The widgets are defined in the XML file `dnd.ui`.
+Виджеты определены в XML-файле `dnd.ui`.
 
 ~~~xml
  1 <?xml version="1.0" encoding="UTF-8"?>
@@ -87,8 +87,8 @@ The widgets are defined in the XML file `dnd.ui`.
 54 
 ~~~
 
-It is converted to a resource file by `glib-compile-resources`.
-The compiler uses an XML file `dnd.gresource.xml`.
+Он преобразуется в файл ресурсов с помощью `glib-compile-resources`.
+Компилятор использует XML-файл `dnd.gresource.xml`.
 
 ~~~xml
 1 <?xml version="1.0" encoding="UTF-8"?>
@@ -99,11 +99,11 @@ The compiler uses an XML file `dnd.gresource.xml`.
 6 </gresources>
 ~~~
 
-## C file dnd.c
+## C-файл dnd.c
 
-The C file `dnd.c` isn't a big file.
-The number of the lines is less than a hundred.
-A GtkApplication object is created in the function `main`.
+C-файл `dnd.c` не является большим файлом.
+Количество строк меньше ста.
+Объект GtkApplication создаётся в функции `main`.
 
 ~~~C
  1 int
@@ -120,27 +120,27 @@ A GtkApplication object is created in the function `main`.
 12 }
 ~~~
 
-The application ID is defined as:
+ID приложения определён как:
 
 ```C
 #define APPLICATION_ID "com.github.ToshioCP.dnd"
 ```
 
-### Startup signal handler
+### Обработчик сигнала startup
 
-Most of the work is done in the "startup" signal handler.
+Большая часть работы выполняется в обработчике сигнала "startup".
 
-Two objects GtkDragSource and GtkDropTarget is used for DND implementation.
+Для реализации DND используются два объекта GtkDragSource и GtkDropTarget.
 
-- Drag source: A drag source (GtkDragSource instance) is an event controller.
-It initiates a DND operation when the user clicks and drags the widget.
-If a data, in the form of GdkContentProvider, is set in advance, it gives the data to the system at the beginning of the drag.
-- Drop target: A drop target (GtkDropTarget) is also an event controller.
-You can get the data in the GtkDropTarget::drop signal handler.
+- Источник перетаскивания: источник перетаскивания (экземпляр GtkDragSource) является контроллером событий.
+Он инициирует операцию DND, когда пользователь щёлкает и перетаскивает виджет.
+Если данные в форме GdkContentProvider установлены заранее, он передаёт данные системе в начале перетаскивания.
+- Цель перетаскивания: цель перетаскивания (GtkDropTarget) также является контроллером событий.
+Вы можете получить данные в обработчике сигнала GtkDropTarget::drop.
 
-The example below uses these objects in a very simple way.
-You can use number of features that the two objects have.
-See the following links for more information.
+Приведённый ниже пример использует эти объекты очень простым способом.
+Вы можете использовать ряд функций, которые есть у этих двух объектов.
+Для получения дополнительной информации см. следующие ссылки.
 
 - [Drag-and-Drop in GTK](https://docs.gtk.org/gtk4/drag-and-drop.html)
 - [GtkDragSource](https://docs.gtk.org/gtk4/class.DragSource.html)
@@ -193,29 +193,29 @@ See the following links for more information.
 44 }
 ~~~
 
-- 15-22: Builds the widgets.
-The array `source_labels[]` points the source labels red, green and blue in the ui file.
-The variable `canvas` points the destination label.
-- 24-30: Sets the DND source widgets.
-The for-loop carries out through the array `src_labels[]` each of which points the source widget,  red, green or blue label.
-- 25: Creates a new GtkDragSource instance.
-- 26: Creates a new GdkContentProvider instance with the string "red", "green" or "blue.
-They are the name of the widgets.
-These strings are the data to transfer through the DND operation.
-- 27: Sets the content of the drag source to the GdkContentProvider instance above.
-- 28: Content is useless so it is destroyed.
-- 29: Add the event controller, which is actually the drag source, to the widget.
-If a DND operation starts on the widget, the corresponding drag source works and the data is given to the system.
-- 32-34: Sets the DND drop target.
-- 32: Creates a new GtkDropTarget instance.
-The first parameter is the GType of the data.
-The second parameter is a GdkDragAction enumerate constant.
-The arguments here are string type and the constant for copy.
-- 33: Connects the "drop" signal and the handler `drop_cb`.
-- 34: Add the event controller, which is actually the drop target, to the widget.
-- 36-43: Sets CSS.
-- 37: A varable `format` is static and defined at the top of the program.
-Static variables are shown below.
+- 15-22: строит виджеты.
+Массив `source_labels[]` указывает на исходные метки red, green и blue в ui-файле.
+Переменная `canvas` указывает на метку назначения.
+- 24-30: устанавливает виджеты источника DND.
+Цикл for перебирает массив `src_labels[]`, каждый из которых указывает на исходный виджет, метку red, green или blue.
+- 25: создаёт новый экземпляр GtkDragSource.
+- 26: создаёт новый экземпляр GdkContentProvider со строкой "red", "green" или "blue.
+Это имена виджетов.
+Эти строки являются данными для передачи через операцию DND.
+- 27: устанавливает содержимое источника перетаскивания на экземпляр GdkContentProvider выше.
+- 28: содержимое бесполезно, поэтому оно уничтожается.
+- 29: добавляет контроллер событий, который на самом деле является источником перетаскивания, к виджету.
+Если операция DND начинается на виджете, соответствующий источник перетаскивания работает, и данные передаются системе.
+- 32-34: устанавливает цель перетаскивания DND.
+- 32: создаёт новый экземпляр GtkDropTarget.
+Первый параметр — это GType данных.
+Второй параметр — это константа перечисления GdkDragAction.
+Аргументами здесь являются тип строки и константа для копирования.
+- 33: подключает сигнал "drop" и обработчик `drop_cb`.
+- 34: добавляет контроллер событий, который на самом деле является целью перетаскивания, к виджету.
+- 36-43: устанавливает CSS.
+- 37: переменная `format` является статической и определена в верхней части программы.
+Статические переменные показаны ниже.
 
 ```C
 static GtkCssProvider *provider = NULL;
@@ -224,7 +224,7 @@ static const char *format = "label {padding: 20px;} label#red {background: red;}
   "label#canvas {color: %s; font-weight: bold; font-size: 72pt;}";
 ```
 
-### Activate signal handler
+### Обработчик сигнала activate
 
 ~~~C
 1 static void
@@ -237,9 +237,9 @@ static const char *format = "label {padding: 20px;} label#red {background: red;}
 8 }
 ~~~
 
-This handler just shows the window.
+Этот обработчик просто показывает окно.
 
-### Drop signal handler
+### Обработчик сигнала drop
 
 ~~~C
 1 static gboolean
@@ -253,20 +253,20 @@ This handler just shows the window.
 9 }
 ~~~
 
-The "drop" signal handler has five parameters.
+Обработчик сигнала "drop" имеет пять параметров.
 
-- GtkDropTarget instance on which the signal has been emitted.
-- GValue that holds the data from the source.
-- The arguments `x` and `y` are the coordinate of the mouse when released.
-- User data was set when the signal and handler was connected.
+- Экземпляр GtkDropTarget, на котором был испущен сигнал.
+- GValue, который содержит данные из источника.
+- Аргументы `x` и `y` — это координаты мыши при отпускании.
+- Пользовательские данные были установлены при подключении сигнала и обработчика.
 
-The string from the GValue is "red", "green" or "blue".
-It replaces "%s" in the variable `format`.
-That means the font color of the label `canvas` will turn to the color.
+Строка из GValue — это "red", "green" или "blue".
+Она заменяет "%s" в переменной `format`.
+Это означает, что цвет шрифта метки `canvas` изменится на этот цвет.
 
 ## Meson.build
 
-The file `meson.build` controls the building process.
+Файл `meson.build` управляет процессом сборки.
 
 ~~~meson
 1 project('dnd', 'c')
@@ -279,7 +279,7 @@ The file `meson.build` controls the building process.
 8 executable(meson.project_name(), 'dnd.c', resources, dependencies: gtkdep, export_dynamic: true, install: false)
 ~~~
 
-You can build it from the command line.
+Вы можете собрать его из командной строки.
 
 ```
 $ cd src/dnd
@@ -288,7 +288,7 @@ $ ninja -C _build
 $ _build/dnd
 ```
 
-The source files are under the directory `src/dnd` of the [repository](https://github.com/ToshioCP/Gtk4-tutorial).
-Download it and see the directory.
+Исходные файлы находятся в каталоге `src/dnd` [репозитория](https://github.com/ToshioCP/Gtk4-tutorial).
+Загрузите его и посмотрите каталог.
 
 Up: [README.md](../README.md),  Prev: [Section 27](sec27.md), Next: [Section 29](sec29.md)

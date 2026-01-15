@@ -1,6 +1,6 @@
-# Учебник по GTK 4 для начинающих
+# GTK 4 Tutorial for beginners
 
-Страница GitHub этого учебника также доступна. Нажмите [здесь](https://toshiocp.github.io/Gtk4-tutorial/).
+The GitHub page of this tutorial is also available. Click [here](https://toshiocp.github.io/Gtk4-tutorial/).
 
 #### Содержание этого репозитория
 
@@ -9,7 +9,7 @@
 
 Этот учебник показывает, как писать программы на C с использованием библиотеки GTK.
 Он ориентирован на начинающих, поэтому содержание ограничено основами.
-Оглавление находится в конце этого файла README.md.
+Оглавление находится в конце этого README.md.
 
 - Разделы с 3 по 23 описывают основы на примере простого редактора `tfe` (Text File Editor - текстовый редактор файлов).
 - Разделы с 24 по 27 описывают GtkDrawingArea.
@@ -60,7 +60,7 @@ GObject является основой GTK, поэтому разработчи
 - GFDL1.3 для документов
 - GPL3 для программ
 
-## Оглавление
+## Table of contents
 
 1. [Предварительные требования и лицензия](gfm/sec1.md)
 1. [Подготовка](gfm/sec2.md)
@@ -81,17 +81,17 @@ GObject является основой GTK, поэтому разработчи
 1. [Меню и действия](gfm/sec17.md)
 1. [Действие с состоянием](gfm/sec18.md)
 1. [UI-файл для меню и записей действий](gfm/sec19.md)
-1. [Составные виджеты и диалог оповещения](gfm/sec20.md)
+1. [Составные виджеты и диалог предупреждения](gfm/sec20.md)
 1. [GtkFontDialogButton и Gsettings](gfm/sec21.md)
 1. [TfeWindow](gfm/sec22.md)
 1. [Pango, CSS и приложение](gfm/sec23.md)
 1. [GtkDrawingArea и Cairo](gfm/sec24.md)
 1. [Периодические события](gfm/sec25.md)
-1. [Пользовательская отрисовка](gfm/sec26.md)
-1. [Интерпретатор миниатюрной черепашьей графики](gfm/sec27.md)
+1. [Пользовательское рисование](gfm/sec26.md)
+1. [Миниатюрный интерпретатор графики черепашки](gfm/sec27.md)
 1. [Перетаскивание](gfm/sec28.md)
 1. [GtkListView](gfm/sec29.md)
-1. [GtkGridView и сигнал активации](gfm/sec30.md)
+1. [GtkGridView и сигнал activate](gfm/sec30.md)
 1. [GtkExpression](gfm/sec31.md)
 1. [GtkColumnView](gfm/sec32.md)
 1. [GtkSignalListItemFactory](gfm/sec33.md)

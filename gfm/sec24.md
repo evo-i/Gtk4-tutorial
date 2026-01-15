@@ -1,55 +1,55 @@
 Up: [README.md](../README.md),  Prev: [Section 23](sec23.md), Next: [Section 25](sec25.md)
 
-# GtkDrawingArea and Cairo
+# GtkDrawingArea и Cairo
 
-If you want to draw shapes or paint images dynamically on the screen, use the GtkDrawingArea widget.
+Если вы хотите рисовать фигуры или динамически отображать изображения на экране, используйте виджет GtkDrawingArea.
 
-GtkDrawingArea provides a cairo drawing context.
-You can draw images with cairo library functions.
-This section describes:
+GtkDrawingArea предоставляет контекст рисования cairo.
+Вы можете рисовать изображения с помощью функций библиотеки cairo.
+Этот раздел описывает:
 
-1. Cairo, but briefly
-2. GtkDrawingArea, with a very simple example.
+1. Cairo, но кратко
+2. GtkDrawingArea, с очень простым примером.
 
 ## Cairo
 
-Cairo is a drawing library for two dimensional graphics.
-There are a lot of documents on [Cairo's website](https://www.cairographics.org/).
-If you aren't familiar with Cairo, it is worth reading the [tutorial](https://www.cairographics.org/tutorial/).
+Cairo — это библиотека рисования для двумерной графики.
+На [веб-сайте Cairo](https://www.cairographics.org/) есть много документов.
+Если вы не знакомы с Cairo, стоит прочитать [руководство](https://www.cairographics.org/tutorial/).
 
-The following is an introduction to the Cairo library.
-First, you need to know surfaces, sources, masks, destinations, cairo context and transformations.
+Ниже приведено введение в библиотеку Cairo.
+Сначала вам нужно знать о поверхностях, источниках, масках, назначениях, контексте cairo и преобразованиях.
 
-- A surface represents an image.
-It is like a canvas.
-We can draw shapes and images with different colors on surfaces.
-- The source pattern, or simply source, is like paint, which will be transferred to destination surface by cairo functions.
-- The mask describes the area to be used in the copy;
-- The destination is a target surface;
-- The cairo context manages the transfer from source to destination, through mask with its functions;
-For example, `cairo_stroke` is a function to draw a path to the destination by the transfer.
-- A transformation can be applied before the transfer completes.
-The transformation which is applied is called affine, which is a mathematical term meaning transofrmations
-that preserve straight lines.
-Scaling, rotating, reflecting, shearing and translating are examples of affine transformations.
-They are mathematically represented by matrix multiplication and vector addition.
-In this section we don't use it, instead we will only use the identity transformation.
-This means that the coordinates in the source and mask are the same as the coordinates in destination.
+- Поверхность представляет изображение.
+Это как холст.
+Мы можем рисовать фигуры и изображения с разными цветами на поверхностях.
+- Шаблон источника, или просто источник, подобен краске, которая будет перенесена на поверхность назначения функциями cairo.
+- Маска описывает область, которая будет использоваться при копировании;
+- Назначение — это целевая поверхность;
+- Контекст cairo управляет переносом из источника в назначение через маску с помощью своих функций;
+Например, `cairo_stroke` — это функция для рисования пути к назначению путём переноса.
+- Преобразование может быть применено до завершения переноса.
+Применяемое преобразование называется аффинным, что является математическим термином, означающим преобразования,
+которые сохраняют прямые линии.
+Масштабирование, поворот, отражение, сдвиг и перемещение — примеры аффинных преобразований.
+Они математически представлены умножением матриц и сложением векторов.
+В этом разделе мы не будем его использовать, вместо этого мы будем использовать только тождественное преобразование.
+Это означает, что координаты в источнике и маске совпадают с координатами в назначении.
 
 ![Stroke a rectangle](../image/cairo.png)
 
-The instruction is as follows:
+Инструкция следующая:
 
-1. Create a surface.
-This will be the destination.
-2. Create a cairo context with the surface, the surface will be the destination of the context.
-3. Create a source pattern within the context.
-4. Create paths, which are lines, rectangles, arcs, texts or more complicated shapes in the mask.
-5. Use a drawing operator such as `cairo_stroke` to transfer the paint in the source to the destination.
-6. Save the destination surface to a file if necessary.
+1. Создать поверхность.
+Это будет назначение.
+2. Создать контекст cairo с поверхностью, поверхность будет назначением контекста.
+3. Создать шаблон источника в контексте.
+4. Создать пути, которые являются линиями, прямоугольниками, дугами, текстами или более сложными фигурами в маске.
+5. Использовать оператор рисования, такой как `cairo_stroke`, для переноса краски из источника в назначение.
+6. Сохранить поверхность назначения в файл, если необходимо.
 
-Here's a simple example program that draws a small square and saves it as a png file.
-The path of the file is `src/misc/cairo.c`.
+Вот простой пример программы, которая рисует небольшой квадрат и сохраняет его как файл png.
+Путь к файлу — `src/misc/cairo.c`.
 
 ~~~C
  1 #include <cairo.h>
@@ -90,37 +90,37 @@ The path of the file is `src/misc/cairo.c`.
 36 }
 ~~~
 
-- 1: Includes the header file of Cairo.
-- 6: `cairo_surface_t` is the type of a surface.
-- 7: `cairo_t` is the type of a cairo context.
-- 8-10: `width` and `height` are the size of `surface`.
-`square_size` is the size of a square to be drawn on the surface.
-- 13: `cairo_image_surface_create` creates an image surface.
-`CAIRO_FORMAT_RGB24` is a constant which means that each pixel has red, green and blue data,
-and each data point is an 8 bits number (for 24 bits in total).
-Modern displays have this type of color depth.
-Width and height are in pixels and given as integers.
-- 14: Creates cairo context.
-The surface given as an argument will be the destination of the context.
-- 18: `cairo_set_source_rgb` creates a source pattern, which is a solid white paint.
-The second to fourth arguments are red, green and blue color values respectively, and they are of type float.
-The values are between zero (0.0) and one (1.0).
-Black is (0.0,0.0,0.0) and white is (1.0,1.0,1.0).
-- 19: `cairo_paint` copies everywhere in the source to destination.
-The destination is filled with white pixels with this command.
-- 21: Sets the source color to black.
-- 22: `cairo_set_line_width` sets the width of lines.
-In this case, the line width is set to be two pixels and will end up that same size.
-(It is because the transformation is identity.
-If the transformation isn't identity, for example scaling with the factor three, the actual width in destination will be six (2x3=6) pixels.)
-- 23: Draws a rectangle (square) on the mask.
-The square is located at the center.
-- 24: `cairo_stroke` transfers the source to destination through the rectangle in the mask.
-- 31: Outputs the image to a png file `rectangle.png`.
-- 32: Destroys the context. At the same time the source is destroyed.
-- 33: Destroys the surface.
+- 1: включает заголовочный файл Cairo.
+- 6: `cairo_surface_t` — это тип поверхности.
+- 7: `cairo_t` — это тип контекста cairo.
+- 8-10: `width` и `height` — это размер `surface`.
+`square_size` — это размер квадрата, который будет нарисован на поверхности.
+- 13: `cairo_image_surface_create` создаёт поверхность изображения.
+`CAIRO_FORMAT_RGB24` — это константа, которая означает, что каждый пиксель имеет красные, зелёные и синие данные,
+и каждая точка данных является 8-битным числом (всего 24 бита).
+Современные дисплеи имеют такую глубину цвета.
+Ширина и высота в пикселях задаются целыми числами.
+- 14: создаёт контекст cairo.
+Поверхность, переданная в качестве аргумента, будет назначением контекста.
+- 18: `cairo_set_source_rgb` создаёт шаблон источника, который является сплошной белой краской.
+Второй-четвёртый аргументы — это значения красного, зелёного и синего цвета соответственно, и они имеют тип float.
+Значения находятся между нулём (0.0) и единицей (1.0).
+Чёрный — это (0.0,0.0,0.0), а белый — это (1.0,1.0,1.0).
+- 19: `cairo_paint` копирует везде из источника в назначение.
+Назначение заполняется белыми пикселями этой командой.
+- 21: устанавливает цвет источника в чёрный.
+- 22: `cairo_set_line_width` устанавливает ширину линий.
+В этом случае ширина линии устанавливается в два пикселя и в итоге будет того же размера.
+(Это потому, что преобразование является тождественным.
+Если преобразование не является тождественным, например масштабирование с коэффициентом три, фактическая ширина в назначении будет шесть (2x3=6) пикселей.)
+- 23: рисует прямоугольник (квадрат) на маске.
+Квадрат расположен в центре.
+- 24: `cairo_stroke` переносит источник в назначение через прямоугольник в маске.
+- 31: выводит изображение в файл png `rectangle.png`.
+- 32: уничтожает контекст. В то же время источник уничтожается.
+- 33: уничтожает поверхность.
 
-To compile this, change your current directory to `src/misc` and type the following.
+Для компиляции измените текущий каталог на `src/misc` и введите следующее.
 
 ```
 $ gcc `pkg-config --cflags cairo` cairo.c `pkg-config --libs cairo`
@@ -128,11 +128,11 @@ $ gcc `pkg-config --cflags cairo` cairo.c `pkg-config --libs cairo`
 s
 ![rectangle.png](../image/rectangle.png)
 
-See the [Cairo's website](https://www.cairographics.org/) for further information.
+Для получения дополнительной информации см. [веб-сайт Cairo](https://www.cairographics.org/).
 
 ## GtkDrawingArea
 
-The following is a very simple example.
+Ниже приведён очень простой пример.
 
 ~~~C
  1 #include <gtk/gtk.h>
@@ -180,42 +180,42 @@ The following is a very simple example.
 43 }
 ~~~
 
-The function `main` is almost same as before.
-The two functions `app_activate` and `draw_function` are important in this example.
+Функция `main` почти такая же, как и раньше.
+Две функции `app_activate` и `draw_function` важны в этом примере.
 
-- 22: Creates a GtkDrawingArea instance.
-- 25: Sets a drawing function of the widget.
-GtkDrawingArea widget uses the function `draw_function` to draw the contents of itself whenever its necessary.
-For example, when a user drag a mouse pointer and resize a top-level window, GtkDrawingArea also changes the size.
-Then, the whole window needs to be redrawn.
-For the information of `gtk_drawing_area_set_draw_func`, see [Gtk API Reference -- gtk\_drawing\_area\_set\_draw\_func](https://docs.gtk.org/gtk4/method.DrawingArea.set_draw_func.html).
+- 22: создаёт экземпляр GtkDrawingArea.
+- 25: устанавливает функцию рисования виджета.
+Виджет GtkDrawingArea использует функцию `draw_function` для рисования своего содержимого всякий раз, когда это необходимо.
+Например, когда пользователь перетаскивает указатель мыши и изменяет размер окна верхнего уровня, GtkDrawingArea также изменяет размер.
+Затем всё окно нужно перерисовать.
+Для получения информации о `gtk_drawing_area_set_draw_func` см. [Gtk API Reference -- gtk\_drawing\_area\_set\_draw\_func](https://docs.gtk.org/gtk4/method.DrawingArea.set_draw_func.html).
 
-The drawing function has five parameters.
+Функция рисования имеет пять параметров.
 
 ~~~C
 void drawing_function (GtkDrawingArea *drawing_area, cairo_t *cr, int width, int height,
                        gpointer user_data);
 ~~~
 
-The first parameter is the GtkDrawingArea widget.
-You can't change any properties, for example `content-width` or `content-height`, in this function.
-The second parameter is a cairo context given by the widget.
-The destination surface of the context is connected to the contents of the widget.
-What you draw to this surface will appear in the widget on the screen.
-The third and fourth parameters are the size of the destination surface.
-Now, look at the program again.
+Первый параметр — это виджет GtkDrawingArea.
+Вы не можете изменять какие-либо свойства, например `content-width` или `content-height`, в этой функции.
+Второй параметр — это контекст cairo, предоставленный виджетом.
+Поверхность назначения контекста подключена к содержимому виджета.
+То, что вы рисуете на этой поверхности, появится в виджете на экране.
+Третий и четвёртый параметры — это размер поверхности назначения.
+Теперь снова посмотрите на программу.
 
-- 3-17: The drawing function.
-- 7-8: Sets the source to be white and paint the destination white.
-- 9: Sets the line width to be 2.
-- 10: Sets the source to be black.
-- 11-15: Adds a rectangle to the mask.
-- 16: Draws the rectangle with black color to the destination.
+- 3-17: функция рисования.
+- 7-8: устанавливает источник в белый цвет и окрашивает назначение в белый.
+- 9: устанавливает ширину линии в 2.
+- 10: устанавливает источник в чёрный цвет.
+- 11-15: добавляет прямоугольник к маске.
+- 16: рисует прямоугольник чёрным цветом в назначение.
 
-The program is [src/misc/da1.c](../src/misc/da1.c).
-Compile and run it, then a window with a black rectangle (square) appears.
-Try resizing the window.
-The square always appears at the center of the window because the drawing function is invoked each time the window is resized.
+Программа находится в [src/misc/da1.c](../src/misc/da1.c).
+Скомпилируйте и запустите её, тогда появится окно с чёрным прямоугольником (квадратом).
+Попробуйте изменить размер окна.
+Квадрат всегда появляется в центре окна, потому что функция рисования вызывается каждый раз при изменении размера окна.
 
 ![Square in the window](../image/da1.png)
 

@@ -1,63 +1,63 @@
-# Defining a final class
+# Определение финального класса
 
-## A very simple editor
+## Очень простой редактор
 
-We made a very simple file viewer in the previous section.
-Now we go on to rewrite it and turn it into very simple editor.
-Its source file is `tfe1.c` (text file editor 1) under `tfe` directory.
+В предыдущем разделе мы создали очень простую программу просмотра файлов.
+Теперь мы перепишем её и превратим в очень простой редактор.
+Её исходный файл — `tfe1.c` (текстовый редактор файлов 1) в директории `tfe`.
 
-GtkTextView is a multi-line editor.
-So, we don't need to write the editor from scratch.
-We just add two things to the file viewer:
+GtkTextView — это многострочный редактор.
+Поэтому нам не нужно писать редактор с нуля.
+Мы просто добавим две вещи к программе просмотра файлов:
 
-- Pointers to GFile instances.
-- A text-save function.
+- Указатели на экземпляры GFile.
+- Функцию сохранения текста.
 
-There are a couple of ways to store the pointers.
+Есть несколько способов хранения указателей.
 
-- Use global variables
-- Make a child class of GtkTextView and its each instance holds a pointer to the GFile instance.
+- Использовать глобальные переменные
+- Создать дочерний класс GtkTextView, и каждый его экземпляр будет хранить указатель на экземпляр GFile.
 
-Using global variables is easy to implement.
-Define a sufficient size pointer array to GFile.
-For example,
+Использование глобальных переменных легко реализовать.
+Определите массив указателей на GFile достаточного размера.
+Например,
 
 ~~~C
 GFile *f[20];
 ~~~
 
-The variable `f[i]` corresponds to the file associated with the i-th GtkNotebookPage.
+Переменная `f[i]` соответствует файлу, связанному с i-й GtkNotebookPage.
 
-However, There are two problems.
-The first is the size of the array.
-If a user gives too many arguments (more than 20 in the example above), it is impossible to store all the pointers to the GFile instances.
-The second is difficulty to maintain the program.
-We have a small program so far.
-But, the more you develop the program, the bigger its size grows.
-Generally speaking, it is very difficult to maintain global variables in a big program.
-When you check the global variable, you need to check all the codes that use the variable.
+Однако есть две проблемы.
+Первая — размер массива.
+Если пользователь передаст слишком много аргументов (более 20 в приведённом выше примере), невозможно сохранить все указатели на экземпляры GFile.
+Вторая — сложность поддержки программы.
+Пока у нас небольшая программа.
+Но чем больше вы развиваете программу, тем больше становится её размер.
+Вообще говоря, очень сложно поддерживать глобальные переменные в большой программе.
+Когда вы проверяете глобальную переменную, вам нужно проверить весь код, который использует эту переменную.
 
-Making a child class is a good idea in terms of maintenance.
-And we prefer it rather than a global variable.
+Создание дочернего класса — хорошая идея с точки зрения поддержки.
+И мы предпочитаем его, а не глобальную переменную.
 
-Be careful that we are thinking about "child class", not "child widget".
-Child class and child widget are totally different.
-Class is a term of GObject system.
-If you are not familiar with GObject, see:
+Будьте внимательны, что мы думаем о "дочернем классе", а не о "дочернем виджете".
+Дочерний класс и дочерний виджет — это совершенно разные вещи.
+Класс — это термин системы GObject.
+Если вы не знакомы с GObject, см.:
 
 - [GObject API reference](https://docs.gtk.org/gobject/)
 - [GObject tutorial for beginners](https://toshiocp.github.io/Gobject-tutorial/)
 
-A child class inherits everything from the parent and, in addition, extends its performance.
-We will define TfeTextView as a child class of GtkTextView.
-It has everything that GtkTextView has and adds a pointer to a GFile.
+Дочерний класс наследует всё от родительского и, кроме того, расширяет его возможности.
+Мы определим TfeTextView как дочерний класс GtkTextView.
+Он имеет всё, что есть у GtkTextView, и добавляет указатель на GFile.
 
 ![Child object of GtkTextView](../image/child.png){width=9.675cm height=4.89cm}
 
-## How to define a child class of GtkTextView
+## Как определить дочерний класс GtkTextView
 
-You need to know GObject system convention.
-First, look at the program below.
+Вам нужно знать соглашения системы GObject.
+Сначала посмотрите на программу ниже.
 
 ~~~C
 #define TFE_TYPE_TEXT_VIEW tfe_text_view_get_type ()
@@ -95,121 +95,121 @@ tfe_text_view_new (void) {
 }
 ~~~
 
-- TfeTextView is divided into two parts.
-Tfe and TextView.
-Tfe is called prefix or namespace.
-TextView is called object.
-- There are three different identifier patterns.
-TfeTextView (camel case), tfe\_text\_view (this is used for functions) and TFE\_TEXT\_VIEW (This is used to cast a object to TfeTextView).
-- First, define `TFE_TYPE_TEXT_VIEW` macro as `tfe_text_view_get_type ()`.
-The name is always (prefix)\_TYPE\_(object) and the letters are upper case.
-And the replacement text is always (prefix)\_(object)\_get\_type () and the letters are lower case.
-This definition is put before `G_DECLARE_FINAL_TYPE` macro.
-- The arguments of `G_DECLARE_FINAL_TYPE` macro are the child class name in camel case, lower case with underscore, prefix (upper case),
-object (upper case with underscore) and parent class name (camel case).
-The following two C structures are declared in the expansion of the macro.
+- TfeTextView разделено на две части.
+Tfe и TextView.
+Tfe называется префиксом или пространством имён.
+TextView называется объектом.
+- Существует три различных шаблона идентификаторов.
+TfeTextView (верблюжий регистр), tfe\_text\_view (используется для функций) и TFE\_TEXT\_VIEW (используется для приведения объекта к типу TfeTextView).
+- Сначала определите макрос `TFE_TYPE_TEXT_VIEW` как `tfe_text_view_get_type ()`.
+Имя всегда (префикс)\_TYPE\_(объект), и буквы в верхнем регистре.
+А заменяющий текст всегда (префикс)\_(объект)\_get\_type (), и буквы в нижнем регистре.
+Это определение размещается перед макросом `G_DECLARE_FINAL_TYPE`.
+- Аргументы макроса `G_DECLARE_FINAL_TYPE` — это имя дочернего класса в верблюжьем регистре, в нижнем регистре с подчёркиванием, префикс (в верхнем регистре),
+объект (в верхнем регистре с подчёркиванием) и имя родительского класса (в верблюжьем регистре).
+Следующие две структуры C объявляются при раскрытии макроса.
   - `typedef struct _TfeTextView TfeTextView`
   - `typedef struct {GtkTextViewClass parent_class; } TfeTextViewClass;`
-- These declaration tells us that TfeTextView and TfeTextViewClass are C structures.
-"TfeTextView" has two meanings, class name and C structure name.
-The C structure TfeTextView is called object.
-Similarly, TfeTextViewClass is called class.
-- Declare the structure `_TfeTextView`.
-The underscore is necessary.
-The first member is the parent object (C structure).
-Notice this is not a pointer but the object itself.
-The second member and after are members of the child object.
-TfeTextView structure has a pointer to a GFile instance as a member.
-- `G_DEFINE_FINAL_TYPE` macro.
-The arguments are the child object name in camel case, lower case with underscore and parent object type (prefix)\_TYPE\_(module).
-This macro is mainly used to register the new class to the type system.
-Type system is a base system of GObject.
-Every class has its own type.
-The types of GObject, GtkWidget and TfeTextView are `G_TYPE_OBJECT`, `GTK_TYPE_WIDGET` and `TFE_TYPE_TEXT_VIEW` respectively.
-For example, `TFE_TYPE_TEXT_VIEW` is a macro and it is expanded to a function `tfe_text_view_get_type()`.
-It returns a integer which is unique among all GObject system classes.
-- The instance init function `tfe_text_view_init` is called when the instance is created.
-It is the same as a constructor in other object oriented languages.
-- The class init function `tfe_text_view_class_init` is called when the class is created.
-- Two functions `tfe_text_view_set_file` and `tfe_text_view_get_file` are public functions.
-Public functions are open and you can call them anywhere.
-They are the same as public method in other object oriented languages.
-`tv` is a pointer to the TfeTextView object (C structure).
-It has a member `file` and it is pointed by `tv->file`.
-- TfeTextView instance creation function is `tfe_text_view_new`.
-Its name is (prefix)\_(object)\_new.
-It uses `g_object_new` function to create the instance.
-The arguments are (prefix)\_TYPE\_(object), a list to initialize properties and NULL.
-NULL is the end mark of the property list.
-No property is initialized here.
-And the return value is casted to GtkWidget.
+- Эти объявления говорят нам, что TfeTextView и TfeTextViewClass — это структуры C.
+"TfeTextView" имеет два значения: имя класса и имя структуры C.
+Структура C TfeTextView называется объектом.
+Аналогично, TfeTextViewClass называется классом.
+- Объявите структуру `_TfeTextView`.
+Подчёркивание необходимо.
+Первый элемент — это родительский объект (структура C).
+Обратите внимание, что это не указатель, а сам объект.
+Второй и последующие элементы — это элементы дочернего объекта.
+Структура TfeTextView имеет указатель на экземпляр GFile в качестве элемента.
+- Макрос `G_DEFINE_FINAL_TYPE`.
+Аргументы — это имя дочернего объекта в верблюжьем регистре, в нижнем регистре с подчёркиванием и тип родительского объекта (префикс)\_TYPE\_(модуль).
+Этот макрос в основном используется для регистрации нового класса в системе типов.
+Система типов — это базовая система GObject.
+Каждый класс имеет свой собственный тип.
+Типы GObject, GtkWidget и TfeTextView — это `G_TYPE_OBJECT`, `GTK_TYPE_WIDGET` и `TFE_TYPE_TEXT_VIEW` соответственно.
+Например, `TFE_TYPE_TEXT_VIEW` — это макрос, который раскрывается в функцию `tfe_text_view_get_type()`.
+Он возвращает целое число, которое уникально среди всех классов системы GObject.
+- Функция инициализации экземпляра `tfe_text_view_init` вызывается при создании экземпляра.
+Это то же самое, что конструктор в других объектно-ориентированных языках.
+- Функция инициализации класса `tfe_text_view_class_init` вызывается при создании класса.
+- Две функции `tfe_text_view_set_file` и `tfe_text_view_get_file` — это публичные функции.
+Публичные функции открыты, и вы можете вызывать их где угодно.
+Они такие же, как публичные методы в других объектно-ориентированных языках.
+`tv` — это указатель на объект TfeTextView (структура C).
+Он имеет элемент `file`, и на него указывает `tv->file`.
+- Функция создания экземпляра TfeTextView — это `tfe_text_view_new`.
+Её имя — (префикс)\_(объект)\_new.
+Она использует функцию `g_object_new` для создания экземпляра.
+Аргументы — это (префикс)\_TYPE\_(объект), список для инициализации свойств и NULL.
+NULL — это конечный маркер списка свойств.
+Здесь не инициализируется ни одно свойство.
+И возвращаемое значение приводится к типу GtkWidget.
 
-This program shows the outline how to define a child class.
+Эта программа показывает общую схему определения дочернего класса.
 
-## Close-request signal
+## Сигнал close-request
 
-Imagine that you are using this editor.
-First, you run the editor with arguments.
-The arguments are filenames.
-The editor reads the files and shows the window with the text of files in it.
-Then you edit the text.
-After you finish editing, you click on the close button of the window and quit the editor.
-The editor updates files just before the window closes.
+Представьте, что вы используете этот редактор.
+Сначала вы запускаете редактор с аргументами.
+Аргументы — это имена файлов.
+Редактор читает файлы и показывает окно с текстом файлов в нём.
+Затем вы редактируете текст.
+После завершения редактирования вы нажимаете на кнопку закрытия окна и выходите из редактора.
+Редактор обновляет файлы непосредственно перед закрытием окна.
 
-GtkWindow emits the "close-request" signal when the close button is clicked.
-We will connect the signal and the handler `before_close`.
-(A handler is a C function which is connected to a signal.)
-The function `before_close` is called when the signal "close-request" is emitted.
+GtkWindow испускает сигнал "close-request", когда нажата кнопка закрытия.
+Мы подключим сигнал и обработчик `before_close`.
+(Обработчик — это функция C, которая подключена к сигналу.)
+Функция `before_close` вызывается, когда испускается сигнал "close-request".
 
 ~~~C
 g_signal_connect (win, "close-request", G_CALLBACK (before_close), NULL);
 ~~~
 
-The argument `win` is a GtkApplicationWindow, in which the signal "close-request" is defined, and `before_close` is the handler.
-The `G_CALLBACK` cast is necessary for the handler.
-The program of `before_close` is as follows.
+Аргумент `win` — это GtkApplicationWindow, в котором определён сигнал "close-request", а `before_close` — это обработчик.
+Приведение типа `G_CALLBACK` необходимо для обработчика.
+Программа `before_close` выглядит следующим образом.
 
 @@@include
 tfe/tfe1.c before_close
 @@@
 
-The numbers on the left are line numbers.
+Числа слева — это номера строк.
 
-- 15: The number of note book pages is assigned to `n`.
-- 16-29: For loop with regard to the index to each page.
-- 17-19: `scr`, `tv` and `file` is assigned pointers to the GtkScrolledWindow, TfeTextView and GFile.
-The GFile of TfeTextView was stored when `app_open` handler was called. It will be shown later.
-- 20-22: `tb` is assigned the GtkTextBuffer of the TfeTextView.
-The contents of the buffer are accessed with iterators.
-Iterators points somewhere in the buffer.
-The function `gtk_text_buffer_get_bounds` assigns the start and end of the buffer to `start_iter` and `end_iter` respectively.
-Then the function `gtk_text_buffer_get_text` returns the text between `start_iter` and `end_iter`, which is the whole text in the buffer.
-- 23-26: The text is saved to the file.
-If it fails, error messages are displayed.
-The GError instance must be freed and the pointer `err` needs to be NULL for the next run in the loop.
-- 27: `contents` are freed.
-- 28: GFile is useless. `g_object_unref` decreases the reference count of the GFile.
-Reference count will be explained in the later section.
-The reference count will be zero and the GFile instance will destroy itself.
+- 15: количество страниц блокнота присваивается переменной `n`.
+- 16-29: цикл for относительно индекса каждой страницы.
+- 17-19: `scr`, `tv` и `file` присваиваются указателями на GtkScrolledWindow, TfeTextView и GFile.
+GFile объекта TfeTextView был сохранён при вызове обработчика `app_open`. Это будет показано позже.
+- 20-22: `tb` присваивается GtkTextBuffer объекта TfeTextView.
+К содержимому буфера осуществляется доступ с помощью итераторов.
+Итераторы указывают где-то в буфере.
+Функция `gtk_text_buffer_get_bounds` присваивает начало и конец буфера переменным `start_iter` и `end_iter` соответственно.
+Затем функция `gtk_text_buffer_get_text` возвращает текст между `start_iter` и `end_iter`, который является всем текстом в буфере.
+- 23-26: текст сохраняется в файл.
+Если это не удаётся, отображаются сообщения об ошибках.
+Экземпляр GError должен быть освобождён, и указатель `err` должен быть NULL для следующего запуска в цикле.
+- 27: `contents` освобождается.
+- 28: GFile больше не нужен. `g_object_unref` уменьшает счётчик ссылок GFile.
+Счётчик ссылок будет объяснён в следующем разделе.
+Счётчик ссылок станет нулевым, и экземпляр GFile уничтожит себя.
 
-## Source code of tfe1.c
+## Исходный код tfe1.c
 
-The following is the whole source code of `tfe1.c`.
+Ниже приведён полный исходный код `tfe1.c`.
 
 @@@include
 tfe/tfe1.c
 @@@
 
-- 109: The GFile pointer of the TfeTextView is set to the copy of `files[i]`, which is a GFile created with the command line argument.
-The GFile will be destroyed by the system later.
-So it needs to be copied before the assignment.
-`g_file_dup` duplicates the GFile.
-Note: GFile is *not* thread safe. Duplicating GFile avoids a trouble comes from the different thread.
-- 124: The "close-request" signal is connected to `before_close` handler.
-The fourth argument is called "user data" and it will be the second argument of the signal handler.
-So, `nb` is given to `before_close` as the second argument.
+- 109: указатель GFile объекта TfeTextView устанавливается на копию `files[i]`, который является GFile, созданным из аргумента командной строки.
+GFile будет уничтожен системой позже.
+Поэтому его нужно скопировать перед назначением.
+`g_file_dup` дублирует GFile.
+Примечание: GFile *не* является потокобезопасным. Дублирование GFile позволяет избежать проблем, возникающих из-за разных потоков.
+- 124: сигнал "close-request" подключается к обработчику `before_close`.
+Четвёртый аргумент называется "пользовательские данные" и будет вторым аргументом обработчика сигнала.
+Таким образом, `nb` передаётся `before_close` в качестве второго аргумента.
 
-Now it's time to compile and run.
+Теперь пришло время скомпилировать и запустить.
 
 ~~~
 $ cd src/tfe
@@ -217,10 +217,10 @@ $ comp tfe1
 $ ./a.out taketori.txt`.
 ~~~
 
-Modify the contents and close the window.
-Make sure that the file is modified.
+Измените содержимое и закройте окно.
+Убедитесь, что файл изменён.
 
-Now we got a very simple editor.
-It's not smart.
-We need more features like open, save, saveas, change font and so on.
-We will add them in the next section and after.
+Теперь у нас есть очень простой редактор.
+Он не очень умный.
+Нам нужно больше функций, таких как открытие, сохранение, сохранение как, изменение шрифта и так далее.
+Мы добавим их в следующем разделе и далее.

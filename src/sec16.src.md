@@ -1,34 +1,34 @@
-# How to build tfe (text file editor)
+# Как собрать tfe (текстовый редактор файлов)
 
-## How to compile and execute the text editor 'tfe'.
+## Как скомпилировать и запустить текстовый редактор 'tfe'.
 
-First, source files are in the [Gtk4-tutorila repository](https://github.com/ToshioCP/Gtk4-tutorial).
-How to download them is written at the end of the [previous section](sec15.src.md).
+Сначала, исходные файлы находятся в [репозитории Gtk4-tutorial](https://github.com/ToshioCP/Gtk4-tutorial).
+Как их загрузить, написано в конце [предыдущего раздела](sec15.src.md).
 
-The following is the instruction of compilation and execution.
+Ниже приведена инструкция по компиляции и выполнению.
 
-- You need meson and ninja.
-- If you have installed gtk4 from the source, you need to set environment variables to suit your installation.
-- Change your current directory to `src/tfe5` directory.
-- Type `meson setup _build` for configuration.
-- Type `ninja -C _build` for compilation.
-Then the application `tfe` is built under the `_build` directory.
-- Type `_build/tfe` to execute it.
+- Вам нужны meson и ninja.
+- Если вы установили gtk4 из исходного кода, вам нужно установить переменные окружения в соответствии с вашей установкой.
+- Измените текущий каталог на каталог `src/tfe5`.
+- Введите `meson setup _build` для конфигурации.
+- Введите `ninja -C _build` для компиляции.
+Затем приложение `tfe` будет собрано в каталоге `_build`.
+- Введите `_build/tfe` для его выполнения.
 
-Then the window appears.
-There are four buttons, `New`, `Open`, `Save` and `Close`.
+Затем появится окно.
+Есть четыре кнопки: `New`, `Open`, `Save` и `Close`.
 
-- Click on `Open` button, then a file chooser dialog appears.
-Choose a file in the list and click on `Open` button.
-Then the file is read and a new Notebook Page appears.
-- Edit the file and click on `Save` button, then the text is saved to the original file.
-- Click `Close`, then the Notebook Page disappears.
-- Click `Close` again, then the `Untitled` Notebook Page disappears and at the same time the application quits.
+- Нажмите кнопку `Open`, затем появится диалог выбора файла.
+Выберите файл в списке и нажмите кнопку `Open`.
+Затем файл будет прочитан, и появится новая страница Notebook.
+- Отредактируйте файл и нажмите кнопку `Save`, тогда текст будет сохранён в исходный файл.
+- Нажмите `Close`, тогда страница Notebook исчезнет.
+- Нажмите `Close` снова, тогда страница Notebook `Untitled` исчезнет, и одновременно приложение завершит работу.
 
-This is a very simple editor.
-It is a good practice for you to add more features.
+Это очень простой редактор.
+Это хорошая практика для вас, чтобы добавить больше функций.
 
-## Total number of lines, words and characters
+## Общее количество строк, слов и символов
 
 @@@shell
 LANG=C wc tfe5/meson.build tfe5/tfeapplication.c tfe5/tfe.gresource.xml tfe5/tfenotebook.c tfe5/tfenotebook.h tfetextview/tfetextview.c tfetextview/tfetextview.h tfe5/tfe.ui

@@ -1,55 +1,55 @@
 Up: [README.md](../README.md),  Prev: [Section 11](sec11.md), Next: [Section 13](sec13.md)
 
-# Signals
+# Сигналы
 
-## Signals
+## Сигналы
 
-Each object is encapsulated in Gtk programming.
-And it is not recommended to use global variables because they are prone to make the program complicated.
-So, we need something to communicate between objects.
-There are two ways to do so.
+Каждый объект инкапсулирован в программировании Gtk.
+И не рекомендуется использовать глобальные переменные, потому что они склонны усложнять программу.
+Итак, нам нужно что-то для связи между объектами.
+Есть два способа сделать это.
 
-- Instance methods:
-Instance methods are functions on instances.
-For example, `tb = gtk_text_view_get_buffer (tv)` is an instance method on the instance `tv`.
-The caller requests `tv` to give `tb`, which is a GtkTextBuffer instance connected to `tv`.
-- Signals:
-For example, `activate` signal on GApplication object.
-When the application is activated, the signal is emitted.
-Then the handler, which has been connected to the signal, is invoked.
+- Методы экземпляра:
+Методы экземпляра — это функции на экземплярах.
+Например, `tb = gtk_text_view_get_buffer (tv)` — это метод экземпляра на экземпляре `tv`.
+Вызывающий запрашивает у `tv` предоставить `tb`, который является экземпляром GtkTextBuffer, подключённым к `tv`.
+- Сигналы:
+Например, сигнал `activate` на объекте GApplication.
+Когда приложение активируется, сигнал испускается.
+Затем вызывается обработчик, который был подключён к сигналу.
 
-The caller of methods or signals are usually out of the object.
-One of the difference between these two is that the object is active or passive.
-In methods, objects passively respond to the caller.
-In signals, objects actively send signals to handlers.
+Вызывающий методов или сигналов обычно находится вне объекта.
+Одно из различий между ними заключается в том, что объект является активным или пассивным.
+В методах объекты пассивно отвечают вызывающему.
+В сигналах объекты активно отправляют сигналы обработчикам.
 
-GObject signals are registered, connected and emitted.
+Сигналы GObject регистрируются, подключаются и испускаются.
 
-1. Signals are registered in the class.
-The registration is done usually when the class is initialized.
-Signals can have a default handler, which is sometimes called "object method handler".
-It is not a user handler connected by `g_signal_connect` family functions.
-A default handler is always called on any instance of the class.
-1. Signals are connected to handlers by the macro `g_signal_connect` or its family functions.
-The connection is usually done out of the object.
-One important thing is that signals are connected on a certain instance.
-Suppose there exist two GtkButton instances A, B and a function C.
-Even if you connected the "clicked" signal on A to C, B and C are *not* connected.
-1. When Signals are emitted, the connected handlers are invoked.
-Signals are emitted on the instance of the class.
+1. Сигналы регистрируются в классе.
+Регистрация обычно выполняется при инициализации класса.
+Сигналы могут иметь обработчик по умолчанию, который иногда называется "обработчик метода объекта".
+Это не пользовательский обработчик, подключённый функциями семейства `g_signal_connect`.
+Обработчик по умолчанию всегда вызывается для любого экземпляра класса.
+1. Сигналы подключаются к обработчикам с помощью макроса `g_signal_connect` или его семейства функций.
+Подключение обычно выполняется вне объекта.
+Одна важная вещь заключается в том, что сигналы подключаются к определённому экземпляру.
+Предположим, существуют два экземпляра GtkButton A, B и функция C.
+Даже если вы подключили сигнал "clicked" на A к C, B и C *не* подключены.
+1. Когда сигналы испускаются, вызываются подключённые обработчики.
+Сигналы испускаются на экземпляре класса.
 
-## Signal registration
+## Регистрация сигналов
 
-In TfeTextView, two signals are registered.
+В TfeTextView регистрируются два сигнала.
 
-- "change-file" signal.
-This signal is emitted when `tv->file` is changed.
-- "open-response" signal.
-The function `tfe_text_view_open` doesn't return the status because it can't get the status from the file chooser dialog.
-(Instead, the call back function gets the status.)
-This signal is emitted instead of the return value of the function.
+- сигнал "change-file".
+Этот сигнал испускается, когда изменяется `tv->file`.
+- сигнал "open-response".
+Функция `tfe_text_view_open` не возвращает статус, потому что она не может получить статус из диалога выбора файла.
+(Вместо этого функция обратного вызова получает статус.)
+Этот сигнал испускается вместо возвращаемого значения функции.
 
-A static variable or array is used to store signal ID.
+Статическая переменная или массив используется для хранения идентификатора сигнала.
 
 ~~~C
 enum {
@@ -61,7 +61,7 @@ enum {
 static guint tfe_text_view_signals[NUMBER_OF_SIGNALS];
 ~~~
 
-Signals are registered in the class initialization function.
+Сигналы регистрируются в функции инициализации класса.
 
 ~~~C
  1 static void
@@ -93,48 +93,48 @@ Signals are registered in the class initialization function.
 27 }
 ~~~
 
-- 6-15: Registers "change-file" signal.
-`g_signal_new` function is used.
-The signal "change-file" has no default handler (object method handler) so the offset (the line 9) is set to zero.
-You usually don't need a default handler.
-If you need it, use `g_signal_new_class_handler` function instead of `g_signal_new`.
-See [GObject API Reference](https://docs.gtk.org/gobject/func.signal_new_class_handler.html) for further information.
-- The return value of `g_signal_new` is the signal id.
-The type of signal id is guint, which is the same as unsigned int.
-It is used in the function `g_signal_emit`.
-- 16-26: Registers "open-response" signal.
-This signal has a parameter.
-- 24: Number of the parameters.
-"open-response" signal has one parameter.
-- 25: The type of the parameter.
-`G_TYPE_INT` is a type of integer.
-Such fundamental types are described in [GObject reference manual](https://developer-old.gnome.org/gobject/stable/gobject-Type-Information.html).
+- 6-15: регистрирует сигнал "change-file".
+Используется функция `g_signal_new`.
+Сигнал "change-file" не имеет обработчика по умолчанию (обработчик метода объекта), поэтому смещение (строка 9) установлено в ноль.
+Обычно вам не нужен обработчик по умолчанию.
+Если он вам нужен, используйте функцию `g_signal_new_class_handler` вместо `g_signal_new`.
+Для получения дополнительной информации см. [GObject API Reference](https://docs.gtk.org/gobject/func.signal_new_class_handler.html).
+- Возвращаемое значение `g_signal_new` — это идентификатор сигнала.
+Тип идентификатора сигнала — guint, что совпадает с unsigned int.
+Он используется в функции `g_signal_emit`.
+- 16-26: регистрирует сигнал "open-response".
+Этот сигнал имеет параметр.
+- 24: количество параметров.
+Сигнал "open-response" имеет один параметр.
+- 25: тип параметра.
+`G_TYPE_INT` — это тип целого числа.
+Такие фундаментальные типы описаны в [руководстве по GObject](https://developer-old.gnome.org/gobject/stable/gobject-Type-Information.html).
 
-The handlers are declared as follows.
+Обработчики объявляются следующим образом.
 
 ~~~C
-/* "change-file" signal handler */
+/* обработчик сигнала "change-file" */
 void
 user_function (TfeTextView *tv,
                gpointer user_data)
 
-/* "open-response" signal handler */
+/* обработчик сигнала "open-response" */
 void
 user_function (TfeTextView *tv,
                TfeTextViewOpenResponseType response-id,
                gpointer user_data)
 ~~~
 
-- The signal "change-file" doesn't have parameter, so the handler's arguments are a TfeTextView instance and a user data.
-- The signal "open-response" signal has one parameter and its arguments are a TfeTextView instance, the signal's parameter and user data.
-- The variable `tv` points the instance on which the signal is emitted.
-- The last argument `user_data` comes from the fourth argument of `g_signal_connect`.
-- The `parameter` (`response-id`) comes from the fourth argument of `g_signal_emit`.
+- Сигнал "change-file" не имеет параметра, поэтому аргументы обработчика — это экземпляр TfeTextView и пользовательские данные.
+- Сигнал "open-response" имеет один параметр, и его аргументы — это экземпляр TfeTextView, параметр сигнала и пользовательские данные.
+- Переменная `tv` указывает на экземпляр, на котором испускается сигнал.
+- Последний аргумент `user_data` берётся из четвёртого аргумента `g_signal_connect`.
+- `Параметр` (`response-id`) берётся из четвёртого аргумента `g_signal_emit`.
 
-The values of the type `TfeTextViewOpenResponseType` are defined in `tfetextview.h`.
+Значения типа `TfeTextViewOpenResponseType` определены в `tfetextview.h`.
 
 ```C
-/* "open-response" signal response */
+/* ответ сигнала "open-response" */
 enum TfeTextViewOpenResponseType
 {
   TFE_OPEN_RESPONSE_SUCCESS,
@@ -143,20 +143,20 @@ enum TfeTextViewOpenResponseType
 };
 ```
 
-- The parameter is set to `TFE_OPEN_RESPONSE_SUCCESS` when `tfe_text_view_open` has successfully opened a file and read it.
-- The parameter is set to `TFE_OPEN_RESPONSE_CANCEL` when the user has canceled.
-- The parameter is set to `TFE_OPEN_RESPONSE_ERROR` when an error has occurred.
+- Параметр устанавливается в `TFE_OPEN_RESPONSE_SUCCESS`, когда `tfe_text_view_open` успешно открыла файл и прочитала его.
+- Параметр устанавливается в `TFE_OPEN_RESPONSE_CANCEL`, когда пользователь отменил действие.
+- Параметр устанавливается в `TFE_OPEN_RESPONSE_ERROR`, когда произошла ошибка.
  
-## Signal connection
+## Подключение сигналов
 
-A signal and a handler are connected by the function macro `g_signal_connect`.
-There are some similar function macros like `g_signal_connect_after`, `g_signal_connect_swapped` and so on.
-However, `g_signal_connect` is used most often.
-The signals "change-file" and "open-response" are connected to their callback functions out of the TfeTextView object.
-Those callback functions are defined by users.
+Сигнал и обработчик подключаются с помощью функционального макроса `g_signal_connect`.
+Существуют похожие функциональные макросы, такие как `g_signal_connect_after`, `g_signal_connect_swapped` и так далее.
+Однако `g_signal_connect` используется чаще всего.
+Сигналы "change-file" и "open-response" подключаются к их функциям обратного вызова вне объекта TfeTextView.
+Эти функции обратного вызова определяются пользователями.
 
-For example, callback functions are defined in `src/tfe6/tfewindow.c` and their names are `file_changed_cb` and `open_response_cb`.
-They will be explained later.
+Например, функции обратного вызова определены в `src/tfe6/tfewindow.c`, и их имена — `file_changed_cb` и `open_response_cb`.
+Они будут объяснены позже.
 
 ~~~C
 g_signal_connect (GTK_TEXT_VIEW (tv), "change-file", G_CALLBACK (file_changed_cb), nb);
@@ -164,12 +164,12 @@ g_signal_connect (GTK_TEXT_VIEW (tv), "change-file", G_CALLBACK (file_changed_cb
 g_signal_connect (TFE_TEXT_VIEW (tv), "open-response", G_CALLBACK (open_response_cb), nb);
 ~~~
 
-## Signal emission
+## Испускание сигналов
 
-A signal is emitted on the instance.
-A function `g_signal_emit` is used to emit the signal.
-The following lines are extracted from `src/tfetextview/tfetextview.c`.
-Each line comes from a different line.
+Сигнал испускается на экземпляре.
+Функция `g_signal_emit` используется для испускания сигнала.
+Следующие строки извлечены из `src/tfetextview/tfetextview.c`.
+Каждая строка берётся из разных строк.
 
 ~~~C
 g_signal_emit (tv, tfe_text_view_signals[CHANGE_FILE], 0);
@@ -178,12 +178,12 @@ g_signal_emit (tv, tfe_text_view_signals[OPEN_RESPONSE], 0, TFE_OPEN_RESPONSE_CA
 g_signal_emit (tv, tfe_text_view_signals[OPEN_RESPONSE], 0, TFE_OPEN_RESPONSE_ERROR);
 ~~~
 
-- The first argument is the instance on which the signal is emitted.
-- The second argument is the signal id.
-- The third argument is the detail of the signal.
-The signals "change-file" and "open-response" don't have details and the arguments are zero.
-- The signal "change-file" doesn't have parameters, so there's no fourth argument.
-- The signal "open-response" has one parameter.
-The fourth argument is the parameter.
+- Первый аргумент — это экземпляр, на котором испускается сигнал.
+- Второй аргумент — это идентификатор сигнала.
+- Третий аргумент — это детали сигнала.
+Сигналы "change-file" и "open-response" не имеют деталей, и аргументы равны нулю.
+- Сигнал "change-file" не имеет параметров, поэтому нет четвёртого аргумента.
+- Сигнал "open-response" имеет один параметр.
+Четвёртый аргумент — это параметр.
 
 Up: [README.md](../README.md),  Prev: [Section 11](sec11.md), Next: [Section 13](sec13.md)

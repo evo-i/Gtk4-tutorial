@@ -1,69 +1,69 @@
 # TfeWindow
 
-## The Tfe window and XML files
+## Окно Tfe и XML-файлы
 
-The following is the window of Tfe.
+Ниже показано окно Tfe.
 
 ![tfe6](../image/tfe6.png){width=9.06cm height=6.615cm}
 
-- Open, save and close buttons are placed on the toolbar.
-In addition, GtkMenuButton is added to the toolbar.
-This button shows a popup menu when clicked on.
-Here, popup means widely, including pull-down menu.
-- New, save-as, preference and quit items are put into the menu.
+- На панели инструментов размещены кнопки открытия, сохранения и закрытия.
+Кроме того, на панель инструментов добавлена GtkMenuButton.
+Эта кнопка показывает всплывающее меню при нажатии.
+Здесь термин "всплывающее" используется в широком смысле, включая выпадающие меню.
+- В меню помещены пункты создания, сохранения как, настроек и выхода.
 
-This makes the most frequently used operation bound to the tool bar buttons.
-And the others are stored in behind the menus.
-So, it is more practical.
+Это позволяет привязать наиболее часто используемые операции к кнопкам панели инструментов.
+А остальные скрыты за меню.
+Таким образом, это более практично.
 
-The window is a composite widget.
-The definition is described in the XML file `tfewindow.ui`.
+Окно является составным виджетом.
+Определение описано в XML-файле `tfewindow.ui`.
 
 @@@include
 tfe6/tfewindow.ui
 @@@
 
-- Three buttons "Open", "Save" and "Close" are defined.
-You can use two ways to catch the button click event.
-The one is "clicked" signal and the other is to register an action to the button.
-The first way is simple.
-You can connects the signal and your handler directly.
-The second way is like menu items.
-When the button is clicked, the corresponding action is activated.
-It is a bit complicated because you need to create an action and its "activate" handler in advance.
-But one advantage is you can connect two or more things to the action.
-For example, an accelerator can be connected to the action.
-Accelerators are keys that connects to actions.
-For example, Ctrl+O is often connected to a file open action.
-So, both open button and Ctrl+O activates an open action.
-The latter way is used in the XML file above.
-- You can specify a theme icon to GtkMenuButton with "icon-name" poperty.
-The "open-menu-symbolic" is an image that is called hamburger menu.
+- Определены три кнопки "Open", "Save" и "Close".
+Вы можете использовать два способа для перехвата события нажатия кнопки.
+Один - это сигнал "clicked", а другой - регистрация действия для кнопки.
+Первый способ прост.
+Вы можете напрямую соединить сигнал и ваш обработчик.
+Второй способ похож на элементы меню.
+Когда кнопка нажата, активируется соответствующее действие.
+Это немного сложнее, потому что вам нужно заранее создать действие и его обработчик "activate".
+Но одно преимущество в том, что вы можете подключить к действию две или более вещи.
+Например, к действию можно подключить акселератор.
+Акселераторы - это клавиши, которые связываются с действиями.
+Например, Ctrl+O часто связывается с действием открытия файла.
+Таким образом, и кнопка открытия, и Ctrl+O активируют действие открытия.
+В приведенном выше XML-файле используется второй способ.
+- Вы можете указать тематическую иконку для GtkMenuButton с помощью свойства "icon-name".
+"open-menu-symbolic" - это изображение, которое называется гамбургер-меню.
 
-The `menu.ui` XML file defines the menu for GtkMenuButton.
+XML-файл `menu.ui` определяет меню для GtkMenuButton.
 
 @@@include
 tfe6/menu.ui
 @@@
 
-There are four menu items and they are connected to actions.
+Здесь четыре пункта меню, и они связаны с действиями.
 
-## The header file
+## Заголовочный файл
 
-The following is the codes of `tfewindow.h`.
+Ниже приведен код `tfewindow.h`.
 
 @@@include
 tfe6/tfewindow.h
 @@@
 
-- 5-6: `TFE_TYPE_WINDOW` definition and the `G_DECLARE_FINAL_TYPE` macro.
-- 8-15: Public functions. The first two functions creates a notebook page and the last function creates a window.
+- 5-6: Определение `TFE_TYPE_WINDOW` и макрос `G_DECLARE_FINAL_TYPE`.
+- 8-15: Публичные функции. Первые две функции создают страницу блокнота, а последняя функция создает окно.
 
-## C file
+## C-файл
 
-### A composite widget
+### Составной виджет
 
-The following codes are extracted from `tfewindow.c`.
+Следующий код извлечен из `tfewindow.c`.
 
 @@@if gfm
 ```C
@@ -165,24 +165,24 @@ tfe_window_new (GtkApplication *app) {
 ```
 @@@end
 
-The program above is similar to `tfealert.c` and `tfepref.c`.
-It uses the same way to build a composite widget.
-But there's one thing new.
-It is menu.
-The menu is built from the XML resource `menu.ui` and inserted into the menu button.
-It is done in the instance initialization function `tfe_window_init`.
+Программа выше похожа на `tfealert.c` и `tfepref.c`.
+Она использует тот же способ для построения составного виджета.
+Но есть одна новая вещь.
+Это меню.
+Меню строится из XML-ресурса `menu.ui` и вставляется в кнопку меню.
+Это делается в функции инициализации экземпляра `tfe_window_init`.
 
-### Actions
+### Действия
 
-Actions can belong to an application or window.
-Tfe only has one top window and all the actions are registered in the window.
-For example, "close-all" action destroys the top level window and that brings the application to quit.
-You can make "app.quit"  action instead of "win.close-all".
-It's your choice.
-If your application has two or more windows, both "app.quit" and "win:close-all", which closes all the notebook pages on the window, may be necessary.
-Anyway, you need to consider that each action should belong to the application or a window.
+Действия могут принадлежать приложению или окну.
+Tfe имеет только одно главное окно, и все действия регистрируются в окне.
+Например, действие "close-all" уничтожает окно верхнего уровня, что приводит к завершению приложения.
+Вы можете создать действие "app.quit" вместо "win.close-all".
+Это ваш выбор.
+Если ваше приложение имеет два или более окон, могут понадобиться оба действия: "app.quit" и "win:close-all", которое закрывает все страницы блокнота в окне.
+В любом случае, вам нужно решить, должно ли каждое действие принадлежать приложению или окну.
 
-Actions are defined in the instance initialization function.
+Действия определяются в функции инициализации экземпляра.
 
 @@@if gfm
 ```C
@@ -224,62 +224,62 @@ tfe_window_init (TfeWindow *win) {
 ```
 @@@end
 
-Two things are necessary, an array and the `g_action_map_add_action_entries` function.
+Необходимы две вещи: массив и функция `g_action_map_add_action_entries`.
 
-- The element of the array is the GActionEntry structure.
-The structure has the following members:
-  - an action name
-  - a handler for the activate signal
-  - the type of the parameter or NULL for no parameter
-  - the initial state for the action
-  - a handler for the change-state signal
-- The actions above are stateless and have no parameters.
-So, the third parameter and after are all NULL.
-- The function `g_action_map_add_action_entries` adds the actions in the `win_entries` array to the action map `win`.
-The last argument `win` is the user_data, which is the last argument of handlers.
-- All the handlers are in `tfewindow.c` program and shown in the following subsections.
+- Элемент массива - это структура GActionEntry.
+Структура имеет следующие члены:
+  - имя действия
+  - обработчик сигнала activate
+  - тип параметра или NULL при отсутствии параметра
+  - начальное состояние для действия
+  - обработчик сигнала change-state
+- Приведенные выше действия не имеют состояния и параметров.
+Поэтому третий параметр и последующие - все NULL.
+- Функция `g_action_map_add_action_entries` добавляет действия из массива `win_entries` в карту действий `win`.
+Последний аргумент `win` - это user_data, который является последним аргументом обработчиков.
+- Все обработчики находятся в программе `tfewindow.c` и показаны в следующих подразделах.
 
-### The handlers of the actions
+### Обработчики действий
 
 #### open\_activated
 
-The callback function `open_activated` is an activate signal handler on "open" action.
+Функция обратного вызова `open_activated` - это обработчик сигнала activate для действия "open".
 
 @@@include
 tfe6/tfewindow.c open_activated
 @@@
 
-It connects the "open-response" signal on the newly created TfeTextView instance and just calls `tfe_text_view_open`.
-It leaves the rest of the task to the signal handler `open_response_cb`.
+Она подключает сигнал "open-response" к вновь созданному экземпляру TfeTextView и просто вызывает `tfe_text_view_open`.
+Остальную часть задачи она оставляет обработчику сигнала `open_response_cb`.
 
 @@@include
 tfe6/tfewindow.c open_response_cb
 @@@
 
-If the TfeTextView instance failed to read a file, it destroys the instance with `g_object_ref_sink` and `g_object_unref`.
-Since newly created widgets are floating, you need to convert the floating reference to the normal reference before you release it.
-The conversion is done with `g_object_ref_sink`.
+Если экземпляр TfeTextView не смог прочитать файл, он уничтожает экземпляр с помощью `g_object_ref_sink` и `g_object_unref`.
+Поскольку вновь созданные виджеты являются плавающими, вам нужно преобразовать плавающую ссылку в обычную ссылку перед её освобождением.
+Преобразование выполняется с помощью `g_object_ref_sink`.
 
-If the instance successfully read the file, it calls `notebook_page_build` to build a notebook page and add it to the GtkNotebook object.
+Если экземпляр успешно прочитал файл, вызывается `notebook_page_build` для построения страницы блокнота и добавления её к объекту GtkNotebook.
 
 @@@include
 tfe6/tfewindow.c notebook_page_build
 @@@
 
-This function is a kind of library function and it is called from the different three places.
+Эта функция - своего рода библиотечная функция, и она вызывается из трех разных мест.
 
-This function creates a new GtkScrolledWindow instance and sets its child to `tv`.
-Then it appends it to the GtkNotebook instance `win->nb`.
-And it sets the tab label to the filename.
+Эта функция создает новый экземпляр GtkScrolledWindow и устанавливает его дочерний элемент в `tv`.
+Затем она добавляет его к экземпляру GtkNotebook `win->nb`.
+И устанавливает метку вкладки на имя файла.
 
-After the building, it connects two signals and handlers.
+После построения она подключает два сигнала и обработчика.
 
-- "change-file" signal and `file_changed_cb` handler.
-If the TfeTextView instance changes the file, the handler is called and the notebook page tab is updated.
-- "modified-changed" signal and `modified_changed_cb` handler.
-If the text in the buffer of TfeTextView instance is modified, an asterisk is added at the beginning of the filename of the notebook page tab.
-If the text is saved to the file, the asterisk is removed.
-The asterisk tells the user that the text has been modified or not.
+- Сигнал "change-file" и обработчик `file_changed_cb`.
+Если экземпляр TfeTextView изменяет файл, вызывается обработчик, и вкладка страницы блокнота обновляется.
+- Сигнал "modified-changed" и обработчик `modified_changed_cb`.
+Если текст в буфере экземпляра TfeTextView изменен, звездочка добавляется в начало имени файла на вкладке страницы блокнота.
+Если текст сохранен в файл, звездочка удаляется.
+Звездочка сообщает пользователю, был ли текст изменен или нет.
 
 @@@include
 tfe6/tfewindow.c file_changed_cb modified_changed_cb
@@ -287,14 +287,14 @@ tfe6/tfewindow.c file_changed_cb modified_changed_cb
 
 #### save\_activated
 
-The callback function `save_activated` is an activate signal handler on "save" action.
+Функция обратного вызова `save_activated` - это обработчик сигнала activate для действия "save".
 
 @@@include
 tfe6/tfewindow.c save_activated
 @@@
 
-This function gets the current TfeTextView instance with the function `get_current_textview`.
-And it just calls `tfe_text_view_save`.
+Эта функция получает текущий экземпляр TfeTextView с помощью функции `get_current_textview`.
+И просто вызывает `tfe_text_view_save`.
 
 @@@include
 tfe6/tfewindow.c get_current_textview
@@ -302,134 +302,134 @@ tfe6/tfewindow.c get_current_textview
 
 #### close\_activated
 
-The callback function `close_activated` is an activate signal handler on "close" action.
-It closes the current notebook page.
+Функция обратного вызова `close_activated` - это обработчик сигнала activate для действия "close".
+Она закрывает текущую страницу блокнота.
 
 @@@include
 tfe6/tfewindow.c close_activated
 @@@
 
-If the text in the current page has been saved, it calls `notebook_page_close` to close the page.
-Otherwise, it sets `win->is_quit` to FALSE and show the alert dialog.
-The "response" signal on the dialog is connected to the handler `alert_response_cb`.
+Если текст на текущей странице был сохранен, она вызывает `notebook_page_close` для закрытия страницы.
+В противном случае она устанавливает `win->is_quit` в FALSE и показывает диалог предупреждения.
+Сигнал "response" диалога подключен к обработчику `alert_response_cb`.
 
 @@@include
 tfe6/tfewindow.c notebook_page_close
 @@@
 
-If the notebook has only one page, it destroys the window and the application quits.
-Otherwise, it removes the current page.
+Если блокнот имеет только одну страницу, она уничтожает окно, и приложение завершается.
+В противном случае она удаляет текущую страницу.
 
 @@@include
 tfe6/tfewindow.c alert_response_cb
 @@@
 
-If the user clicked on the cacel button, it does nothing.
-If the user clicked on the accept button, which is the same as close button, it calls `notebook_page_close`.
-Note that `win->is_quit` has been set to FALSE in the `close_activated` function.
+Если пользователь нажал на кнопку отмены, она ничего не делает.
+Если пользователь нажал на кнопку принятия, которая эквивалентна кнопке закрытия, она вызывает `notebook_page_close`.
+Обратите внимание, что `win->is_quit` был установлен в FALSE в функции `close_activated`.
 
 #### new\_activated
 
-The callback function `new_activated` is an activate signal handler on "new" action.
+Функция обратного вызова `new_activated` - это обработчик сигнала activate для действия "new".
 
 @@@include
 tfe6/tfewindow.c new_activated
 @@@
 
-It just calls `tfe_window_notebook_page_new`, which is a public method of TfeWindow.
+Она просто вызывает `tfe_window_notebook_page_new`, который является публичным методом TfeWindow.
 
 @@@include
 tfe6/tfewindow.c tfe_window_notebook_page_new
 @@@
 
-This function creates a new TfeTextView instance, "Untitled" family string and calls `notebook_page_build`.
+Эта функция создает новый экземпляр TfeTextView, строку семейства "Untitled" и вызывает `notebook_page_build`.
 
 #### saveas\_activated
 
-The callback function `saveas_activated` is an activate signal handler on "saveas" action.
+Функция обратного вызова `saveas_activated` - это обработчик сигнала activate для действия "saveas".
 
 @@@include
 tfe6/tfewindow.c saveas_activated
 @@@
 
-This function gets the current page TfeTextView instance and calls `tfe_text_view_saveas`.
+Эта функция получает экземпляр TfeTextView текущей страницы и вызывает `tfe_text_view_saveas`.
 
 #### pref\_activated
 
-The callback function `pref_activated` is an activate signal handler on "pref" action.
+Функция обратного вызова `pref_activated` - это обработчик сигнала activate для действия "pref".
 
 @@@include
 tfe6/tfewindow.c pref_activated
 @@@
 
-This function creates a TfePref instance, which is a dialog, and sets the transient parent window to `win`.
-And it shows the dialog.
+Эта функция создает экземпляр TfePref, который является диалогом, и устанавливает временное родительское окно в `win`.
+И показывает диалог.
 
 #### close\_all\_activated
 
-The callback function `close_all_activated` is an activate signal handler on "close_all" action.
+Функция обратного вызова `close_all_activated` - это обработчик сигнала activate для действия "close_all".
 
 @@@include
 tfe6/tfewindow.c close_all_activated
 @@@
 
-It first calls the function `close_request_cb`.
-It is a callback function for the "close-request" signal on the top window.
-It returns FALSE if all the texts have been saved.
-Otherwise it returns TRUE.
+Сначала она вызывает функцию `close_request_cb`.
+Это функция обратного вызова для сигнала "close-request" главного окна.
+Она возвращает FALSE, если все тексты были сохранены.
+В противном случае она возвращает TRUE.
 
-Therefore, function `close_all_activated` destroys the top window if all the texts have been saved.
-Otherwise it does nothing.
-But, the function `close_request_cb` shows an alert dialog and if the user clicks on the accept button, the window will be destroyed.
+Таким образом, функция `close_all_activated` уничтожает главное окно, если все тексты были сохранены.
+В противном случае она ничего не делает.
+Но функция `close_request_cb` показывает диалог предупреждения, и если пользователь нажмет на кнопку принятия, окно будет уничтожено.
 
-### Window "close-request" signal
+### Сигнал "close-request" окна
 
-GtkWindow has a "close-request" signal and it is emitted when the close button, which is x-shaped button at the top right corner, is clicked on.
-And the user handler is called before the default handler.
-If the user handler returns TRUE, the rest of the close process is skipped.
-If it returns FALSE, the rest will go on and the window will be destroyed.
+GtkWindow имеет сигнал "close-request", который испускается, когда нажимается кнопка закрытия - кнопка в форме X в правом верхнем углу.
+И пользовательский обработчик вызывается перед обработчиком по умолчанию.
+Если пользовательский обработчик возвращает TRUE, остальная часть процесса закрытия пропускается.
+Если он возвращает FALSE, остальное продолжается, и окно будет уничтожено.
 
 @@@include
 tfe6/tfewindow.c close_request_cb
 @@@
 
-First, it calls `is_saved_all` and checks if the texts have been saved.
-If so, it returns FALSE and the close process continues.
-Otherwise, it sets `win->is_quit` to TRUE and shows an alert dialog.
-When the user clicks on the accept or cancel button, the dialog disappears and "response" signal is emitted.
-Then, the handler `alert_response_cb` is called.
-It destroys the top window if the user clicked on the accept button since `win->is_quit` is TRUE.
-Otherwise it does nothing.
+Сначала она вызывает `is_saved_all` и проверяет, были ли сохранены тексты.
+Если да, она возвращает FALSE, и процесс закрытия продолжается.
+В противном случае она устанавливает `win->is_quit` в TRUE и показывает диалог предупреждения.
+Когда пользователь нажимает на кнопку принятия или отмены, диалог исчезает, и испускается сигнал "response".
+Затем вызывается обработчик `alert_response_cb`.
+Он уничтожает главное окно, если пользователь нажал на кнопку принятия, поскольку `win->is_quit` равен TRUE.
+В противном случае он ничего не делает.
 
 @@@include
 tfe6/tfewindow.c is_saved_all
 @@@
 
-### Public functions
+### Публичные функции
 
-There are three public functions.
+Есть три публичные функции.
 
 - `void tfe_window_notebook_page_new (TfeWindow *win)`
 - `void tfe_window_notebook_page_new_with_files (TfeWindow *win, GFile **files, int n_files)`
 - `GtkWidget *tfe_window_new (GtkApplication *app)`
 
-The first function is called when the application emits the "activate" signal.
-The second is for "open" signal.
-It is given three arguments and they are owned by the caller.
+Первая функция вызывается, когда приложение испускает сигнал "activate".
+Вторая - для сигнала "open".
+Ей передаются три аргумента, и они принадлежат вызывающей стороне.
 
 @@@include
 tfe6/tfewindow.c tfe_window_notebook_page_new_with_files
 @@@
 
-This function has a loop for the array `files`.
-It creates TfeTextView instance with the text from each file.
-And build a page with it.
+Эта функция имеет цикл для массива `files`.
+Она создает экземпляр TfeTextView с текстом из каждого файла.
+И строит с ним страницу.
 
-If an error happens and no page is created, it creates a new empty page.
+Если происходит ошибка и ни одна страница не создана, она создает новую пустую страницу.
 
-### Full codes of tfewindow.c
+### Полный код tfewindow.c
 
-The following is the full source codes of `tfewindow.c`.
+Ниже приведен полный исходный код `tfewindow.c`.
 
 @@@include
 tfe6/tfewindow.c

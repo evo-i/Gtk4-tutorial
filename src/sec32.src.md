@@ -2,81 +2,81 @@
 
 ## GtkColumnView
 
-GtkColumnView is like GtkListView, but it has multiple columns.
-Each column is GtkColumnViewColumn.
+GtkColumnView похож на GtkListView, но имеет несколько столбцов.
+Каждый столбец является GtkColumnViewColumn.
 
 ![Column View](../image/column_view.png){width=11.3cm height=9cm}
 
-- GtkColumnView has "model" property.
-The property points a GtkSelectionModel object.
-- Each GtkColumnViewColumn has "factory" property.
-The property points a GtkListItemFactory (GtkSignalListItemFactory or GtkBuilderListItemFactory).
-- The factory connects GtkListItem and items of GtkSelectionModel.
-And the factory builds the descendant widgets of GtkColumnView to display the item on the display.
-This process is the same as the one in GtkListView.
+- GtkColumnView имеет свойство "model".
+Свойство указывает на объект GtkSelectionModel.
+- Каждый GtkColumnViewColumn имеет свойство "factory".
+Свойство указывает на GtkListItemFactory (GtkSignalListItemFactory или GtkBuilderListItemFactory).
+- Фабрика связывает GtkListItem и элементы GtkSelectionModel.
+И фабрика создаёт виджеты-потомки GtkColumnView для отображения элемента на экране.
+Этот процесс такой же, как и в GtkListView.
 
-The following diagram shows how it works.
+Следующая диаграмма показывает, как это работает.
 
 ![ColumnView](../image/column.png){width=12cm height=9cm}
 
-The example in this section is a window that displays information of files in a current directory.
-The information is the name, size and last modified datetime of files.
-So, there are three columns.
+Пример в этом разделе — это окно, которое отображает информацию о файлах в текущем каталоге.
+Информация — это имя, размер и время последнего изменения файлов.
+Таким образом, есть три столбца.
 
-In addition, the example uses GtkSortListModel and GtkSorter to sort the information.
+Кроме того, пример использует GtkSortListModel и GtkSorter для сортировки информации.
 
 ## column.ui
 
-Ui file specifies widgets and list item templates.
+Файл Ui задаёт виджеты и шаблоны элементов списка.
 
 @@@include
 column/column.ui
 @@@
 
-- 3-12: GtkApplicationWindow has a child widget GtkScrolledWindow.
-GtkScrolledWindoww has a child widget GtkColumnView.
-- 12-18: GtkColumnView has "model" property.
-It points GtkSelectionModel interface.
-GtkNoSelection class is used as GtkSelectionModel.
-And again, it has "model" property.
-It points GtkSortListModel.
-This list model supports sorting the list.
-It will be explained in the later subsection.
-And it also has "model" property.
-It points GtkDirectoryList.
-Therefore, the chain is: GtkColumnView => GtkNoSelection => GtkSortListModel => GtkDirectoryList.
+- 3-12: GtkApplicationWindow имеет дочерний виджет GtkScrolledWindow.
+GtkScrolledWindoww имеет дочерний виджет GtkColumnView.
+- 12-18: GtkColumnView имеет свойство "model".
+Оно указывает на интерфейс GtkSelectionModel.
+Класс GtkNoSelection используется как GtkSelectionModel.
+И снова, он имеет свойство "model".
+Оно указывает на GtkSortListModel.
+Эта модель списка поддерживает сортировку списка.
+Это будет объяснено в следующем подразделе.
+И он также имеет свойство "model".
+Оно указывает на GtkDirectoryList.
+Следовательно, цепочка такова: GtkColumnView => GtkNoSelection => GtkSortListModel => GtkDirectoryList.
 - 18-20: GtkDirectoryList.
-It is a list of GFileInfo, which holds information of files under a directory.
-It has "attributes" property.
-It specifies what attributes is kept in each GFileInfo.
-  - "standard::name" is a name of the file.
-  - "standard::icon" is a GIcon object of the file
-  - "standard::size" is the file size.
-  - "time::modified" is the date and time the file was last modified.
-- 29-79: The first GtkColumnViewColumn object.
-There are four properties, "title", "expand", factory" and "sorter".
-- 31: Sets the "title" property to "Name".
-This is the title on the header of the column.
-- 32: Sets the "expand" property to TRUE to allow the column to expand as much as possible.
-(See the image above).
-- 33- 69: Sets the "factory" property to GtkBuilderListItemFactory.
-The factory has "bytes" property which holds a ui string to define a template to extend GtkListItem class.
-The CDATA section (line 36-66) is the ui string to put into the "bytes" property.
-The contents are the same as the ui file `factory_list.ui` in the section 30.
-- 70-77: Sets the "sorter" property to GtkStringSorter object.
-This object provides a sorter that compares strings.
-It has "expression" property.
-A closure tag with a string type function `get_file_name` is used here.
-The function will be explained later.
-- 80-115: The second GtkColumnViewColumn object.
-Its sorter property is set to GtkNumericSorter.
-- 116-151: The third GtkColumnViewColumn object.
-Its sorter property is set to GtkNumericSorter.
+Это список GFileInfo, который хранит информацию о файлах в каталоге.
+Он имеет свойство "attributes".
+Оно указывает, какие атрибуты хранятся в каждом GFileInfo.
+  - "standard::name" — это имя файла.
+  - "standard::icon" — это объект GIcon файла
+  - "standard::size" — это размер файла.
+  - "time::modified" — это дата и время последнего изменения файла.
+- 29-79: Первый объект GtkColumnViewColumn.
+Есть четыре свойства: "title", "expand", factory" и "sorter".
+- 31: устанавливает свойство "title" в "Name".
+Это заголовок в заголовке столбца.
+- 32: устанавливает свойство "expand" в TRUE, чтобы позволить столбцу расширяться насколько возможно.
+(См. изображение выше).
+- 33- 69: устанавливает свойство "factory" в GtkBuilderListItemFactory.
+Фабрика имеет свойство "bytes", которое содержит строку ui для определения шаблона для расширения класса GtkListItem.
+Раздел CDATA (строка 36-66) — это строка ui для помещения в свойство "bytes".
+Содержимое то же самое, что и в файле ui `factory_list.ui` в разделе 30.
+- 70-77: устанавливает свойство "sorter" в объект GtkStringSorter.
+Этот объект предоставляет сортировщик, который сравнивает строки.
+Он имеет свойство "expression".
+Здесь используется тег closure с функцией типа string `get_file_name`.
+Функция будет объяснена позже.
+- 80-115: Второй объект GtkColumnViewColumn.
+Его свойство sorter установлено в GtkNumericSorter.
+- 116-151: Третий объект GtkColumnViewColumn.
+Его свойство sorter установлено в GtkNumericSorter.
 
-## GtkSortListModel and GtkSorter
+## GtkSortListModel и GtkSorter
 
-GtkSortListModel is a list model that sorts its elements according to a GtkSorter instance assigned to the "sorter" property.
-The property is bound to "sorter" property of GtkColumnView in line 22 to 24.
+GtkSortListModel — это модель списка, которая сортирует свои элементы согласно экземпляру GtkSorter, назначенному свойству "sorter".
+Свойство привязано к свойству "sorter" GtkColumnView в строках 22-24.
 
 ~~~xml
 <object class="GtkSortListModel" id="sortlist">
@@ -86,30 +86,30 @@ The property is bound to "sorter" property of GtkColumnView in line 22 to 24.
   </binding>
 ~~~
 
-Therefore, `columnview` determines the way how to sort the list model.
-The "sorter" property of GtkColumnView is read-only property and it is a special sorter.
-It reflects the user's sorting choice.
-If a user clicks the header of a column, then the sorter ("sorter" property) of the column is referenced by "sorter" property of the GtkColumnView.
-If the user clicks the header of another column, then the "sorter" property of the GtkColumnView refers to the newly clicked column's "sorter" property.
+Поэтому `columnview` определяет способ сортировки модели списка.
+Свойство "sorter" GtkColumnView — это свойство только для чтения, и это особый сортировщик.
+Он отражает выбор сортировки пользователя.
+Если пользователь нажимает заголовок столбца, то сортировщик (свойство "sorter") столбца ссылается на свойство "sorter" GtkColumnView.
+Если пользователь нажимает заголовок другого столбца, то свойство "sorter" GtkColumnView ссылается на свойство "sorter" вновь нажатого столбца.
 
-The binding above makes a indirect connection between the "sorter" property of GtkSortListModel and the "sorter" property of each column.
+Привязка выше создаёт косвенное соединение между свойством "sorter" GtkSortListModel и свойством "sorter" каждого столбца.
 
-GtkSorter compares two items (GObject or its descendant).
-GtkSorter has several child objects.
+GtkSorter сравнивает два элемента (GObject или его потомок).
+GtkSorter имеет несколько дочерних объектов.
 
-- GtkStringSorter compares strings taken from the items.
-- GtkNumericSorter compares numbers taken from the items.
-- GtkCustomSorter uses a callback to compare.
-- GtkMultiSorter combines multiple sorters.
+- GtkStringSorter сравнивает строки, взятые из элементов.
+- GtkNumericSorter сравнивает числа, взятые из элементов.
+- GtkCustomSorter использует обратный вызов для сравнения.
+- GtkMultiSorter объединяет несколько сортировщиков.
 
-The example uses GtkStringSorter and GtkNumericSorter.
+Пример использует GtkStringSorter и GtkNumericSorter.
 
-GtkStringSorter uses GtkExpression to get the strings from the items (objects).
-The GtkExpression is stored in the "expression" property of the GtkStringSorter.
-When GtkStringSorter compares two items, it evaluates the expression by calling `gtk_expression_evaluate` function.
-It assigns each item to the second argument ('this' object) of the function.
+GtkStringSorter использует GtkExpression для получения строк из элементов (объектов).
+GtkExpression хранится в свойстве "expression" GtkStringSorter.
+Когда GtkStringSorter сравнивает два элемента, он оценивает выражение, вызывая функцию `gtk_expression_evaluate`.
+Он назначает каждый элемент второму аргументу (объект 'this') функции.
 
-In the ui file above, the GtkExpression is in the line 71 to 76.
+В файле ui выше GtkExpression находится в строках 71-76.
 
 ~~~xml
 <object class="GtkStringSorter">
@@ -120,22 +120,22 @@ In the ui file above, the GtkExpression is in the line 71 to 76.
 </object>
 ~~~
 
-The GtkExpression calls `get_file_name` function when it is evaluated.
+GtkExpression вызывает функцию `get_file_name` при её оценке.
 
 @@@include
 column/column.c get_file_name
 @@@
 
-The function is given the item (GFileInfo) of the GtkSortListModel as an argument (`this` object).
-But you need to be careful that it can be NULL while the list item is being recycled.
-So, `G_IS_FILE_INFO (info)` is always necessary in callback functions.
-The function retrieves a filename from `info`.
-The string is owned by `info` so it is necessary to duplicate.
-And it returns the copied string.
+Функции передаётся элемент (GFileInfo) GtkSortListModel в качестве аргумента (объект `this`).
+Но нужно быть осторожным, что он может быть NULL во время переработки элемента списка.
+Поэтому `G_IS_FILE_INFO (info)` всегда необходим в функциях обратного вызова.
+Функция извлекает имя файла из `info`.
+Строка принадлежит `info`, поэтому необходимо дублировать.
+И она возвращает скопированную строку.
 
-GtkNumericSorter compares numbers.
-It is used in the line 106 to 112 and line 142 to 148.
-The lines from 106 to 112 is:
+GtkNumericSorter сравнивает числа.
+Он используется в строках 106-112 и строках 142-148.
+Строки от 106 до 112:
 
 ~~~xml
 <object class="GtkNumericSorter">
@@ -147,17 +147,17 @@ The lines from 106 to 112 is:
 </object>
 ~~~
 
-The closure tag specifies a callback function `get_file_size`.
+Тег closure указывает функцию обратного вызова `get_file_size`.
 
 @@@include
 column/column.c get_file_size
 @@@
 
-It just returns the size of `info`.
-The type of the size is `goffset`.
-The type `goffset` is the same as `gint64`.
+Она просто возвращает размер `info`.
+Тип размера — `goffset`.
+Тип `goffset` такой же, как `gint64`.
 
-The lines from 142 to 148 is:
+Строки от 142 до 148:
 
 ~~~xml
 <object class="GtkNumericSorter" id="sorter_datetime_modified">
@@ -169,31 +169,31 @@ The lines from 142 to 148 is:
 </object>
 ~~~
 
-The closure tag specifies a callback function `get_file_unixtime_modified`.
+Тег closure указывает функцию обратного вызова `get_file_unixtime_modified`.
 
 @@@include
 column/column.c get_file_unixtime_modified
 @@@
 
-It gets the modification date and time (GDateTime type) of `info`.
-Then it gets a unix time from `dt`.
-Unix time, sometimes called unix epoch, is the number of seconds that have elapsed since 00:00:00 UTC on 1 January 1970.
-It returns the unix time (gint64 type).
+Она получает дату и время модификации (тип GDateTime) из `info`.
+Затем она получает unix time из `dt`.
+Unix time, иногда называемое unix epoch, — это количество секунд, прошедших с 00:00:00 UTC 1 января 1970 года.
+Она возвращает unix time (тип gint64).
 
 ## column.c
 
-`column.c` is as follows.
-It is simple and short thanks to `column.ui`.
+`column.c` выглядит следующим образом.
+Он простой и короткий благодаря `column.ui`.
 
 @@@include
 column/column.c
 @@@
 
 
-## Compilation and execution.
+## Компиляция и выполнение.
 
-All the source files are in [`src/column`](column) directory.
-Change your current directory to the directory and type the following.
+Все исходные файлы находятся в каталоге [`src/column`](column).
+Измените текущий каталог на этот каталог и введите следующее.
 
 ~~~
 $ cd src/colomn
@@ -202,12 +202,12 @@ $ ninja -C _build
 $ _build/column
 ~~~
 
-Then, a window appears.
+Затем появляется окно.
 
 ![Column View](../image/column_view.png){width=11.3cm height=9cm}
 
-If you click the header of a column, then the whole lists are sorted by the column.
-If you click the header of another column, then the whole lists are sorted by the newly selected column.
+Если вы нажмёте заголовок столбца, то весь список будет отсортирован по этому столбцу.
+Если вы нажмёте заголовок другого столбца, то весь список будет отсортирован по вновь выбранному столбцу.
 
-GtkColumnView is very useful and it can manage very big GListModel.
-It is possible to use it for file list, application list, database frontend and so on.
+GtkColumnView очень полезен, и он может управлять очень большим GListModel.
+Можно использовать его для списка файлов, списка приложений, интерфейса базы данных и так далее.

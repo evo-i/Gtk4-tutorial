@@ -1,20 +1,20 @@
 Up: [README.md](../README.md),  Prev: [Section 14](sec14.md), Next: [Section 16](sec16.md)
 
-# Tfe main program
+# Главная программа Tfe
 
-The file `tfeapplication.c` is a main program of Tfe.
-It includes all the code other than `tfetextview.c` and `tfenotebook.c`.
-It does:
+Файл `tfeapplication.c` является главной программой Tfe.
+Он включает весь код, кроме `tfetextview.c` и `tfenotebook.c`.
+Он выполняет:
 
-- Application support, mainly handling command line arguments.
-- Builds widgets using ui file.
-- Connects button signals and their handlers.
-- Manages CSS.
+- Поддержку приложения, в основном обработку аргументов командной строки.
+- Создание виджетов с использованием ui-файла.
+- Соединение сигналов кнопок и их обработчиков.
+- Управление CSS.
 
-## The function main
+## Функция main
 
-The function `main` is the first invoked function in C language.
-It connects the command line given by the user and Gtk application.
+Функция `main` — это первая вызываемая функция в языке C.
+Она соединяет командную строку, предоставленную пользователем, и приложение Gtk.
 
 ~~~C
  1 #define APPLICATION_ID "com.github.ToshioCP.tfe"
@@ -36,23 +36,23 @@ It connects the command line given by the user and Gtk application.
 17 }
 ~~~
 
-- 1: Defines the application id.
-Thanks to the `#define` directive, it is easy to find the application id.
-- 8: Creates GtkApplication object.
-- 10-12: Connects "startup", "activate" and "open" signals to their handlers.
-- 14: Runs the application.
-- 15-16: Releases the reference to the application and returns the status.
+- 1: Определяет идентификатор приложения.
+Благодаря директиве `#define` легко найти идентификатор приложения.
+- 8: Создаёт объект GtkApplication.
+- 10-12: Соединяет сигналы "startup", "activate" и "open" с их обработчиками.
+- 14: Запускает приложение.
+- 15-16: Освобождает ссылку на приложение и возвращает статус.
 
-## Startup signal handler
+## Обработчик сигнала startup
 
-Startup signal is emitted just after the GtkApplication instance is initialized.
-The handler initializes the whole application which includes not only GtkApplication instance but also widgets and some other objects.
+Сигнал startup испускается сразу после инициализации экземпляра GtkApplication.
+Обработчик инициализирует всё приложение, которое включает не только экземпляр GtkApplication, но также виджеты и некоторые другие объекты.
 
-- Builds the widgets using ui file.
-- Connects button signals and their handlers.
-- Sets CSS.
+- Создаёт виджеты с использованием ui-файла.
+- Соединяет сигналы кнопок и их обработчики.
+- Устанавливает CSS.
 
-The handler is as follows.
+Обработчик выглядит следующим образом.
 
 ~~~C
  1 static void
@@ -92,92 +92,92 @@ The handler is as follows.
 35 }
 ~~~
 
-- 12-15: Builds widgets using ui resource.
-Connects the top-level window and the application with `gtk_window_set_application`.
-- 16-23: Gets buttons and connects their signals and handlers.
-The macro `g_signal_connect_swapped` connects a signal and handler like `g_signal_connect`.
-The difference is that `g_signal_connect_swapped` swaps the user data for the object.
-For example, the macro on line 20 swaps `nb` for `btno`.
-So, the handler expects that the first argument is `nb` instead of `btno`.
-- 24: Releases the reference to GtkBuilder.
-- 26-31: Sets CSS.
-CSS in Gtk is similar to CSS in HTML.
-You can set margin, border, padding, color, font and so on with CSS.
-In this program, CSS is on line 30.
-It sets padding, font-family and font size of GtkTextView.
-CSS will be explained in the next subsection.
-- 26-28: GdkDisplay is used to set CSS.
-The default GdkDisplay object can be obtain with the function `gfk_display_get_default`.
-This function needs to be called after the window creation.
-- 33: Connects "destroy" signal on the main window and before\_destroy handler.
-This handler is explained in the next subsection.
-- 34: The provider is useless for the startup handler, so it is released.
-Note: It doesn't mean the destruction of the provider.
-It is referred by the display so the reference count is not zero.
+- 12-15: Создаёт виджеты с использованием ui-ресурса.
+Соединяет окно верхнего уровня и приложение с помощью `gtk_window_set_application`.
+- 16-23: Получает кнопки и соединяет их сигналы и обработчики.
+Макрос `g_signal_connect_swapped` соединяет сигнал и обработчик так же, как `g_signal_connect`.
+Разница в том, что `g_signal_connect_swapped` меняет местами пользовательские данные для объекта.
+Например, макрос в строке 20 меняет местами `nb` и `btno`.
+Таким образом, обработчик ожидает, что первым аргументом будет `nb` вместо `btno`.
+- 24: Освобождает ссылку на GtkBuilder.
+- 26-31: Устанавливает CSS.
+CSS в Gtk похож на CSS в HTML.
+С помощью CSS можно задать margin, border, padding, color, font и так далее.
+В этой программе CSS находится в строке 30.
+Он устанавливает padding, font-family и размер шрифта для GtkTextView.
+CSS будет объяснён в следующем подразделе.
+- 26-28: GdkDisplay используется для установки CSS.
+Объект GdkDisplay по умолчанию можно получить с помощью функции `gfk_display_get_default`.
+Эту функцию нужно вызывать после создания окна.
+- 33: Соединяет сигнал "destroy" главного окна и обработчик before\_destroy.
+Этот обработчик объясняется в следующем подразделе.
+- 34: Провайдер бесполезен для обработчика startup, поэтому он освобождается.
+Примечание: Это не означает уничтожение провайдера.
+На него ссылается дисплей, поэтому счётчик ссылок не равен нулю.
 
-## CSS in Gtk
+## CSS в Gtk
 
-CSS is an abbreviation of Cascading Style Sheet.
-It is originally used with HTML to describe the presentation semantics of a document.
-You might have found that widgets in Gtk is similar to elements in HTML.
-It tells that CSS can be applied to Gtk windowing system, too.
+CSS — это аббревиатура от Cascading Style Sheet (каскадная таблица стилей).
+Изначально он используется с HTML для описания семантики представления документа.
+Вы могли заметить, что виджеты в Gtk похожи на элементы в HTML.
+Это означает, что CSS также может применяться к оконной системе Gtk.
 
-### CSS nodes, selectors
+### CSS-узлы, селекторы
 
-The syntax of CSS is as follows.
+Синтаксис CSS выглядит следующим образом.
 
 ~~~css
 selector { color: yellow; padding-top: 10px; ...}
 ~~~
 
-Every widget has CSS node.
-For example, GtkTextView has `textview` node.
-If you want to set style to GtkTextView, substitute "textview" for `selector` above.
+Каждый виджет имеет CSS-узел.
+Например, GtkTextView имеет узел `textview`.
+Если вы хотите установить стиль для GtkTextView, замените `selector` выше на "textview".
 
 ~~~css
 textview {color: yellow; ...}
 ~~~
 
-Class, ID and some other things can be applied to the selector like Web CSS.
-Refer to [GTK 4 API Reference -- CSS in Gtk](https://docs.gtk.org/gtk4/css-overview.html) for further information.
+К селектору можно применять класс, идентификатор и некоторые другие вещи, как в веб-CSS.
+Для получения дополнительной информации обратитесь к [GTK 4 API Reference -- CSS in Gtk](https://docs.gtk.org/gtk4/css-overview.html).
 
-The codes of the startup handler has a CSS string on line 30.
+Код обработчика startup содержит строку CSS в строке 30.
 
 ~~~css
 textview {padding: 10px; font-family: monospace; font-size: 12pt;}
 ~~~
 
-- Padding is a space between the border and contents.
-This space makes the textview easier to read.
-- font-family is a name of font.
-The font name "monospace" is one of the generic family font keywords.
-- Font-size is set to 12pt.
+- Padding — это пространство между границей и содержимым.
+Это пространство делает textview более читаемым.
+- font-family — это название шрифта.
+Название шрифта "monospace" — одно из ключевых слов семейства общих шрифтов.
+- Font-size устанавливается в 12pt.
 
-### GtkStyleContext, GtkCssProvider and GdkDisplay
+### GtkStyleContext, GtkCssProvider и GdkDisplay
 
-GtkStyleContext is deprecated since version 4.10.
-But two functions `gtk_style_context_add_provider_for_display` and `gtk_style_context_remove_provider_for_display` are not deprecated.
-They add or remove a css provider object to the GdkDisplay object.
+GtkStyleContext устарел с версии 4.10.
+Но две функции `gtk_style_context_add_provider_for_display` и `gtk_style_context_remove_provider_for_display` не устарели.
+Они добавляют или удаляют объект css-провайдера из объекта GdkDisplay.
 
-GtkCssProvider is an object which parses CSS for style widgets.
+GtkCssProvider — это объект, который разбирает CSS для стилизации виджетов.
 
-To apply your CSS to widgets, you need to add GtkStyleProvider (the interface of GtkCssProvider) to the GdkDisplay object.
-You can get the default display object with the function `gdk_display_get_default`.
-The returned object is owned by the function and you don't have its ownership.
-So, you don't need to care about releasing it.
+Чтобы применить ваш CSS к виджетам, вам нужно добавить GtkStyleProvider (интерфейс GtkCssProvider) в объект GdkDisplay.
+Вы можете получить объект дисплея по умолчанию с помощью функции `gdk_display_get_default`.
+Возвращённый объект принадлежит функции, и у вас нет его владения.
+Поэтому вам не нужно беспокоиться об его освобождении.
 
-Look at the source file of `startup` handler again.
+Взгляните на исходный файл обработчика `startup` ещё раз.
 
-- 28: The display is obtained by `gdk_display_get_default`.
-- 29: Creates a GtkCssProvider instance.
-- 30: Puts the CSS into the provider.
-The function `gtk_css_provider_load_from_data` will be deprecated since 4.12 (Not 4.10).
-The new function `gtk_css_provider_load_from_string` will be used in the future version of Tfe.
-- 31: Adds the provider to the display.
-The last argument of `gtk_style_context_add_provider_for_display` is the priority of the style provider.
-`GTK_STYLE_PROVIDER_PRIORITY_APPLICATION` is a priority for application-specific style information.
-Refer to [GTK 4 Reference --- Constants](https://docs.gtk.org/gtk4/index.html#constants) for more information.
-You can find other constants, which have "STYLE\_PROVIDER\_PRIORITY\_XXXX" pattern names.
+- 28: Дисплей получается с помощью `gdk_display_get_default`.
+- 29: Создаёт экземпляр GtkCssProvider.
+- 30: Помещает CSS в провайдер.
+Функция `gtk_css_provider_load_from_data` устареет с версии 4.12 (не 4.10).
+Новая функция `gtk_css_provider_load_from_string` будет использоваться в будущей версии Tfe.
+- 31: Добавляет провайдер к дисплею.
+Последний аргумент `gtk_style_context_add_provider_for_display` — это приоритет провайдера стилей.
+`GTK_STYLE_PROVIDER_PRIORITY_APPLICATION` — это приоритет для специфичной для приложения информации о стиле.
+Для получения дополнительной информации обратитесь к [GTK 4 Reference --- Constants](https://docs.gtk.org/gtk4/index.html#constants).
+Вы можете найти другие константы, которые имеют имена с шаблоном "STYLE\_PROVIDER\_PRIORITY\_XXXX".
 
 ~~~C
 1 static void
@@ -187,20 +187,20 @@ You can find other constants, which have "STYLE\_PROVIDER\_PRIORITY\_XXXX" patte
 5 }
 ~~~
 
-When a widget is destroyed, or more precisely during its disposing process, a "destroy" signal is emitted.
-The "before\_destroy" handler connects to the signal on the main window.
-(See the program list of app\_startup.)
-So, it is called when the window is destroyed.
+Когда виджет уничтожается, или, точнее, во время процесса его удаления, испускается сигнал "destroy".
+Обработчик "before\_destroy" подключается к сигналу главного окна.
+(См. листинг программы app\_startup.)
+Таким образом, он вызывается при уничтожении окна.
 
-The handler removes the CSS provider from the GdkDisplay.
+Обработчик удаляет CSS-провайдер из GdkDisplay.
 
-Note: CSS providers are removed automatically when the application quits.
-So, even if the handler `before_destroy` is removed, the application works.
+Примечание: CSS-провайдеры удаляются автоматически при выходе из приложения.
+Поэтому, даже если обработчик `before_destroy` удалён, приложение работает.
 
-## Activate and open signal handler
+## Обработчики сигналов activate и open
 
-The handlers of "activate" and "open" signals are `app_activate` and `app_open` respectively.
-They just create a new GtkNotebookPage.
+Обработчиками сигналов "activate" и "open" являются `app_activate` и `app_open` соответственно.
+Они просто создают новую страницу GtkNotebookPage.
 
 ~~~C
  1 static void
@@ -231,49 +231,49 @@ They just create a new GtkNotebookPage.
 ~~~
 
 - 1-10: `app_activate`.
-- 8-10: Creates a new page and shows the window.
+- 8-10: Создаёт новую страницу и показывает окно.
 - 12-25: `app_open`.
-- 20-21: Creates notebook pages with files.
-- 22-23: If no page has created, maybe because of read error, then it creates an empty page.
-- 24: Shows the window.
+- 20-21: Создаёт страницы блокнота с файлами.
+- 22-23: Если ни одна страница не создана, возможно из-за ошибки чтения, то создаётся пустая страница.
+- 24: Показывает окно.
 
-These codes have become really simple thanks to tfenotebook.c and tfetextview.c.
+Эти коды стали действительно простыми благодаря tfenotebook.c и tfetextview.c.
 
-## A primary instance
+## Первичный экземпляр
 
-Only one GApplication instance can be run at a time in a session.
-The session is a bit difficult concept and also platform-dependent, but roughly speaking, it corresponds to a graphical desktop login.
-When you use your PC, you probably login first, then your desktop appears until you log off.
-This is the session.
+Только один экземпляр GApplication может быть запущен одновременно в сеансе.
+Сеанс — это немного сложная концепция, зависящая от платформы, но грубо говоря, он соответствует входу в графический рабочий стол.
+Когда вы используете свой ПК, вы, вероятно, сначала входите в систему, затем ваш рабочий стол появляется до тех пор, пока вы не выйдете.
+Это и есть сеанс.
 
-However, Linux is multi process OS and you can run two or more instances of the same application.
-Isn't it a contradiction?
+Однако Linux — многопроцессная ОС, и вы можете запустить два или более экземпляров одного и того же приложения.
+Разве это не противоречие?
 
-When first instance is launched, then it registers itself with its application ID (for example, `com.github.ToshioCP.tfe`).
-Just after the registration, startup signal is emitted, then activate or open signal is emitted and the instance's main loop runs.
-I wrote "startup signal is emitted just after the application instance is initialized" in the prior subsection.
-More precisely, it is emitted after the registration.
+Когда запускается первый экземпляр, он регистрирует себя со своим идентификатором приложения (например, `com.github.ToshioCP.tfe`).
+Сразу после регистрации испускается сигнал startup, затем испускается сигнал activate или open и запускается главный цикл экземпляра.
+Я писал "сигнал startup испускается сразу после инициализации экземпляра приложения" в предыдущем подразделе.
+Точнее, он испускается после регистрации.
 
-If another instance which has the same application ID is launched, it also tries to register itself.
-Because this is the second instance, the registration of the ID has already done, so it fails.
-Because of the failure startup signal isn't emitted.
-After that, activate or open signal is emitted in the primary instance, not on the second instance.
-The primary instance receives the signal and its handler is invoked.
-On the other hand, the second instance doesn't receive the signal and it immediately quits.
+Если запускается другой экземпляр с тем же идентификатором приложения, он также пытается зарегистрировать себя.
+Поскольку это второй экземпляр, регистрация идентификатора уже выполнена, поэтому она завершается неудачно.
+Из-за неудачи сигнал startup не испускается.
+После этого сигнал activate или open испускается в первичном экземпляре, а не во втором экземпляре.
+Первичный экземпляр получает сигнал, и вызывается его обработчик.
+С другой стороны, второй экземпляр не получает сигнал и немедленно завершает работу.
 
-Try running two instances in a row.
+Попробуйте запустить два экземпляра подряд.
 
     $ ./_build/tfe &
     [1] 84453
     $ ./build/tfe tfeapplication.c
     $
 
-First, the primary instance opens a window.
-Then, after the second instance is run, a new notebook page with the contents of `tfeapplication.c` appears in the primary instance's window.
-This is because the open signal is emitted in the primary instance.
-The second instance immediately quits so shell prompt soon appears.
+Сначала первичный экземпляр открывает окно.
+Затем, после запуска второго экземпляра, в окне первичного экземпляра появляется новая страница блокнота с содержимым `tfeapplication.c`.
+Это происходит потому, что сигнал open испускается в первичном экземпляре.
+Второй экземпляр немедленно завершает работу, поэтому приглашение оболочки вскоре появляется.
 
-## A series of handlers correspond to the button signals
+## Серия обработчиков, соответствующих сигналам кнопок
 
 ~~~C
  1 static void
@@ -297,7 +297,7 @@ The second instance immediately quits so shell prompt soon appears.
 19 }
 ~~~
 
-`open_cb`, `new_cb`, `save_cb` and `close_cb` just call corresponding notebook page functions.
+`open_cb`, `new_cb`, `save_cb` и `close_cb` просто вызывают соответствующие функции страницы блокнота.
 
 ## meson.build
 
@@ -314,21 +314,21 @@ The second instance immediately quits so shell prompt soon appears.
 10 executable('tfe', sourcefiles, resources, dependencies: gtkdep)
 ~~~
 
-In this file, just the source file names are modified from the prior version.
+В этом файле просто изменены имена исходных файлов по сравнению с предыдущей версией.
 
-## source files
+## Исходные файлы
 
-You can download the files from the [repository](https://github.com/ToshioCP/Gtk4-tutorial).
-There are two options.
+Вы можете скачать файлы из [репозитория](https://github.com/ToshioCP/Gtk4-tutorial).
+Есть два варианта.
 
-- Use git and clone.
-- Run your browser and open the [top page](https://github.com/ToshioCP/Gtk4-tutorial). Then click on "Code" button and click "Download ZIP" in the popup menu.
-After that, unzip the archive file.
+- Использовать git и клонировать.
+- Запустить браузер и открыть [главную страницу](https://github.com/ToshioCP/Gtk4-tutorial). Затем нажать на кнопку "Code" и нажать "Download ZIP" во всплывающем меню.
+После этого распаковать архивный файл.
 
-If you use git, run the terminal and type the following.
+Если вы используете git, запустите терминал и введите следующее.
 
     $ git clone https://github.com/ToshioCP/Gtk4-tutorial.git
 
-The source files are under [/src/tfe5](../src/tfe5) directory.
+Исходные файлы находятся в каталоге [/src/tfe5](../src/tfe5).
 
 Up: [README.md](../README.md),  Prev: [Section 14](sec14.md), Next: [Section 16](sec16.md)
