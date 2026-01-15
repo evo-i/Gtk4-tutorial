@@ -151,8 +151,8 @@ Pandoc — это мощный инструмент для преобразов�
     ~~~
       ... ...
 
-If the Markdown file is an intermediate step for HTML output, a different info string is used.
-If the `@@@include` command doesn't have `-N` option, then the generated markdown is:
+Если файл Markdown является промежуточным шагом для вывода в HTML, используется другая информационная строка.
+Если команда `@@@include` не имеет опции `-N`, то сгенерированный markdown будет:
 
     ~~~{.C .numberLines}
     int
@@ -161,12 +161,12 @@ If the `@@@include` command doesn't have `-N` option, then the generated markdow
     }
     ~~~
 
-The info string `.C` specifies C language.
-The `.numberLines` class is a feature of Pandoc's Markdown; it allows Pandoc to generate CSS that inserts line numbers into the final HTML.
-As a result, the fenced code block in the Markdown source does not contain hard-coded line numbers, unlike GFM.
-If `-N` option is given, then the info string is `{.C}` only.
+Информационная строка `.C` указывает язык C.
+Класс `.numberLines` является функцией Markdown от Pandoc; он позволяет Pandoc генерировать CSS, который вставляет номера строк в итоговый HTML.
+В результате огороженный блок кода в исходном Markdown не содержит жестко закодированных номеров строк, в отличие от GFM.
+Если задана опция `-N`, то информационная строка будет только `{.C}`.
 
-If the Markdown file is an intermediate step for LaTeX file, the same info string follows the beginning fence.
+Если файл Markdown является промежуточным шагом для файла LaTeX, та же информационная строка следует после начального ограждения.
 
     ~~~{.C .numberLines}
     int
@@ -175,9 +175,9 @@ If the Markdown file is an intermediate step for LaTeX file, the same info strin
     }
     ~~~
 
-Rake uses Pandoc with the --listings option to convert Markdown into a LaTeX file.
-The resulting LaTeX file utilizes the listings package to display source code rather than a simple verbatim environment.
-The Markdown file is converted to the following LaTeX source file.
+Rake использует Pandoc с опцией --listings для преобразования Markdown в файл LaTeX.
+Итоговый файл LaTeX использует пакет listings для отображения исходного кода вместо простого окружения verbatim.
+Файл Markdown преобразуется в следующий исходный файл LaTeX.
 
     \begin{lstlisting}[language=C, numbers=left]
     int
@@ -186,43 +186,43 @@ The Markdown file is converted to the following LaTeX source file.
     }
     \end{lstlisting}
 
-The listings package can color or emphasize keywords, strings, comments and directives.
-But it doesn't really analyze the syntax of the language, so the emphasis tokens are limited.
+Пакет listings может раскрашивать или выделять ключевые слова, строки, комментарии и директивы.
+Но он на самом деле не анализирует синтаксис языка, поэтому токены выделения ограничены.
 
-The @@@include command has two advantages:
+Команда @@@include имеет два преимущества:
 
-1. Less typing.
-2. Modifying a C source file does not require manual updates to the .src.md file, making maintenance much easier for authors.
+1. Меньше набора текста.
+2. Изменение исходного файла C не требует ручного обновления файла .src.md, что значительно облегчает сопровождение для авторов.
 
 ### @@@shell
 
-This command begins with the `@@@shell` directive.
+Эта команда начинается с директивы `@@@shell`.
 
     @@@shell
     shell command
      ... ...
     @@@
 
-It is replaced by both the executed command itself and its standard output.
+Она заменяется как самой выполненной командой, так и её стандартным выводом.
 
-For example,
+Например,
 
     @@@shell
     wc Rakefile
     @@@
 
-This is converted to:
+Это преобразуется в:
 
     ~~~
     $ wc Rakefile
     164  475 4971 Rakefile
     ~~~
 
-### @@@if series (Conditional Branching)
+### @@@if series (Условное ветвление)
 
-This command block starts with `@@@if` and can be followed by `@@@elif`, `@@@else`, or `@@@end`.
-These work similarly to the `#if`, `#elif`, `#else`, and `#endif` preprocessor directives in C.
-For example,
+Этот блок команд начинается с `@@@if` и может сопровождаться `@@@elif`, `@@@else` или `@@@end`.
+Они работают аналогично директивам препроцессора `#if`, `#elif`, `#else` и `#endif` в C.
+Например,
 
     @@@if gfm
     Refer to  [tfetextview API reference](tfetextview_doc.md)
@@ -232,24 +232,24 @@ For example,
     Refer to tfetextview API reference in appendix.
     @@@end
 
-The directives `@@@if` and `@@@elif` accept conditions such as `gfm`, `html`, or `latex`.
+Директивы `@@@if` и `@@@elif` принимают условия, такие как `gfm`, `html` или `latex`.
 
-- gfm: If the target is GFM.
-- html: If the target is HTML.
-- latex: If the target is PDF.
+- gfm: Если целью является GFM.
+- html: Если целью является HTML.
+- latex: Если целью является PDF.
 
-Other type of conditions may be available in the future version.
+Другие типы условий могут стать доступными в будущих версиях.
 
-The code analyzing @@@if series commands is rather complicated.
-It is based on the state diagram below.
+Код, анализирующий команды серии @@@if, довольно сложный.
+Он основан на диаграмме состояний ниже.
 
 ![state diagram](../image/state_diagram.png)
 
 ### @@@table
 
-This type of @@@ command starts with a line that begins with `@@@table`.
-This command takes a GFM or Pandoc-style table as input and formats it to be more human-readable in the source file.
-For example, a text file `sample.md` has a table like this:
+Этот тип команды @@@ начинается со строки, которая начинается с `@@@table`.
+Эта команда принимает таблицу в стиле GFM или Pandoc в качестве входных данных и форматирует её, чтобы она была более читаемой для человека в исходном файле.
+Например, текстовый файл `sample.md` содержит таблицу вот так:
 
     Price list
 
@@ -260,7 +260,7 @@ For example, a text file `sample.md` has a table like this:
     |PC|$500|
     @@@
 
-The command changes this into:
+Команда преобразует это в:
 
 ~~~
 Price list
@@ -271,40 +271,40 @@ Price list
 | PC  |$500 |
 ~~~
 
-This command only affects the visual alignment of the table in Markdown; it does not change the final HTML or LaTeX output.
-Notice that the command supports only the above type of Markdown table format.
+Эта команда влияет только на визуальное выравнивание таблицы в Markdown; она не изменяет итоговый вывод в HTML или LaTeX.
+Обратите внимание, что команда поддерживает только указанный выше тип формата таблиц Markdown.
 
-A script `mktbl.rb` supports this command.
-If you run the script like this:
+Скрипт `mktbl.rb` поддерживает эту команду.
+Если вы запустите скрипт следующим образом:
 
 ~~~
 $ ruby mktbl.rb sample.md
 ~~~
 
-Then, the tables in 'sample.md' will be arranged.
-The script also makes a backup file `sample.md.bak`.
+Тогда таблицы в 'sample.md' будут упорядочены.
+Скрипт также создаёт резервный файл `sample.md.bak`.
 
-The task of the script seems easy, but the program is not so simple.
-The script `mktbl.rb` uses the library `lib/lib_src2md.rb`
+Задача скрипта кажется лёгкой, но программа не такая простая.
+Скрипт `mktbl.rb` использует библиотеку `lib/lib_src2md.rb`
 
-The @@@ commands are effective throughout the whole text.
-This means you can't stop the @@@ commands.
-But sometimes you want to show the commands literally.
-One solution is to add four blanks at the top of the lines.
-Then @@@ commands are not effective because `@@@` must be at the top of the line.
+Команды @@@ действуют на протяжении всего текста.
+Это означает, что вы не можете остановить команды @@@.
+Но иногда вы хотите показать команды буквально.
+Одно решение — добавить четыре пробела в начале строк.
+Тогда команды @@@ не будут действовать, потому что `@@@` должен находиться в начале строки.
 
-## Conversion
+## Преобразование
 
-The @@@ commands are processed by the `src2md` method in `lib/lib_src2md.rb`.
-This method converts .src.md files into standard Markdown files.
-In addition, the `src2md` method performs the following transformations:
+Команды @@@ обрабатываются методом `src2md` в `lib/lib_src2md.rb`.
+Этот метод преобразует файлы .src.md в стандартные файлы Markdown.
+Кроме того, метод `src2md` выполняет следующие преобразования:
 
-- **Relative links:** These are updated to reflect the change in the base directory.
-- **Image sizes:** Image size options (e.g., {width=...}) are removed when the target format is GFM or HTML.
-- **HTML-specific links:** For HTML output, all relative links are removed, except for those pointing to other `.src.md` files.
-- **LaTeX-specific links:** For LaTeX output, all relative links are removed.
+- **Относительные ссылки:** Они обновляются, чтобы отразить изменение базового каталога.
+- **Размеры изображений:** Параметры размера изображения (например, {width=...}) удаляются, когда целевой формат — GFM или HTML.
+- **HTML-специфичные ссылки:** Для вывода в HTML все относительные ссылки удаляются, за исключением тех, которые указывают на другие файлы `.src.md`.
+- **LaTeX-специфичные ссылки:** Для вывода в LaTeX все относительные ссылки удаляются.
 
-The conversions are executed in the following order:
+Преобразования выполняются в следующем порядке:
 
 1. @@@if
 2. @@@table
@@ -312,188 +312,188 @@ The conversions are executed in the following order:
 4. @@@shell
 5. others
 
-The `src2md.rb` script in the root directory simply invokes the `src2md` method.
-Similarly, the `Rakefile` also calls this method as part of its tasks.
+Скрипт `src2md.rb` в корневом каталоге просто вызывает метод `src2md`.
+Аналогично, `Rakefile` также вызывает этот метод в рамках своих задач.
 
-## Directory Structure
+## Структура каталогов
 
-The `Gtk4-tutorial` directory contains seven subdirectories: `gfm`, `docs`, `latex`, `src`, `image`, `test` and `lib`.
-The `gfm`, `docs`, and `latex` directories serve as the destination folders for GFM, HTML, and LaTeX files, respectively.
-Note that these three destination directories may not exist at the beginning of the conversion.
-The conversion program automatically makes the directories if they do not exist.
+Каталог `Gtk4-tutorial` содержит семь подкаталогов: `gfm`, `docs`, `latex`, `src`, `image`, `test` и `lib`.
+Каталоги `gfm`, `docs` и `latex` служат папками назначения для файлов GFM, HTML и LaTeX соответственно.
+Обратите внимание, что эти три каталога назначения могут не существовать в начале преобразования.
+Программа преобразования автоматически создаёт каталоги, если они не существуют.
 
-- `src`: Contains the .src.md source files and C source code.
-- `image`: Contains image files, such as PNG or JPG.
-- `gfm`: Contains GFM files converted by Rake from the .src.md source files.
-- `docs`: Contains HTML files converted by Rake (`rake html`) from the .src.md source files.
-- `latex`: Contains a PDF file and intermediate LaTeX files converted by Rake (`rake pdf`) from the .src.md source files.
-- `lib`: Contains ruby library files.
-- `test`: Contains test files, which are executed by running `rake test` in the terminal.
+- `src`: Содержит исходные файлы .src.md и исходный код C.
+- `image`: Содержит файлы изображений, такие как PNG или JPG.
+- `gfm`: Содержит файлы GFM, преобразованные Rake из исходных файлов .src.md.
+- `docs`: Содержит файлы HTML, преобразованные Rake (`rake html`) из исходных файлов .src.md.
+- `latex`: Содержит файл PDF и промежуточные файлы LaTeX, преобразованные Rake (`rake pdf`) из исходных файлов .src.md.
+- `lib`: Содержит файлы библиотек ruby.
+- `test`: Содержит тестовые файлы, которые выполняются запуском `rake test` в терминале.
 
-## Organization of the Source Files
+## Организация исходных файлов
 
-### The `src` and Root Directory
+### Каталог `src` и корневой каталог
 
-The `src` directory contains .src.md files and C-related source files.
-The root directory (`Gtk4-tutorial`) contains the `Rakefile`, `src2md.rb`, and other essential files.
-The generated `README.md` is placed in this root directory.
-It includes the title, an overview, and a table of contents with links to the GFM files.
+Каталог `src` содержит файлы .src.md и исходные файлы, связанные с C.
+Корневой каталог (`Gtk4-tutorial`) содержит `Rakefile`, `src2md.rb` и другие важные файлы.
+Сгенерированный `README.md` размещается в этом корневом каталоге.
+Он включает заголовок, обзор и оглавление со ссылками на файлы GFM.
 
-`Rakefile` describes how to convert .src.md files into GFM, HTML and/or PDF files.
-Rake converts the source files according to the `Rakefile`.
+`Rakefile` описывает, как преобразовать файлы .src.md в файлы GFM, HTML и/или PDF.
+Rake преобразует исходные файлы в соответствии с `Rakefile`.
 
-### File Naming in the `src` Directory
+### Именование файлов в каталоге `src`
 
-The `src` directory contains `abstract.src.md`, individual section files, and other .src.md documents.
-Rake converts `abstract.src.md` to the overview of this tutorial such as `gfm/README.md`, `docs/index.html` and/or corresponding part of the PDF file.
-Section files are named using the prefix "sec" followed by the section number and the .src.md extension (e.g., `sec1.src.md`, `sec5.src.md`, or `sec12.src.md`).
-They are the files that correspond to the section 1, section 5 and section 12 respectively.
+Каталог `src` содержит `abstract.src.md`, отдельные файлы разделов и другие документы .src.md.
+Rake преобразует `abstract.src.md` в обзор этого руководства, такой как `gfm/README.md`, `docs/index.html` и/или соответствующую часть файла PDF.
+Файлы разделов именуются с использованием префикса "sec", за которым следует номер раздела и расширение .src.md (например, `sec1.src.md`, `sec5.src.md` или `sec12.src.md`).
+Это файлы, которые соответствуют разделу 1, разделу 5 и разделу 12 соответственно.
 
-### C Source Code Storage
+### Хранение исходного кода C
 
-Most .src.md files use the `@@@include` command to pull in C source code.
-These C files are organized into subdirectories under the `src` directory.
+Большинство файлов .src.md используют команду `@@@include` для включения исходного кода C.
+Эти файлы C организованы в подкаталоги в каталоге `src`.
 
-All included C files have been tested.
-When you compile the source files, some auxiliary files and a target file like `a.out` are created.
-When you use `meson` and `ninja` for compilation, they create a temporary `_build` directory.
-Those files and directories are ignored by Git as specified in the .gitignore file.
+Все включённые файлы C были протестированы.
+Когда вы компилируете исходные файлы, создаются некоторые вспомогательные файлы и целевой файл вроде `a.out`.
+Когда вы используете `meson` и `ninja` для компиляции, они создают временный каталог `_build`.
+Эти файлы и каталоги игнорируются Git, как указано в файле .gitignore.
 
-## Renumbering
+## Перенумерация
 
-Occasionally, you may need to insert a new section, for example, between Section 4 and Section 5.
-You can temporarily name it "Section 4.5" to place it between the two.
-However, since section numbers should be integers, Section 4.5 must be renamed to Section 5, and all subsequent section numbers must be incremented by one.
+Иногда вам может потребоваться вставить новый раздел, например, между разделом 4 и разделом 5.
+Вы можете временно назвать его "Раздел 4.5", чтобы разместить его между двумя.
+Однако, поскольку номера разделов должны быть целыми числами, раздел 4.5 должен быть переименован в раздел 5, и все последующие номера разделов должны быть увеличены на единицу.
 
-This renumbering process is handled automatically by the `renumber` method in `lib/lib_renumber.rb`.
-This method performs two main tasks:
+Этот процесс перенумерации обрабатывается автоматически методом `renumber` в `lib/lib_renumber.rb`.
+Этот метод выполняет две основные задачи:
 
-- Renaming the physical files.
-- Updating any internal links or references within the .src.md files to match the new section numbers.
+- Переименование физических файлов.
+- Обновление любых внутренних ссылок или упоминаний внутри файлов .src.md в соответствии с новыми номерами разделов.
 
 ## Rakefile
 
-The `Rakefile` is similar to a Makefile but is executed by Rake, a Ruby-based build tool.
-The `Rakefile` in this project defines the following tasks:
+`Rakefile` похож на Makefile, но выполняется Rake, инструментом сборки на основе Ruby.
+`Rakefile` в этом проекте определяет следующие задачи:
 
-- `md`: Generates GFM Markdown files (default task).
-- `html`: Generates HTML files.
-- `pdf`: Generates LaTeX source files and compiles them into a PDF using lualatex.
-- `all`: Generates GFM, HTML and PDF files.
-- `clean`: Deletes LaTeX intermediate files.
-- `clobber`: Deletes all the generated files.
+- `md`: Генерирует файлы GFM Markdown (задача по умолчанию).
+- `html`: Генерирует файлы HTML.
+- `pdf`: Генерирует исходные файлы LaTeX и компилирует их в PDF с использованием lualatex.
+- `all`: Генерирует файлы GFM, HTML и PDF.
+- `clean`: Удаляет промежуточные файлы LaTeX.
+- `clobber`: Удаляет все сгенерированные файлы.
 
-Rake automatically performs the renumbering process before executing any of these tasks.
+Rake автоматически выполняет процесс перенумерации перед выполнением любой из этих задач.
 
-### Generating GFM Files
+### Генерация файлов GFM
 
-You can generate GFM files by simply running Rake in your terminal:
+Вы можете сгенерировать файлы GFM, просто запустив Rake в вашем терминале:
 
     $ rake
 
-This command generates `README.md` from `src/abstract.src.md` and titles of each .src.md file.
-At the same time, it converts each .src.md file into a GFM file and store it under the `gfm` directory.
-Navigation links (e.g., "Next" and "Previous") are automatically inserted to the top and bottom of each generated Markdown file.
+Эта команда генерирует `README.md` из `src/abstract.src.md` и заголовков каждого файла .src.md.
+В то же время она преобразует каждый файл .src.md в файл GFM и сохраняет его в каталоге `gfm`.
+Навигационные ссылки (например, "Next" и "Previous") автоматически вставляются в верхнюю и нижнюю части каждого сгенерированного файла Markdown.
 
-You can specify the width and height of images within .src.md files using the following syntax:
+Вы можете указать ширину и высоту изображений внутри файлов .src.md, используя следующий синтаксис:
 
     ![sample image](../image/sample_image.png){width=10cm height=6cm}
 
-Since image size attributes (e.g., {width=10cm}) are specific to LaTeX and are not supported by GFM syntax,
-they are automatically stripped out during the conversion to GFM or HTML.
+Поскольку атрибуты размера изображения (например, {width=10cm}) специфичны для LaTeX и не поддерживаются синтаксисом GFM,
+они автоматически удаляются во время преобразования в GFM или HTML.
 
-If a .src.md file has relative URL links, they will be changed by conversion, since GFM files are located under the `gfm` directory while .src.md files lie in the `src` directory.
-That means the base directory of the relative links is different.
-For example, `[src/sample.c](sample.c)` is translated to `[src/sample.c](../src/sample.c)`.
+Если файл .src.md имеет относительные URL-ссылки, они будут изменены при преобразовании, поскольку файлы GFM находятся в каталоге `gfm`, а файлы .src.md находятся в каталоге `src`.
+Это означает, что базовый каталог относительных ссылок отличается.
+Например, `[src/sample.c](sample.c)` переводится в `[src/sample.c](../src/sample.c)`.
 
-Similarly, if a link points another .src.md file, the target extension is automatically updated to .md.
-For example, `[Section 5](sec5.src.md)` is translated to `[Section 5](sec5.md)`.
+Аналогично, если ссылка указывает на другой файл .src.md, целевое расширение автоматически обновляется до .md.
+Например, `[Section 5](sec5.src.md)` переводится в `[Section 5](sec5.md)`.
 
-The following command cleans all the generated files.
+Следующая команда очищает все сгенерированные файлы.
 
     $ rake clobber
 
-Sometimes this is necessary before generating GFM files.
+Иногда это необходимо перед генерацией файлов GFM.
 
     $ rake clobber
     $ rake
 
-If you add a new section, running rake clobber is necessary to ensure that the "Next" and "Previous" navigation links are correctly updated.
-Without `rake clobber`, these links may not be updated because Rake's dependency tracking will see that the existing .md files in the `gfm` directory are already newer than their corresponding .src.md sources.
-Alternatively, using the touch command on the previous section's .src.md file will also force an update of its navigation links.
+Если вы добавляете новый раздел, запуск rake clobber необходим для обеспечения корректного обновления навигационных ссылок "Next" и "Previous".
+Без `rake clobber` эти ссылки могут не обновиться, потому что отслеживание зависимостей Rake увидит, что существующие файлы .md в каталоге `gfm` уже новее, чем соответствующие исходные файлы .src.md.
+В качестве альтернативы использование команды touch для файла .src.md предыдущего раздела также принудительно обновит его навигационные ссылки.
 
-If you view the GitHub repository (ToshioCP/Gtk4-tutorial), `README.md` is shown below the code.
-And `README.md` includes links to each Markdown file.
-This allows the GitHub repository to function not just as a source code host, but as a readable online version of the entire tutorial.
+Если вы просматриваете репозиторий GitHub (ToshioCP/Gtk4-tutorial), `README.md` отображается под кодом.
+И `README.md` включает ссылки на каждый файл Markdown.
+Это позволяет репозиторию GitHub функционировать не только как хост исходного кода, но и как читаемая онлайн-версия всего руководства.
 
-### Generating HTML Files
+### Генерация файлов HTML
 
-The .src.md files can also be converted into HTML.
-This process requires Pandoc.
-Most Linux distributions include a Pandoc package; please refer to your distribution's documentation for installation instructions.
+Файлы .src.md также могут быть преобразованы в HTML.
+Этот процесс требует Pandoc.
+Большинство дистрибутивов Linux включают пакет Pandoc; обратитесь к документации вашего дистрибутива для инструкций по установке.
 
-Type `rake html` to generate HTML files.
+Введите `rake html` для генерации файлов HTML.
 
     $ rake html
 
-Rake first generates intermediate Pandoc-style Markdown files in the `docs` directory.
-Then, it executes `pandoc` to convert them into final HTML files.
-The width and height of image files are removed.
-Links to .src.md files will be converted like this.
+Rake сначала генерирует промежуточные файлы Markdown в стиле Pandoc в каталоге `docs`.
+Затем он выполняет `pandoc` для преобразования их в итоговые файлы HTML.
+Ширина и высота файлов изображений удаляются.
+Ссылки на файлы .src.md будут преобразованы следующим образом.
 
     [Section 5](sec5.src.md) => [Section 5](sec5.html)
 
-Image files are copied to the `docs/image` directory, and their links are updated accordingly:
+Файлы изображений копируются в каталог `docs/image`, и их ссылки соответственно обновляются:
 
     [sample.png](../image/sample.png) => [sample.png](image/sample.png)
 
-Other relative links will be removed.
+Другие относительные ссылки будут удалены.
 
-The top HTML file `index.html` corresponds to the `README.md` file in the `gfm` directory.
-If you want to clean HTML files, type `rake clobber` or `cleanhtml`.
+Верхний файл HTML `index.html` соответствует файлу `README.md` в каталоге `gfm`.
+Если вы хотите очистить файлы HTML, введите `rake clobber` или `cleanhtml`.
 
     $ rake clobber
 
-Each HTML file includes a standard header (`<head> ... </head>`), generated by Pandoc using the standalone (-s) option.
-You can customize the output with your own template file for pandoc.
-Rake uses `lib/lib_mk_html_template.rb` to create its own template.
-This template integrates Bootstrap CSS and JavaScript via the jsDelivr CDN.
+Каждый файл HTML включает стандартный заголовок (`<head> ... </head>`), сгенерированный Pandoc с использованием опции standalone (-s).
+Вы можете настроить вывод с помощью собственного файла шаблона для pandoc.
+Rake использует `lib/lib_mk_html_template.rb` для создания собственного шаблона.
+Этот шаблон интегрирует CSS и JavaScript Bootstrap через CDN jsDelivr.
 
-The `docs` directory contains all the necessary html files.
-They are used in the [GitHub pages](https://ToshioCP.github.io/Gtk4-tutorial) of this repository.
+Каталог `docs` содержит все необходимые файлы html.
+Они используются на [страницах GitHub](https://ToshioCP.github.io/Gtk4-tutorial) этого репозитория.
 
-To publish this tutorial on your own website, simply upload the contents of the `docs` directory to your web server.
+Чтобы опубликовать это руководство на вашем собственном веб-сайте, просто загрузите содержимое каталога `docs` на ваш веб-сервер.
 
-### Generating a PDF File
+### Генерация файла PDF
 
-Converting Markdown files into LaTeX source files also requires Pandoc.
+Преобразование файлов Markdown в исходные файлы LaTeX также требует Pandoc.
 
-Type `rake pdf` to generate laTeX files and finally create a PDF file.
+Введите `rake pdf` для генерации файлов laTeX и, наконец, создания файла PDF.
 
     $ rake pdf
 
-First, it generates Pandoc's Markdown files under `latex` directory.
-Then, Pandoc converts them into LaTeX files.
-Links to local files or directories are removed during conversion because LaTeX does not support them in the same way.
-However, external URLs and image references are preserved.
-Image dimensions are determined by the values specified within the curly braces in the source file.
+Сначала генерируются файлы Markdown от Pandoc в каталоге `latex`.
+Затем Pandoc преобразует их в файлы LaTeX.
+Ссылки на локальные файлы или каталоги удаляются во время преобразования, потому что LaTeX не поддерживает их таким же образом.
+Однако внешние URL и ссылки на изображения сохраняются.
+Размеры изображений определяются значениями, указанными в фигурных скобках в исходном файле.
 
     ![sample image](../image/sample_image.png){width=10cm height=6cm}
 
-You should specify appropriate dimensions; a good rule of thumb is roughly 0.015 x (width in pixels) cm.
-For example, if the width of an image is 400 pixels, the width in a LaTeX file will be almost 6cm.
+Вы должны указать соответствующие размеры; хорошее эмпирическое правило — примерно 0.015 x (ширина в пикселях) см.
+Например, если ширина изображения 400 пикселей, ширина в файле LaTeX будет почти 6 см.
 
-The file `main.tex` serves as the root LaTeX file.
-It contains `\input` commands between the `\begin{document}` and `\end{document}` tags to include each individual section.
-It also has `\input`, which inserts `helper.tex` in the preamble.
-Both `main.tex` and `helper.tex` are generated by the `lib/lib_gen_main_tex.rb` script.
-The script converts a sample piece of Markdown using `pandoc -s`, extracts the resulting LaTeX preamble, and saves it into `helper.tex`.
-You can customize `helper.tex` by modifying `lib/lib_gen_main_tex.rb`.
+Файл `main.tex` служит корневым файлом LaTeX.
+Он содержит команды `\input` между тегами `\begin{document}` и `\end{document}` для включения каждого отдельного раздела.
+Он также имеет `\input`, который вставляет `helper.tex` в преамбулу.
+Как `main.tex`, так и `helper.tex` генерируются скриптом `lib/lib_gen_main_tex.rb`.
+Скрипт преобразует образец фрагмента Markdown с использованием `pandoc -s`, извлекает получившуюся преамбулу LaTeX и сохраняет её в `helper.tex`.
+Вы можете настроить `helper.tex`, изменив `lib/lib_gen_main_tex.rb`.
 
-Finally, LuaLaTeX compiles the `main.tex` into a PDF file.
+Наконец, LuaLaTeX компилирует `main.tex` в файл PDF.
 
-If you want to clean the `latex` directory, type `rake clobber` or `rake cleanlatex`
+Если вы хотите очистить каталог `latex`, введите `rake clobber` или `rake cleanlatex`
 
     $ rake clobber
 
-This removes all the LaTeX source files and a PDF file.
+Это удаляет все исходные файлы LaTeX и файл PDF.
